@@ -16,11 +16,6 @@ namespace CustomScripts.Objects
 
         private Coroutine _musicEndCoroutine;
 
-        private void Awake()
-        {
-            GameSettings.OnMusicSettingChanged += OnMusicSettingsChanged;
-        }
-
         private void OnMusicSettingsChanged()
         {
             _isPlaying = false;
@@ -56,10 +51,7 @@ namespace CustomScripts.Objects
 
                 AudioManager.Instance.MusicAudioSource.Stop();
 
-                if (GameSettings.BackgroundMusic)
-                {
-                    AudioManager.Instance.PlayMusic(AudioManager.Instance.Music, .08f);
-                }
+                AudioManager.Instance.PlayMusic(AudioManager.Instance.Music, .08f);
 
                 if (_musicEndCoroutine != null)
                     StopCoroutine(_musicEndCoroutine);
@@ -90,15 +82,7 @@ namespace CustomScripts.Objects
 
             _isPlaying = false;
 
-            if (GameSettings.BackgroundMusic)
-            {
-                AudioManager.Instance.PlayMusic(AudioManager.Instance.Music, .08f);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            GameSettings.OnMusicSettingChanged -= OnMusicSettingsChanged;
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.Music, .08f);
         }
     }
 }

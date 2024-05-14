@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using CustomScripts.Managers;
+using CustomScripts.Multiplayer;
 using FistVR;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -73,6 +74,8 @@ namespace CustomScripts
 
             if (OnGameStarted != null)
                 OnGameStarted.Invoke();
+            
+            CodZNetworking.Instance.StartGame_Send();
         }
 
         public void AdvanceRound()

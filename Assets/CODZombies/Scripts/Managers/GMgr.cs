@@ -107,6 +107,7 @@ namespace CustomScripts
         
         ////
         public static bool H3mpEnabled = false;
+        public bool GameServerRunning = false;
         
     }
 }

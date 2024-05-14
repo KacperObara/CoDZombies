@@ -3,10 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HideIfNotHost : MonoBehaviour {
-	private void Start()
-	{
-		if (Networking.IsClient())
-			gameObject.SetActive(false);
+namespace CustomScripts.Multiplayer
+{
+	public class HideIfNotHost : MonoBehaviour {
+		private void Start()
+		{
+			if (Networking.IsClient())
+				gameObject.SetActive(false);
+		}
 	}
 }
+

@@ -42,20 +42,13 @@ namespace CustomScripts
 
         private Coroutine _musicRepetition;
 
-        public override void Awake()
-        {
-            base.Awake();
-
-            GameSettings.OnMusicSettingChanged += OnMusicSettingChanged;
-        }
-
-        private void OnMusicSettingChanged()
-        {
-            if (GameSettings.BackgroundMusic)
-                PlayMusic(Music, .08f, repeat: true);
-            else
-                MusicAudioSource.Stop();
-        }
+        // private void OnMusicSettingChanged()
+        // {
+        //     if (GameSettings.BackgroundMusic)
+        //         PlayMusic(Music, .08f, repeat: true);
+        //     else
+        //         MusicAudioSource.Stop();
+        // }
 
         public void Play(AudioClip audioClip, float volume = 1f, float delay = 0f)
         {
@@ -86,26 +79,26 @@ namespace CustomScripts
             MusicAudioSource.volume = volume;
             MusicAudioSource.PlayDelayed(delay);
 
-            if (repeat)
-            {
-                _musicRepetition = StartCoroutine(RepeatMusic(audioClip.length, volume));
-            }
+            // if (repeat)
+            // {
+            //     _musicRepetition = StartCoroutine(RepeatMusic(audioClip.length, volume));
+            // }
         }
 
-        private IEnumerator RepeatMusic(float endTimer, float volume)
-        {
-            yield return new WaitForSeconds(endTimer);
+        // private IEnumerator RepeatMusic(float endTimer, float volume)
+        // {
+        //     yield return new WaitForSeconds(endTimer);
+        //
+        //     if (GameSettings.BackgroundMusic)
+        //     {
+        //         PlayMusic(Music, .08f, repeat: true);
+        //     }
+        // }
 
-            if (GameSettings.BackgroundMusic)
-            {
-                PlayMusic(Music, .08f, repeat: true);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            GameSettings.OnMusicSettingChanged -= OnMusicSettingChanged;
-        }
+        // private void OnDestroy()
+        // {
+        //     GameSettings.OnMusicSettingChanged -= OnMusicSettingChanged;
+        // }
     }
 }
 #endif

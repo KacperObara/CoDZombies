@@ -12,14 +12,11 @@ namespace CustomScripts
     public class GameSettings : MonoBehaviourSingleton<GameSettings>
     {
         public static Action OnSettingsChanged;
-        public static Action OnMusicSettingChanged;
 
         public static bool HardMode;
         public static bool SpecialRoundDisabled;
         public static bool ItemSpawnerEnabled;
         public static bool WeakerEnemiesEnabled;
-
-        public static bool BackgroundMusic;
 
         public Text OptionDescriptionText;
 
@@ -127,11 +124,6 @@ namespace CustomScripts
 
         public void ToggleBackgroundMusic()
         {
-            BackgroundMusic = !BackgroundMusic;
-
-            if (OnMusicSettingChanged != null)
-                OnMusicSettingChanged.Invoke();
-
             if (OnSettingsChanged != null)
                 OnSettingsChanged.Invoke();
         }
