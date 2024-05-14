@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742743991c64e4cdf9b46eea0bd485c2, type: 3}
+  m_Name: SVT40
+  m_EditorClassIdentifier: 
+  DisplayName: SVT 40
+  Description: 
+  DefaultSpawners:
+  - SVT40
+  - MagazineSVT40
+  UpgradedWeapon: {fileID: 11400000, guid: 9bee14c7b39487c4da4b91533893e39f, type: 2}
+  LimitedAmmoMagazineCount: 4
+  Price: 750
+  AmmoBuyCost: 500

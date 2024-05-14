@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742743991c64e4cdf9b46eea0bd485c2, type: 3}
+  m_Name: M1897Trench
+  m_EditorClassIdentifier: 
+  DisplayName: M1897 Trench
+  Description: 
+  DefaultSpawners:
+  - M1897Trench
+  - 12GaugeShell00Buckshot
+  UpgradedWeapon: {fileID: 11400000, guid: 9e8d5fa6dd2c61342a86b1d894fc1d0d, type: 2}
+  LimitedAmmoMagazineCount: 18
+  Price: 1500
+  AmmoBuyCost: 800
