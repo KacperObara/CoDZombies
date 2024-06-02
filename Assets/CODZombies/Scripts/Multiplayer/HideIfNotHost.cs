@@ -10,6 +10,10 @@ namespace CustomScripts.Multiplayer
 		{
 			if (Networking.IsClient())
 				gameObject.SetActive(false);
+			else
+			{
+				Debug.Log("Host is running, object is active.");
+			}
 		}
 	}
 }

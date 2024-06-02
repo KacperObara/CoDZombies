@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb9ca90819b143909ef3b06721bb54cc, type: 3}
+  m_Name: ZombiesScene
+  m_EditorClassIdentifier: 
+  SceneFile: {fileID: 102900000, guid: f1da1eba2d1ca934a94109157024aa0c, type: 3}
+  SceneName: CodZombiesMulti
+  GameMode: sandbox
+  DisplayMode: sandbox
+  Thumbnail: {fileID: 2800000, guid: 3ccbef88a8f68454bad5324d9f420654, type: 3}
+  Author: Kodeman
+  Description: Yes

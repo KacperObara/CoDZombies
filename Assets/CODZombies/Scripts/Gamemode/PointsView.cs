@@ -11,6 +11,11 @@ namespace CustomScripts.Gamemode
         {
             GMgr.OnPointsChanged += OnPointsChanged;
         }
+        
+        private void Start()
+        {
+            OnPointsChanged();
+        }
 
         private void OnDestroy()
         {

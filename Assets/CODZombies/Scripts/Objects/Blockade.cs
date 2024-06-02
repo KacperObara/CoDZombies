@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Atlas.MappingComponents.Sandbox;
 using CustomScripts.Gamemode.GMDebug;
 using CustomScripts.Managers;
+using CustomScripts.Multiplayer;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,8 @@ namespace CustomScripts
     /// </summary>
     public class Blockade : MonoBehaviour, IPurchasable
     {
+        private int _id;
+        
         public Action OnPurchase;
 
         public List<Transform> UnlockableZombieSpawnPoints;
@@ -41,7 +44,13 @@ namespace CustomScripts
             }
         }
 
-        public void Buy()
+        private void Start()
+        {
+            GMgr.Instance.Blockades.Add(this);
+            _id = GMgr.Instance.Blockades.Count - 1;
+        }
+
+        public void TryBuying()
         {
             if (_alreadyUsed)
                 return;
@@ -49,9 +58,14 @@ namespace CustomScripts
             if (!GMgr.Instance.TryRemovePoints(Cost))
                 return;
 
+            Unlock();
+            CodZNetworking.Instance.BlockadeCleared_Send(_id);
+        }
+        
+        public void Unlock()
+        {
             _alreadyUsed = true;
-
-
+            
             foreach (Transform spawnPoint in UnlockableZombieSpawnPoints)
             {
                 if (!ZombieManager.Instance.CurrentLocation.ZombieSpawnPoints.Contains(spawnPoint))

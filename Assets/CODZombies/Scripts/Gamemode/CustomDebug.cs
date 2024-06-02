@@ -67,7 +67,7 @@ namespace CustomScripts.Gamemode.GMDebug
 
             if (Input.GetKeyDown(KeyCode.K))
             {
-                TrapBlockade.Buy();
+                //TrapBlockade.Buy();
             }
             if (Input.GetKeyDown(KeyCode.L))
             {
@@ -145,6 +145,29 @@ namespace CustomScripts.Gamemode.GMDebug
                 RoundManager.Instance.SpecialRoundInterval = 1;
                 _forcingSpecialEnemy = true;
             }
+        }
+
+        private bool _isGodMode;
+        public void ToggleGodMode()
+        {
+            _isGodMode = !_isGodMode;
+
+            if (_isGodMode)
+            {
+                GM.CurrentPlayerBody.Health = 999999;
+                GM.CurrentPlayerBody.SetHealthThreshold(999999);
+                GM.CurrentPlayerBody.m_buffTime_DamResist = 999999;
+                GM.CurrentPlayerBody.ActivatePower(PowerupType.Invincibility, PowerUpIntensity.High,
+                    PowerUpDuration.SuperLong, false, false);
+                GM.CurrentPlayerBody.m_buffTime_DamResist = 999999;
+            }
+            else
+            {
+                GM.CurrentPlayerBody.Health = 5000;
+                GM.CurrentPlayerBody.SetHealthThreshold(5000);
+                GM.CurrentPlayerBody.m_buffTime_DamResist = 0;
+            }
+            
         }
     }
 }

@@ -8,7 +8,7 @@ namespace CustomScripts.Zombie
 
         public Transform Target;
 
-        public abstract void Initialize(Transform newTarget);
+        public abstract void Initialize();
         public abstract void InitializeSpecialType();
         public abstract void OnHit(float damage, bool headHit = false);
         public abstract void OnKill(bool awardPoints = true);

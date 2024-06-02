@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Atlas.MappingComponents.Sandbox;
 using CustomScripts.Gamemode.GMDebug;
+using CustomScripts.Multiplayer;
 using CustomScripts.Zombie;
 using FistVR;
 using HarmonyLib;
@@ -32,8 +33,6 @@ namespace CustomScripts.Managers
 
         public List<ZombieController> AllCustomZombies;
         [HideInInspector] public List<ZombieController> ExistingZombies;
-
-        private Transform _zombieTarget;
 
         public ParticleSystem HellhoundExplosionPS;
 
@@ -80,11 +79,7 @@ namespace CustomScripts.Managers
         {
             _spawningCoroutine = StartCoroutine(DelayedZombieSpawn(initialDelay));
         }
-
-        public void OnZombieSpawned(ZombieController controller)
-        {
-            StartCoroutine(DelayedCustomZombieSpawn(controller));
-        }
+        
 
         private IEnumerator DelayedZombieSpawn(float delay)
         {
@@ -98,54 +93,9 @@ namespace CustomScripts.Managers
                     continue;
                 }
 
-                _zombieTarget = GameReferences.Instance.Player;
-
                 SpawnZosig();
 
                 yield return new WaitForSeconds(2);
-            }
-        }
-
-        private IEnumerator DelayedCustomZombieSpawn(ZombieController controller)
-        {
-            yield return null;
-
-            Transform spawnPoint = null;
-            if (RoundManager.Instance.IsRoundSpecial)
-            {
-                spawnPoint = CurrentLocation.SpecialZombieSpawnPoints[Random.Range(0, CurrentLocation.SpecialZombieSpawnPoints.Count)].transform;
-            }
-            else
-            {
-                spawnPoint = CurrentLocation.ZombieSpawnPoints[Random.Range(0, CurrentLocation.ZombieSpawnPoints.Count)];
-            }
-
-            if (spawnPoint.GetComponent<ZombieSpawner>() != null)
-            {
-                Window targetWindow = spawnPoint.GetComponent<ZombieSpawner>().WindowWaypoint;
-                if (targetWindow != null)
-                    _zombieTarget = targetWindow.ZombieWaypoint;
-            }
-
-            ExistingZombies.Add(controller);
-
-            if (RoundManager.Instance.IsRoundSpecial)
-            {
-                spawnPoint.GetComponent<CustomSosigSpawnPoint>().SpawnPS.Play(true);
-
-                if (RoundManager.Instance.IsRoundSpecial)
-                    AudioManager.Instance.Play(AudioManager.Instance.HellHoundSpawnSound, volume:.4f, delay:.25f);
-
-                yield return new WaitForSeconds(2f);
-            }
-
-            if (ExistingZombies.Contains(controller))
-            {
-                controller.transform.position = spawnPoint.position;
-                controller.Initialize(_zombieTarget);
-
-                if (RoundManager.Instance.IsRoundSpecial)
-                    controller.InitializeSpecialType();
             }
         }
 
@@ -164,8 +114,8 @@ namespace CustomScripts.Managers
                     CurrentLocation.ZombieSpawnPoints[Random.Range(0, CurrentLocation.ZombieSpawnPoints.Count)].GetComponent<CustomSosigSpawnPoint>();
 
                 Window targetWindow = spawner.GetComponent<ZombieSpawner>().WindowWaypoint;
-                if (targetWindow != null)
-                    _zombieTarget = targetWindow.ZombieWaypoint;
+                //if (targetWindow != null)
+                //    _zombieTarget = targetWindow.ZombieWaypoint;
 
                 spawner.Spawn();
             }
@@ -175,7 +125,7 @@ namespace CustomScripts.Managers
         {
             ZombieController controller = zosig.gameObject.AddComponent<ZosigZombieController>();
 
-            controller.Initialize(_zombieTarget);
+            controller.Initialize();
             ExistingZombies.Add(controller);
 
             if (RoundManager.Instance.IsRoundSpecial)
@@ -261,7 +211,7 @@ namespace CustomScripts.Managers
         [HarmonyPostfix]
         private static void AfterZombieHit(Sosig __instance, Damage d, SosigLink link)
         {
-            __instance.GetComponent<ZosigZombieController>().OnHit(d);
+            __instance.GetComponent<ZosigZombieController>().OnHit(__instance, d);
         }
     }
 }

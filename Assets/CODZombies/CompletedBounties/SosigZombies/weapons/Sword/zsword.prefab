@@ -573,8 +573,13 @@ MonoBehaviour:
   IFFCode: -2
   ReceivesEvent_Damage: 0
   ManagerCheckFrequency: 0.2
+  m_checkTick: 0
+  Registers: 1
+  PerceivesPassiveEntities: 1
   FacingTransform: {fileID: 4141602011010464}
+  m_hasFacingTransform: 0
   GroundTransform: {fileID: 0}
+  m_hasGroundTransform: 0
   Beacons: []
   UsesFakedPosition: 0
   FakePos: {x: 0, y: 0, z: 0}
@@ -600,6 +605,7 @@ MonoBehaviour:
   DangerMultiplier: 1
   VisibilityMultiplier: 1
   MaxDistanceVisibleFrom: 300
+  IsPassiveEntity: 0
 --- !u!114 &114214899471304010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -622,9 +628,13 @@ MonoBehaviour:
   UseGripRotInterp: 1
   PositionInterpSpeed: 1
   RotationInterpSpeed: 1
+  m_grabPointTransform: {fileID: 0}
+  m_pos_interp_tick: 0
+  m_rot_interp_tick: 0
   EndInteractionIfDistant: 1
   EndInteractionDistance: 0.25
   m_hasTriggeredUpSinceBegin: 0
+  triggerCooldown: 0.5
   m_hand: {fileID: 0}
   UXGeo_Hover: {fileID: 0}
   UXGeo_Held: {fileID: 0}
@@ -632,7 +642,11 @@ MonoBehaviour:
   UseFilteredHandPosition: 0
   UseFilteredHandRotation: 0
   UseSecondStepRotationFiltering: 0
-  ObjectWrapper: {fileID: 0}
+  SecondStepFilteredRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_isHovered: 0
+  m_isHeld: 0
+  m_colliders: []
+  ObjectWrapper: {fileID: 11400000, guid: 05af58f44319c5549b6c0e089819106d, type: 2}
   SpawnLockable: 0
   Harnessable: 0
   HandlingReleaseIntoSlotSound: 1
@@ -646,6 +660,10 @@ MonoBehaviour:
   ThrowAngMultiplier: 0.05
   MoveIntensity: 0
   RotIntensity: 0
+  AttachedRotationMultiplier: 60
+  AttachedPositionMultiplier: 9000
+  AttachedRotationFudge: 10000
+  AttachedPositionFudge: 10000
   UsesGravity: 1
   DependantRBs: []
   DistantGrabbable: 0
@@ -654,8 +672,21 @@ MonoBehaviour:
   IsKinematicLocked: 0
   DoesQuickbeltSlotFollowHead: 0
   IsInWater: 0
+  m_timeHeld: 0
+  m_isSaveLoadable: 1
+  m_storedCOMLocal: {x: 0, y: 0, z: 0}
   AttachmentMounts: []
+  AttachmentsList: []
+  m_quickbeltSlot: {fileID: 0}
+  m_timeSinceInQuickbelt: 10
+  Slots: []
+  m_altGrip: {fileID: 0}
+  savedGrip: {fileID: 0}
   IsAltToAltTransfer: 0
+  m_bipod: {fileID: 0}
+  m_isPivotLocked: 0
+  m_pivotLockedPos: {x: 0, y: 0, z: 0}
+  m_pivotLockedRot: {x: 0, y: 0, z: 0, w: 1}
   CollisionSound:
     Clips: []
     ColSoundCooldown: 0.65
@@ -663,9 +694,14 @@ MonoBehaviour:
     m_hasCollisionSound: 0
     m_audioCollision: {fileID: 0}
     m_colSoundTick: 1
+  m_IDSpawnedFrom: {fileID: 0}
   IsPickUpLocked: 1
+  m_doesDirectParent: 1
   OverridesObjectToHand: 0
+  audioImpactController: {fileID: 0}
+  m_hasImpactController: 0
   MP:
+    m_obj: {fileID: 0}
     IsMeleeWeapon: 1
     IgnoreRBs: []
     HandPoint: {fileID: 4871904963490772}
@@ -678,8 +714,11 @@ MonoBehaviour:
     HighDamageVectors: []
     DoesCyclePosePoints: 0
     PosePoints: []
+    m_poseIndex: 0
     IsThrownDisposable: 1
+    m_isCountingDownToDispose: 0
     m_isThrownAutoAim: 0
+    m_countDownToDestroy: 10
     ThrownDetectMask:
       serializedVersion: 2
       m_Bits: 0
@@ -697,6 +736,14 @@ MonoBehaviour:
     StabVelocityRequirement: 1
     CanTearOut: 1
     TearOutVelThreshold: 3
+    m_isJointedToObject: 0
+    m_stabJoint: {fileID: 0}
+    m_stabTargetRB: {fileID: 0}
+    m_initialStabPointWorld: {x: 0, y: 0, z: 0}
+    m_initialStabPointLocal: {x: 0, y: 0, z: 0}
+    m_relativeStabDir: {x: 0, y: 0, z: 0}
+    m_stabbedLink: {fileID: 0}
+    m_initialPosOfStabbedThingLocal: {x: 0, y: 0, z: 0}
     CanNewLodge: 0
     LodgeDepth: 0.04
     MassWhileLodged: 10
@@ -704,6 +751,10 @@ MonoBehaviour:
     LodgeColliders: []
     LodgeVelocityRequirement: 4
     DeLodgeVelocityRequirement: 1
+    m_isLodgedToObject: 0
+    m_lodgeJoint: {fileID: 0}
+    m_lodgeTargetRB: {fileID: 0}
+    m_initialLodgeNormal: {x: 0, y: 0, z: 0}
     UsesSweepTesting: 0
     UsesSweepDebug: 0
     TestCols: []
@@ -712,11 +763,36 @@ MonoBehaviour:
     LM_DamageTest:
       serializedVersion: 2
       m_Bits: 0
+    m_isReadyToAim: 0
+    m_lastHandPoint: {x: 0, y: 0, z: 0}
+    m_lastEndPoint: {x: 0, y: 0, z: 0}
+    handPointVelocity: {x: 0, y: 0, z: 0}
+    endPointVelocity: {x: 0, y: 0, z: 0}
+    m_pointDistance: 0
+    m_lastangFlick: 0
+    m_lastangFlickLinear: 0
+    m_SweepPointStart: {x: 0, y: 0, z: 0}
+    m_SweepPointEnd: {x: 0, y: 0, z: 0}
+    m_lastSweepPointStart: {x: 0, y: 0, z: 0}
+    m_lastSweepPointEnd: {x: 0, y: 0, z: 0}
+    m_timeSinceLastDamageDone: 0
+    timeSinceStateChange: 10
+    stabDistantPoint: {x: 1, y: 1, z: 1}
+    stabInsidePoint: {x: 1, y: 1, z: 1}
+    m_initialMass: 0
+    m_initRot: 0
+  CheckDestroyTick: 1
+  fakeHandPosWorld: {x: 0, y: 0, z: 0}
+  fakeHandVelWorld: {x: 0, y: 0, z: 0}
+  m_timeSinceFakeVelWorldTransfered: 1
+  m_isVisible: 1
+  m_containedObjects: []
   W: {fileID: 114570527862939870}
   Foregrip: {fileID: 0}
   HasActiveShoulderStock: 0
   StockPos: {fileID: 0}
   UsesHoloSight: 0
+  m_isHoloActive: 1
   HoloSight: {fileID: 0}
   AudEvent_Rattle:
     Clips: []
@@ -730,6 +806,13 @@ MonoBehaviour:
     ClipLengthRange: {x: 1, y: 1}
   RattleRadius: 0
   RattleHeight: 0
+  m_rattlePos: {x: 0, y: 0, z: 0}
+  m_rattleLastPos: {x: 0, y: 0, z: 0}
+  m_rattleVel: {x: 0, y: 0, z: 0}
+  m_israttleSide: 0
+  m_wasrattleSide: 0
+  m_rattleTime: 0.1
+  m_numRattle: 0
 --- !u!114 &114244811879167604
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -744,19 +827,24 @@ MonoBehaviour:
   ImpactType: 131
   SoundOnRB: 1
   SoundOnNonRb: 1
+  m_tickTilCollisionSound: 0.1
   DelayLengthMult: 1
   DistLimit: 25
   PoolToUse: 41
   HitThreshold_High: 7
   HitThreshold_Medium: 4
   HitThreshold_Ignore: 1.5
+  m_hasPlayedAudioThisFrame: 0
   IgnoreRBs: []
   CausesSonicEventOnSoundPlay: 0
   BaseLoudness: 1
   LoudnessVelocityMult: 1
   MaxLoudness: 10
+  m_iFFForSonicEvent: -3
   UsesAltTypes: 0
   Alts: []
+  rb: {fileID: 0}
+  m_hasRB: 0
 --- !u!114 &114570527862939870
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -768,12 +856,16 @@ MonoBehaviour:
   m_Script: {fileID: 1396220381, guid: 61df6207064b6df9f1154d3f48a90696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CrankPrefab: {fileID: 0}
+  m_crank: {fileID: 0}
   Quality: 2
+  m_baseQuality: 1
   Type: 1
   IsShakeReloadable: 1
   UsesFakeType: 0
   FakeType: 0
   IsAlsoThrowable: 0
+  m_backupType: 0
   PrimesOnFirstSwing: 0
   IsDroppedOnStrongHit: 1
   AmmoType: 0
@@ -781,29 +873,72 @@ MonoBehaviour:
   SosigHoldingThis: {fileID: 0}
   HandHoldingThis:
     S: {fileID: 0}
+    E: {fileID: 0}
     Root: {fileID: 0}
     Target: {fileID: 0}
     IsHoldingObject: 0
     HeldObject: {fileID: 0}
     IsRightHand: 1
+    m_posedToward: {fileID: 0}
     Pose: 0
     Point_Aimed: {fileID: 0}
     Point_HipFire: {fileID: 0}
     Point_AtRest: {fileID: 0}
     Point_ShieldHold: {fileID: 0}
+    HasActiveAimPoint: 0
+    m_aimTowardPoint: {x: 0, y: 0, z: 0}
+    vertOffsets:
+    - 0
+    - 0.2
+    - 0.4
+    - 0.65
+    - -0.1
+    - -0.2
+    forwardOffsets:
+    - 0
+    - 0.15
+    - 0.1
+    - 0.1
+    - 0.05
+    - 0.1
+    tiltLerpOffsets:
+    - 0
+    - 0.2
+    - 0.4
+    - 0.7
+    - 0
+    - 0
+    m_curFiringPose_Hip: 0
+    m_prevFiringPose_Hip: 0
+    m_curFiringPose_Aimed: 0
+    m_prevFiringPose_Aimed: 0
+    m_nextPoseToTestToTarget: 0
+    m_timeSincePoseChange: 0
+    m_sightValid_Hip: 010000
+    m_sightValid_Aimed: 010000
+    m_timeAwayFromTarget: 0
+    m_lastPos: {x: 0, y: 0, z: 0}
   SosigWithInventory: {fileID: 0}
   InventorySlotWithThis:
+    m_inventory:
+      S: {fileID: 0}
+      Slots: []
+      m_ammoStores: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+      m_objectsByType: 000000000000000000000000000000000000000000000000
     Target: {fileID: 0}
     LinkAttachedTo: {fileID: 0}
     HeldObject: {fileID: 0}
     IsHoldingObject: 0
+    m_timeAwayFromTarget: 0
   O: {fileID: 114214899471304010}
   E: {fileID: 114002506371426734}
   SourceIFF: 1
   IsHeldByBot: 0
   IsInBotInventory: 0
   RecoilHolder: {fileID: 4287556167187538}
+  m_ignoreRBs: []
   ImpactController: {fileID: 114244811879167604}
+  m_hasImpactController: 0
   Hipfire_HorizontalLimit: 10
   Hipfire_VerticalLimit: 60
   Aim_HorizontalLimit: 20
@@ -851,34 +986,49 @@ MonoBehaviour:
     ClipLengthRange: {x: 1, y: 1}
   AudSource_SustainedLoop: {fileID: 0}
   SustainEnergyPerShot: 0.2
+  m_sustainEnergy: 0
   Muzzle: {fileID: 0}
   CyclingPart: {fileID: 0}
   HasCyclingPart: 0
+  RequiresForeHeldToCycle: 0
   CycleAxis: 2
   CycleInterpStyle: 0
   CycleForwardBackValues: {x: 0, y: -0.0314}
+  DelayAfterFiring: 0
   CycleSpeedForward: 10
   CycleSpeedBackward: 50
+  m_cycleDelay: 0
+  m_cycleLerp: 0
   ShotsPerCycle: 1
+  m_shotsSoFarThisCycle: 0
   HasMuzzleOffsetSet: 0
   MuzzleOffsetSets: []
+  m_muzzleOffsetIndex: 0
   ShotsPerLoad: 20
   AmmoClampRange: {x: 3, y: 5}
+  m_shotsLeft: 5
   FlightVelocityMultiplier: 1
   Projectile: {fileID: 0}
   ProjectilesPerShot: 1
   ProjectileSpread: 0.5
+  m_projRealSpeed: 300
   isFullAuto: 0
-  RecoilPerShot: {x: 1, y: 10, z: 0.01, w: 0.03}
-  RecoilRecoveryMults: {x: 1, y: 1, z: 1}
+  RecoilP: {fileID: 0}
+  m_recoilLinear: 0
+  m_recoilX: 0
+  m_recoilY: 0
   MeleeType: 2
   MeleeTypeCycleList: 
   DoesMeleeTypeCycle: 0
+  m_meleeTypeCycle: 0
+  m_tickDownToTypeCycle: 4
   DoesHeightAdjust: 1
   MeleeState: 0
   MeleeStateSpeeds: {x: 4, y: 5, z: 0.3}
   CloseAttackRange: {x: 0.5, y: 1}
   DistantAttackRange: {x: 1.25, y: 2}
+  m_sosigMeleeStateTick: 0
+  m_sosigMeleeLerp: 0
   AvailableIdleAnims:
   - {fileID: 11400000, guid: abe000226695088458ec34d7bd07bc08, type: 2}
   - {fileID: 11400000, guid: 642631e6a2292c94eb247884f2a3734a, type: 2}
@@ -888,12 +1038,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 74119d2dd564db844be5d3f72085a541, type: 2}
   - {fileID: 11400000, guid: dbc3edb66a909f747a5d40cc6679250b, type: 2}
   - {fileID: 11400000, guid: 9d1f7c8a21349fd4faadc2e470e10df4, type: 2}
+  m_currentIdleAnim: {fileID: 0}
   AvailableReadyAnims:
   - {fileID: 11400000, guid: 95d8ebeecd818c74f9cca34dda2f55f3, type: 2}
   - {fileID: 11400000, guid: 12c9182bcb444894e84d59176aa85697, type: 2}
   - {fileID: 11400000, guid: 539536a2209c858479af56711315e3e1, type: 2}
   - {fileID: 11400000, guid: a5c55eab768e8554bb0eb8bea6a8376d, type: 2}
   - {fileID: 11400000, guid: 8ea4091651d07a845be248e31e39a902, type: 2}
+  m_currentReadyAnim: {fileID: 0}
   AvailableAttackAnims:
   - {fileID: 11400000, guid: 195214c05e88b164a91030eed76c794f, type: 2}
   - {fileID: 11400000, guid: 2218b99806a097f42bfb9515d2646b8b, type: 2}
@@ -914,7 +1066,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3b1db67975ff6b4489245b11b30515aa, type: 2}
   - {fileID: 11400000, guid: 279a074dd4f06e244b0bb455e55f4163, type: 2}
   - {fileID: 11400000, guid: 4ab35ae6130e5b042a44f1f61fcaa3e3, type: 2}
+  m_currentAttackAnim: {fileID: 0}
   DoesCastForPlayerHitBox: 0
+  m_isThrownTagCastTag: 0
   LM_Thrown:
     serializedVersion: 2
     m_Bits: 0
@@ -922,6 +1076,8 @@ MonoBehaviour:
   ThrownCastPos2: {fileID: 0}
   SpawnOnExplode: []
   GrenadeFuseTime: 3
+  m_startFuseTime: 0
+  m_isFuseTickingDown: 0
   Pin: {fileID: 0}
   Obstacle: {fileID: 0}
   UsesFusePulse: 0
@@ -931,13 +1087,22 @@ MonoBehaviour:
     PitchRange: {x: 1, y: 1}
     ClipLengthRange: {x: 1, y: 1}
   FusePSystem: {fileID: 0}
+  m_fuse_PitchStart: 1.8
+  m_fuse_PitchEnd: 3.7
+  m_fuse_StartRefire: 0.4
+  m_fuse_EndRefire: 0.02
+  KeyType: -1
   UsageState: 0
   ReloadTime: 2
+  m_reloadingLerp: 0
+  m_reloadSource: {fileID: 0}
   Usage_RefireRange: {x: 0.25, y: 0.5}
+  m_refireTick: 1
   UsesBurstLimit: 0
   BurstLimit: 3
   BurstLimitRange: 0
   BurstDelayRange: {x: 0.1, y: 0.25}
+  m_shotsLeftTilBurstLimit: 3
   LM_IFFCheck:
     serializedVersion: 2
     m_Bits: 1048576
@@ -945,19 +1110,28 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   UsesMuzzleFire: 0
+  UsesMuzzleFireOnlyClose: 0
   DoesFlashOnFire: 0
   FlashOnFireColor: {r: 1, g: 0.9, b: 0.77, a: 1}
   PSystemsMuzzle: []
   MuzzlePAmount: 1
   Laser: {fileID: 0}
+  m_hasLaser: 0
   GunShotProfile: {fileID: 0}
   MinHandlingDistance: 15
   UsesCyclingSounds: 0
   UsesReloadingSounds: 0
+  m_setToAutoDestroy: 0
+  m_autoDestroyTickDown: 30
+  m_ammoClampOnPlayerPickup: 0
+  m_hasClamped: 0
   IsDestructible: 0
   ShardPrefabs: []
   ShardPositions: []
   CollisionLife: {x: 20, y: 35}
+  m_collisionLife: 1
+  m_shouldShatter: 0
+  m_isShattered: 0
   AudEvent_Shatter:
     Clips: []
     VolumeRange: {x: 0.3, y: 0.3}
@@ -965,10 +1139,26 @@ MonoBehaviour:
     ClipLengthRange: {x: 1, y: 1}
   TakesDamage: 0
   Life: 10000
+  m_startingLife: 10000
   UsesDestructionStageRenderers: 0
   DestructionRenderers: []
+  m_currentDestructionRenderer: -1
   ResistMultBCP: {x: 1, y: 1, z: 1}
+  m_shouldBeAbleToStab: 0
   LayerState: 0
+  m_fuse_tick: 0
+  lastPos: {x: 0, y: 0, z: 0}
+  m_hasExploded: 0
+  m_idleTick: 0
+  m_readyLoopTick: 0
+  m_attackLerpTick: 0
+  m_currentStateSpeeds: {x: 1, y: 1, z: 1}
+  checkHeightTick: 0.1
+  heightOffset: 0
+  attackHoldLimit: 1
+  readyAbort: 1
+  timeSinceFired: 0
+  DamRefire: 0.1
 --- !u!114 &114632902241193884
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -982,6 +1172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Def: {fileID: 0}
   MatDef: {fileID: 11400000, guid: 2c631a60bbbb7bc4c82ea03a130e9321, type: 2}
+  m_condition: 1
 --- !u!114 &114819696800763622
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -995,6 +1186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Def: {fileID: 0}
   MatDef: {fileID: 11400000, guid: 2c631a60bbbb7bc4c82ea03a130e9321, type: 2}
+  m_condition: 1
 --- !u!114 &114943604969150108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1008,6 +1200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Def: {fileID: 0}
   MatDef: {fileID: 11400000, guid: 2c631a60bbbb7bc4c82ea03a130e9321, type: 2}
+  m_condition: 1
 --- !u!135 &135665266454323874
 SphereCollider:
   m_ObjectHideFlags: 1

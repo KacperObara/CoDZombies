@@ -1,8 +1,10 @@
 #if H3VR_IMPORTED
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using CustomScripts.Gamemode;
 using CustomScripts.Managers;
+using CustomScripts.Multiplayer;
 using CustomScripts.Objects;
 using CustomScripts.Player;
 using CustomScripts.Zombie;
@@ -17,6 +19,8 @@ namespace CustomScripts
         public static Action OnPointsChanged;
         public static Action OnPowerEnabled;
 
+        [HideInInspector] public List<Blockade> Blockades;
+        
         [HideInInspector] public int Points;
         [HideInInspector] public int TotalPoints; // for highscore
 
@@ -40,8 +44,15 @@ namespace CustomScripts
             _harmony.PatchAll(typeof (ZombieManager));
         }
 
+        public void PowerLeverPulled()
+        {
+            TurnOnPower();
+            CodZNetworking.Instance.PowerEnabled_Send();
+        }
+        
         public void TurnOnPower()
         {
+            Debug.Log("Power Enabled Turned on");
             if (PowerEnabled)
                 return;
 
@@ -106,8 +117,9 @@ namespace CustomScripts
         }
         
         ////
-        public static bool H3mpEnabled = false;
+        public static bool H3mpEnabled = true;
         public bool GameServerRunning = false;
+        
         
     }
 }

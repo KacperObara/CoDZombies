@@ -10,8 +10,11 @@ namespace CustomScripts.Multiplayer
         
         //Packet IDs
         private int gameStarted_ID = -1;
-        private int serverRunning_ID = -1;
-        private int requestSync_ID = -1;
+        private int powerEnabled_ID = -1;
+        private int blockadeCleared_ID = -1;
+        private int mysteryBoxMoved_ID = -1;
+        private int powerUpSpawned_ID = -1;
+        private int powerUpCollected_ID = -1;
         
         void Start()
         {
@@ -24,16 +27,15 @@ namespace CustomScripts.Multiplayer
         {
             if (Networking.ServerRunning())
             {
-                if (Networking.IsHost())
-                {
-                    //Only Sends data if they join the server IN the map.
-                    //ServerClient.OnSendPostWelcomeData += OnPlayerJoined;
-                }
+                SetupPacketTypes();
+                
+                if (Networking.IsClient())
+                    isClient = true;
 
-                // if (Networking.IsHost() || Client.isFullyConnected)
-                // {
-                //     SetupPacketTypes();
-                // }
+                for (int i = 0; i < GameManager.players.Count; i++)
+                {
+                    GameManager.players[i].SetIFF(i + 5);
+                }
             }
         }
 
@@ -47,19 +49,17 @@ namespace CustomScripts.Multiplayer
                     gameStarted_ID = Server.RegisterCustomPacketType("CodZ_GameStarted");
                 Mod.customPacketHandlers[gameStarted_ID] = StartGame_Handler;
                 
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_ServerRunning"))
-                    serverRunning_ID = Mod.registeredCustomPacketIDs["CodZ_ServerRunning"];
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_PowerEnabled"))
+                    powerEnabled_ID = Mod.registeredCustomPacketIDs["CodZ_PowerEnabled"];
                 else
-                    serverRunning_ID = Server.RegisterCustomPacketType("CodZ_ServerRunning");
-                Mod.customPacketHandlers[serverRunning_ID] = ServerRunning_Handler;
+                    powerEnabled_ID = Server.RegisterCustomPacketType("CodZ_PowerEnabled");
+                Mod.customPacketHandlers[powerEnabled_ID] = PowerEnabled_Handler;       
                 
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_RequestSync"))
-                    requestSync_ID = Mod.registeredCustomPacketIDs["CodZ_RequestSync"];
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_BlockadeCleared"))
+                    blockadeCleared_ID = Mod.registeredCustomPacketIDs["CodZ_BlockadeCleared"];
                 else
-                    requestSync_ID = Server.RegisterCustomPacketType("CodZ_RequestSync");
-                Mod.customPacketHandlers[requestSync_ID] = RequestSync_Handler;
+                    blockadeCleared_ID = Server.RegisterCustomPacketType("CodZ_BlockadeCleared");
+                Mod.customPacketHandlers[blockadeCleared_ID] = BlockadeCleared_Handler;
             }
             else
             {
@@ -75,32 +75,33 @@ namespace CustomScripts.Multiplayer
                     Mod.CustomPacketHandlerReceived += StartGame_Received;
                 }
                 
-                //Server Running
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_ServerRunning"))
+                //Power Enabled
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_PowerEnabled"))
                 {
-                    serverRunning_ID = Mod.registeredCustomPacketIDs["CodZ_ServerRunning"];
-                    Mod.customPacketHandlers[serverRunning_ID] = ServerRunning_Handler;
+                    powerEnabled_ID = Mod.registeredCustomPacketIDs["CodZ_PowerEnabled"];
+                    Mod.customPacketHandlers[powerEnabled_ID] = PowerEnabled_Handler;
                 }
                 else
                 {
-                    ClientSend.RegisterCustomPacketType("CodZ_ServerRunning");
-                    Mod.CustomPacketHandlerReceived += ServerRunning_Received;
-                }
+                    ClientSend.RegisterCustomPacketType("CodZ_PowerEnabled");
+                    Mod.CustomPacketHandlerReceived += PowerEnabled_Received;
+                }   
                 
-                //Request Sync
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_RequestSync"))
+                //Blockade Cleared
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_BlockadeCleared"))
                 {
-                    requestSync_ID = Mod.registeredCustomPacketIDs["CodZ_RequestSync"];
-                    Mod.customPacketHandlers[requestSync_ID] = RequestSync_Handler;
+                    blockadeCleared_ID = Mod.registeredCustomPacketIDs["CodZ_BlockadeCleared"];
+                    Mod.customPacketHandlers[blockadeCleared_ID] = PowerEnabled_Handler;
                 }
                 else
                 {
-                    ClientSend.RegisterCustomPacketType("CodZ_RequestSync");
-                    Mod.CustomPacketHandlerReceived += RequestSync_Received;
+                    ClientSend.RegisterCustomPacketType("CodZ_BlockadeCleared");
+                    Mod.CustomPacketHandlerReceived += BlockadeCleared_Received;
                 }
             }
         }
 
+        //Game Started -------------------------------------
         public void StartGame_Send()
         {
             if (!Networking.ServerRunning() || Networking.IsClient())
@@ -111,6 +112,8 @@ namespace CustomScripts.Multiplayer
             packet.Write(GameSettings.WeakerEnemiesEnabled);
             packet.Write(GameSettings.SpecialRoundDisabled);
             packet.Write(GameSettings.ItemSpawnerEnabled);
+
+            Debug.Log("Start game packet sent");
 
             ServerSend.SendTCPDataToAll(packet, true);
         }
@@ -123,6 +126,8 @@ namespace CustomScripts.Multiplayer
             GameSettings.ItemSpawnerEnabled = packet.ReadBool();
             
             GameSettings.OnSettingsChanged.Invoke();
+
+            Debug.Log("Start game packet received");
             
             RoundManager.Instance.StartGame();
         }
@@ -131,74 +136,71 @@ namespace CustomScripts.Multiplayer
         {
             if (handlerID == "CodZ_GameStarted")
             {
+                Debug.Log("Start Game Received");
                 gameStarted_ID = index;
                 Mod.customPacketHandlers[index] = StartGame_Handler;
                 Mod.CustomPacketHandlerReceived -= StartGame_Received;
             }
         }
         
-        public void ServerRunning_Send()
-        {
-            if (!Networking.ServerRunning() || Networking.IsClient())
-                return;
-
-            Packet packet = new Packet(serverRunning_ID);
-            packet.Write(GMgr.Instance.GameServerRunning);
-            
-            ServerSend.SendTCPDataToAll(packet, true);
-        }
-
-        //Server Running Received
-        private void ServerRunning_Handler(int clientID, Packet packet)
-        {
-            bool status = packet.ReadBool();
-            GMgr.Instance.GameServerRunning = status;
-            //SR_Menu.instance.lauchGameButton.SetActive(status);
-        }
         
-        private void ServerRunning_Received(string handlerID, int index)
-        {
-            if (handlerID == "CodZ_ServerRunning")
-            {
-                serverRunning_ID = index;
-                Mod.customPacketHandlers[index] = ServerRunning_Handler;
-                Mod.CustomPacketHandlerReceived -= ServerRunning_Received;
-            }
-        }
-        
-        //RequestSync Send ----------------------------------------------
-        public void RequestSync_Send()
+        //Power Enabled -------------------------------------
+        public void PowerEnabled_Send()
         {
             if (!Networking.ServerRunning() || Networking.IsHost())
                 return;
 
-            Debug.Log("Client Sending Request Sync");
+            Debug.Log("Client Sending PowerEnabled");
 
-            Packet packet = new Packet(requestSync_ID);
+            Packet packet = new Packet(powerEnabled_ID);
             ClientSend.SendTCPData(packet, true);
         }
-
-        //RequestSync Received TODO make corouteen
-        void RequestSync_Handler(int clientID, Packet packet)
+        
+        void PowerEnabled_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received Client Request Sync");
-
-            // GameOptions_Send();
-            // LevelUpdate_Send(SR_Manager.instance.gameCompleted);
-            // UpdateStats_Send();
-            ServerRunning_Send();
+            Debug.Log("Received Client PowerEnabled");
+            GMgr.Instance.TurnOnPower();
         }
 
-        void RequestSync_Received(string handlerID, int index)
+        void PowerEnabled_Received(string handlerID, int index)
         {
-            if (handlerID == "CodZ_RequestSync")
+            if (handlerID == "CodZ_PowerEnabled")
             {
-                requestSync_ID = index;
-                Mod.customPacketHandlers[index] = RequestSync_Handler;
-                Mod.CustomPacketHandlerReceived -= RequestSync_Received;
-                    
-                //Clients request data once handler is setup
-                RequestSync_Send();
+                powerEnabled_ID = index;
+                Mod.customPacketHandlers[index] = PowerEnabled_Handler;
+                Mod.CustomPacketHandlerReceived -= PowerEnabled_Received;
+            }
+        }
+        
+        
+        //Blockade Cleared -------------------------------------
+        public void BlockadeCleared_Send(int blockadeId)
+        {
+            if (!Networking.ServerRunning() || Networking.IsHost())
+                return;
+
+            Debug.Log("Client Sending BlockadeCleared");
+
+            Packet packet = new Packet(blockadeCleared_ID);
+            packet.Write(blockadeId);
+            
+            ClientSend.SendTCPData(packet, true);
+        }
+        
+        void BlockadeCleared_Handler(int clientID, Packet packet)
+        {
+            Debug.Log("Received Client BlockadeCleared");
+            int blockadeId = packet.ReadInt();
+            GMgr.Instance.Blockades[blockadeId].Unlock();
+        }
+
+        void BlockadeCleared_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_BlockadeCleared")
+            {
+                blockadeCleared_ID = index;
+                Mod.customPacketHandlers[index] = PowerEnabled_Handler;
+                Mod.CustomPacketHandlerReceived -= PowerEnabled_Received;
             }
         }
     }

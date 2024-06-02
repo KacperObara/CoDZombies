@@ -14,11 +14,12 @@ MonoBehaviour:
   m_anvilPrefab:
     Guid: 
     Bundle: 
-    AssetName: Assets/CompletedBounties/SosigZombies/weapons/Sword/zsword.prefab
+    AssetName: Assets/CODZombies/CompletedBounties/SosigZombies/weapons/Sword/zsword.prefab
   m_export: 0
   ItemID: zsword.arp
   DisplayName: 
-  Category: 0
+  Family: 
+  Category: 10
   SpawnedFromId: zsword.arp
   Mass: 0
   MagazineCapacity: 0

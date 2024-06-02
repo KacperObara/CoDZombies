@@ -2,10 +2,13 @@
 using System;
 using System.Collections;
 using CustomScripts.Managers;
+using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
+using H3MP;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace CustomScripts.Zombie
 {
@@ -25,9 +28,18 @@ namespace CustomScripts.Zombie
 
         private Coroutine _tearingPlanksCoroutine;
 
-        public override void Initialize(Transform newTarget)
+        public override void Initialize()
         {
-            Target = newTarget;
+            if (GMgr.H3mpEnabled && Networking.ServerRunning())
+            {
+                int playerID = Random.Range(0, Networking.GetPlayerCount());
+                Target = GameManager.players[playerID].head;
+            }
+            else
+            {
+                Target = GM.CurrentPlayerBody.Head;
+            }
+            //newTarget
 
             _sosig = GetComponent<Sosig>();
 
@@ -185,10 +197,15 @@ namespace CustomScripts.Zombie
                 var explosionPS = Instantiate(ZombieManager.Instance.HellhoundExplosionPS, transform.position + new Vector3(0, .75f, 0), transform.rotation);
                 Destroy(explosionPS.gameObject, 4f);
             }
-
+            
             if (awardPoints)
             {
-                GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
+                int killerID = _sosig.GetDiedFromIFF();
+                if (Networking.Instance.IsMineIFF(killerID))
+                {
+                    GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
+                }
+                //GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
 
                 ZombieManager.Instance.OnZombieDied(this);
             }
@@ -200,7 +217,7 @@ namespace CustomScripts.Zombie
             StartCoroutine(DelayedDespawn());
         }
 
-        public void OnHit(Damage damage)
+        public void OnHit(Sosig sosig, Damage damage)
         {
             if (damage.Dam_TotalKinetic < 20)
                 return;
@@ -215,7 +232,8 @@ namespace CustomScripts.Zombie
 
             _hitsGivingMoney--;
 
-            GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
+            if (Networking.Instance.IsMineIFF(damage.Source_IFF))
+                GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
         }
 
         public override void OnHit(float damage, bool headHit)

@@ -59,8 +59,15 @@ namespace CustomScripts
             }
         }
 
+        public void SendStartGame()
+        {
+            StartGame();
+            CodZNetworking.Instance.StartGame_Send();
+        }
+        
         public void StartGame()
         {
+            Debug.Log("Starting game");
             if (!Application.isEditor)
             {
                 GM.CurrentMovementManager.TeleportToPoint(GMgr.Instance.StartGameWaypoint.position, true);
@@ -74,8 +81,6 @@ namespace CustomScripts
 
             if (OnGameStarted != null)
                 OnGameStarted.Invoke();
-            
-            CodZNetworking.Instance.StartGame_Send();
         }
 
         public void AdvanceRound()

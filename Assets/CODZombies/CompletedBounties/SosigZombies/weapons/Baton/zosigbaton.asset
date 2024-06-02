@@ -14,11 +14,12 @@ MonoBehaviour:
   m_anvilPrefab:
     Guid: 
     Bundle: 
-    AssetName: Assets/CompletedBounties/SosigZombies/weapons/Baton/zbaton.prefab
+    AssetName: Assets/CODZombies/CompletedBounties/SosigZombies/weapons/Baton/zbaton.prefab
   m_export: 0
   ItemID: sombiesosigbaton.arp
   DisplayName: 
-  Category: 0
+  Family: 
+  Category: 10
   SpawnedFromId: sombiesosigbaton.arp
   Mass: 0
   MagazineCapacity: 0
