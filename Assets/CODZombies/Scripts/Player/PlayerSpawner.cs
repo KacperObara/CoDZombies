@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
 using HarmonyLib;
@@ -16,12 +17,12 @@ namespace CustomScripts.Gamemode
         public override void Awake()
         {
             base.Awake();
-
             RoundManager.OnGameStarted += OnGameStarted;
         }
 
         private void OnGameStarted()
         {
+            // When game starts, move respawn Pos to end game area
             transform.position = EndGameSpawnerPos.position;
         }
 
@@ -29,44 +30,24 @@ namespace CustomScripts.Gamemode
         {
             // Wait one frame so that everything is all setup
             yield return null;
-
             GM.CurrentSceneSettings.DeathResetPoint = transform;
             GM.CurrentMovementManager.TeleportToPoint(transform.position, true, transform.position + transform.forward);
         }
+        
+        // [HarmonyPatch(typeof(GM), "BringBackPlayer")]
+        // [HarmonyPrefix]
+        // private static void BeforePlayerDeath()
+        // {
+        //     //PlayerData.Instance.AfterPlayerDeath();
+        // }
 
-        private void OnPlayerDeath()
-        {
-            if (PlayerData.Instance.QuickRevivePerkActivated)
-            {
-                PlayerData.Instance.QuickRevivePerkActivated = false;
-
-                transform.position = GameReferences.Instance.Player.position;
-
-                GM.CurrentPlayerBody.ActivatePower(PowerupType.Invincibility, PowerUpIntensity.High, PowerUpDuration.VeryShort,
-                    false, false);
-
-                StartCoroutine(PlayerData.Instance.ActivateInvincibility(10f));
-
-                GM.CurrentPlayerBody.HealPercent(.5f);
-
-                if (BeingRevivedEvent != null)
-                    BeingRevivedEvent.Invoke();
-            }
-        }
-
-        [HarmonyPatch(typeof(GM), "BringBackPlayer")]
-        [HarmonyPrefix]
-        private static void BeforePlayerDeath()
-        {
-            Instance.OnPlayerDeath();
-        }
-
-        [HarmonyPatch(typeof(GM), "BringBackPlayer")]
-        [HarmonyPostfix]
-        private static void AfterPlayerDeath()
-        {
-            Instance.transform.position = Instance.EndGameSpawnerPos.position;
-        }
+        // [HarmonyPatch(typeof(GM), "BringBackPlayer")]
+        // [HarmonyPostfix]
+        // private static void AfterPlayerDeath()
+        // {
+        //     PlayerData.Instance.AfterPlayerDeath();
+        //     //Instance.transform.position = Instance.EndGameSpawnerPos.position;
+        // }
 
         private void OnDestroy()
         {

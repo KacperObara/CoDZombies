@@ -46,13 +46,19 @@ namespace CustomScripts
 
         public void PowerLeverPulled()
         {
-            TurnOnPower();
-            CodZNetworking.Instance.PowerEnabled_Send();
+            if (Networking.IsHost())
+            {
+                TurnOnPower();
+                CodZNetworking.Instance.PowerEnabled_Send();
+            }
+            else
+            {
+                CodZNetworking.Instance.Client_PowerEnabled_Send();
+            }
         }
         
         public void TurnOnPower()
         {
-            Debug.Log("Power Enabled Turned on");
             if (PowerEnabled)
                 return;
 

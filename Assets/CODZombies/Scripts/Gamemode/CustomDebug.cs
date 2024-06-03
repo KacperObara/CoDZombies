@@ -28,6 +28,8 @@ namespace CustomScripts.Gamemode.GMDebug
         public Teleport TeleportToMainArea;
 
         public DeadShotPerkBottle DeadShotPerkBottle;
+
+        public Text IFFText;
         
         private void Update()
         {
@@ -94,6 +96,8 @@ namespace CustomScripts.Gamemode.GMDebug
             {
                 GameSettings.Instance.ToggleBackgroundMusic();
             }
+            
+            IFFText.text = "IFF: " + GM.CurrentPlayerBody.GetPlayerIFF();
         }
 
         public void SpawnCarpenter()

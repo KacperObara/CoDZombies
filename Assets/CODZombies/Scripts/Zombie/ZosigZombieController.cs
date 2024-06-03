@@ -1,6 +1,7 @@
 #if H3VR_IMPORTED
 using System;
 using System.Collections;
+using System.Linq;
 using CustomScripts.Managers;
 using CustomScripts.Multiplayer;
 using CustomScripts.Player;
@@ -30,17 +31,16 @@ namespace CustomScripts.Zombie
 
         public override void Initialize()
         {
-            if (GMgr.H3mpEnabled && Networking.ServerRunning())
+            // If solo, target you, otherwise target random player (It's more complicated to include host in random player selection)
+            if (Networking.IsHostOrSolo())
             {
-                int playerID = Random.Range(0, Networking.GetPlayerCount());
-                Target = GameManager.players[playerID].head;
+                int randomPlayerId = Networking.GetRandomPlayerId();
+                if (randomPlayerId == -1)
+                    Target = GM.CurrentPlayerBody.Head;
+                else
+                    Target = GameManager.players.ElementAt(randomPlayerId).Value.head;
             }
-            else
-            {
-                Target = GM.CurrentPlayerBody.Head;
-            }
-            //newTarget
-
+            
             _sosig = GetComponent<Sosig>();
 
             _sosig.CoreRB.gameObject.AddComponent<ZosigTrigger>().Initialize(this);
@@ -78,9 +78,7 @@ namespace CustomScripts.Zombie
                         link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .65f);
                 }
             }
-
-
-
+            
             _sosig.Speed_Walk = _sosig.Speed_Run;
             _sosig.Speed_Turning = _sosig.Speed_Run;
             _sosig.Speed_Sneak = _sosig.Speed_Run;
@@ -127,6 +125,9 @@ namespace CustomScripts.Zombie
 
         private void Update()
         {
+            if (!Networking.IsHostOrSolo())
+                return;
+            
             if (_sosig == null)
                 return;
 
@@ -150,6 +151,9 @@ namespace CustomScripts.Zombie
 
         private void LateUpdate()
         {
+            if (!Networking.IsHostOrSolo())
+                return;
+            
             if (_sosig == null)
                 return;
 
@@ -201,11 +205,16 @@ namespace CustomScripts.Zombie
             if (awardPoints)
             {
                 int killerID = _sosig.GetDiedFromIFF();
-                if (Networking.Instance.IsMineIFF(killerID))
+                if (Networking.IsMineIFF(killerID))
                 {
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
                 }
-                //GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
+
+                Debug.Log("Sosig Died killer: " + killerID + " and me " + GM.CurrentPlayerBody.GetPlayerIFF());
+                if (Networking.IsMineIFF(killerID))
+                {
+                    Debug.Log("That means I killed it!");
+                }
 
                 ZombieManager.Instance.OnZombieDied(this);
             }
@@ -232,7 +241,7 @@ namespace CustomScripts.Zombie
 
             _hitsGivingMoney--;
 
-            if (Networking.Instance.IsMineIFF(damage.Source_IFF))
+            if (Networking.IsMineIFF(damage.Source_IFF))
                 GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
         }
 

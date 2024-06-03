@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FistVR;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -39,8 +40,9 @@ namespace CustomScripts.Gamemode.GMDebug
         {
             yield return null;
 
-            GameObject[] rootGameObjects = SceneManager.GetSceneByName("ModBlank_Simple").GetRootGameObjects();
-            GameObject itemSpawner = rootGameObjects.First(x => x.name == "ItemSpawner");
+            //GameObject[] rootGameObjects = SceneManager.GetSceneByName("ModBlank_Simple").GetRootGameObjects();
+            //GameObject itemSpawner = rootGameObjects.First(x => x.name == "ItemSpawner");
+            GameObject itemSpawner = IM.Prefab_ItemSpawner;
 
             Instantiate(itemSpawner, transform.position, transform.rotation).SetActive(true);
 

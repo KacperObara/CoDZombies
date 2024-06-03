@@ -437,7 +437,7 @@ MonoBehaviour:
   IsAlsoThrowable: 0
   m_backupType: 0
   PrimesOnFirstSwing: 0
-  IsDroppedOnStrongHit: 1
+  IsDroppedOnStrongHit: 0
   AmmoType: 0
   ShotLoudness: 0
   SosigHoldingThis: {fileID: 0}
@@ -484,14 +484,8 @@ MonoBehaviour:
     m_prevFiringPose_Aimed: 0
     m_nextPoseToTestToTarget: 0
     m_timeSincePoseChange: 0
-    m_sightValid_Hip:
-    - 1
-    - 0
-    - 0
-    m_sightValid_Aimed:
-    - 1
-    - 0
-    - 0
+    m_sightValid_Hip: 010000
+    m_sightValid_Aimed: 010000
     m_timeAwayFromTarget: 0
     m_lastPos: {x: 0, y: 0, z: 0}
   SosigWithInventory: {fileID: 0}
@@ -521,18 +515,22 @@ MonoBehaviour:
   Aim_VerticalLimit: 85
   MaxAngularFireRange: 50
   AngularFiringLimitByRange:
+    serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 0.02886918
+    - serializedVersion: 2
+      time: 0.02886918
       value: 0.1421845
       inSlope: -0.31659374
       outSlope: -0.31659374
       tangentMode: 0
-    - time: 1
+    - serializedVersion: 2
+      time: 1
       value: 0
       inSlope: 0
       outSlope: 0
@@ -636,7 +634,9 @@ MonoBehaviour:
   m_currentAttackAnim: {fileID: 0}
   DoesCastForPlayerHitBox: 0
   m_isThrownTagCastTag: 0
-  LM_Thrown: {}
+  LM_Thrown:
+    serializedVersion: 2
+    m_Bits: 0
   ThrownCastPos1: {fileID: 0}
   ThrownCastPos2: {fileID: 0}
   SpawnOnExplode: []
@@ -668,16 +668,16 @@ MonoBehaviour:
   BurstLimitRange: 0
   BurstDelayRange: {x: 0.1, y: 0.25}
   m_shotsLeftTilBurstLimit: 3
-  LM_IFFCheck: {}
-  LM_EnvCheck: {}
+  LM_IFFCheck:
+    serializedVersion: 2
+    m_Bits: 0
+  LM_EnvCheck:
+    serializedVersion: 2
+    m_Bits: 0
   UsesMuzzleFire: 0
   UsesMuzzleFireOnlyClose: 0
   DoesFlashOnFire: 0
-  FlashOnFireColor:
-    r: 1
-    g: 0.9
-    b: 0.77
-    a: 1
+  FlashOnFireColor: {r: 1, g: 0.9, b: 0.77, a: 1}
   PSystemsMuzzle: []
   MuzzlePAmount: 1
   Laser: {fileID: 0}

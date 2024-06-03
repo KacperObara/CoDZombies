@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CustomScripts.Multiplayer;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -36,14 +37,18 @@ namespace CustomScripts
 
         private void Start()
         {
+            // if (Networking.IsHost())
+            // {
+            //     CodZNetworking.Instance.CustomData_Send();
+            // }
             Teleport(true);
         }
 
-        public void Teleport(bool firstTime = false)
+        public void Teleport(bool includeCurrentPos = false)
         {
             Transform newPos = SpawnPoints[Random.Range(0, SpawnPoints.Count)];
 
-            if (!firstTime)
+            if (!includeCurrentPos)
             {
                 SpawnPoints.Add(CurrentPos);
             }
@@ -58,20 +63,28 @@ namespace CustomScripts
             _mysteryBox.InUse = false;
         }
 
+        // public int GetRandomMovePoint(bool includeCurrentPos = false)
+        // {
+        //     List<Transform> filteredList = new List<Transform>(SpawnPoints);
+        //
+        //     if (!includeCurrentPos)
+        //     {
+        //         filteredList.Remove(CurrentPos);
+        //     }
+        //     
+        //     return Random.Range(0, filteredList.Count);
+        // }
+        // public void Teleport(Transform newPos)
+        // {
+        //     
+        // }
+
         public bool TryTeleport()
         {
             if (CurrentRoll <= SafeRollsProvided)
                 return false;
 
             return (Random.Range(0, 100) <= TeleportChance);
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                StartTeleportAnim();
-            }
         }
 
         public void StartTeleportAnim()
@@ -112,6 +125,11 @@ namespace CustomScripts
         private IEnumerator DelayedTeleport()
         {
             yield return new WaitForSeconds(4.2f);
+
+            // if (Networking.IsHost())
+            // {
+            //     Transform newPos = SpawnPoints[Random.Range(0, SpawnPoints.Count)];
+            // }
             Teleport();
         }
     }

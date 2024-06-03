@@ -113,7 +113,7 @@ namespace CustomScripts.Managers
                 CustomSosigSpawnPoint spawner =
                     CurrentLocation.ZombieSpawnPoints[Random.Range(0, CurrentLocation.ZombieSpawnPoints.Count)].GetComponent<CustomSosigSpawnPoint>();
 
-                Window targetWindow = spawner.GetComponent<ZombieSpawner>().WindowWaypoint;
+                //Window targetWindow = spawner.GetComponent<ZombieSpawner>().WindowWaypoint;
                 //if (targetWindow != null)
                 //    _zombieTarget = targetWindow.ZombieWaypoint;
 
@@ -121,6 +121,13 @@ namespace CustomScripts.Managers
             }
         }
 
+        [HarmonyPatch(typeof (Sosig), "Start")]
+        [HarmonyPostfix]
+        private static void OnSosigSpawned(Sosig __instance)
+        {
+            Instance.OnZosigSpawned(__instance);
+        }
+        
         public void OnZosigSpawned(Sosig zosig)
         {
             ZombieController controller = zosig.gameObject.AddComponent<ZosigZombieController>();

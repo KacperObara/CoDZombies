@@ -4,16 +4,25 @@ using System.Collections;
 using System.Collections.Generic;
 using CustomScripts.Gamemode;
 using CustomScripts.Managers;
+using CustomScripts.Multiplayer;
 using CustomScripts.Zombie;
 using FistVR;
 using HarmonyLib;
 using UnityEngine;
+using Valve.VR;
 
 namespace CustomScripts.Player
 {
     public class PlayerData : MonoBehaviourSingleton<PlayerData>
     {
         public static Action GettingHitEvent;
+
+        public bool IsDead;
+        public bool NeedsRevive;
+        public bool Exists { get { return !IsDead && !NeedsRevive; } }
+            
+        private float _downTime = 30f;
+        private float _downTimer = 0f;
 
         public PowerUpIndicator DoublePointsPowerUpIndicator;
         public PowerUpIndicator InstaKillPowerUpIndicator;
@@ -22,12 +31,11 @@ namespace CustomScripts.Player
         public float DamageModifier = 1f;
         [HideInInspector] public float MoneyModifier = 1f;
 
-        public float LargeItemSpeedMult;
-        public float MassiveItemSpeedMult;
+        //public float LargeItemSpeedMult;
+        //public float MassiveItemSpeedMult;
         private float _currentSpeedMult = 1f;
 
         [HideInInspector] public bool InstaKill;
-        [HideInInspector] public bool IsInvincible;
 
         [HideInInspector] public bool DeadShotPerkActivated;
         [HideInInspector] public bool DoubleTapPerkActivated;
@@ -58,6 +66,23 @@ namespace CustomScripts.Player
             SpeedColaPerkActivated = false;
             QuickRevivePerkActivated = false;
             StaminUpPerkActivated = false;
+        }
+
+        private void Update()
+        {
+            if (NeedsRevive)
+            {
+                _downTimer += Time.deltaTime;
+                if (_downTimer >= _downTime)
+                {
+                    // Player is fully dead
+                    IsDead = true;
+                    NeedsRevive = false;
+                    _downTimer = 0f;
+                    GM.CurrentPlayerBody.DisableHands();
+                    GM.CurrentPlayerBody.DisableHitBoxes();
+                }
+            }
         }
 
         private void OnRoundAdvance()
@@ -136,28 +161,58 @@ namespace CustomScripts.Player
             stunThrottle = false;
         }
 
-        public IEnumerator ActivateInvincibility(float time)
+
+
+        [HarmonyPatch(typeof(GM), "BringBackPlayer")]
+        [HarmonyPostfix]
+        private static void AfterPlayerDeath()
         {
-            IsInvincible = true;
+            Instance.OnPlayerDeath();
+        }
+        
+        public void OnPlayerDeath()
+        {
+            if (Networking.ServerRunning())
+            {
+                // Put into revive state
+                NeedsRevive = true;
+                PlayerSpawner.Instance.transform.position = GameReferences.Instance.Player.position;
+                GM.CurrentPlayerBody.HealPercent(1f);
+                
+                GM.CurrentPlayerBody.DisableHands();
+                GM.CurrentPlayerBody.DisableHitBoxes();
+                
+                SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
+            }
+            else
+            {
+                if (QuickRevivePerkActivated)
+                {
+                    QuickRevivePerkActivated = false;
+                    PlayerSpawner.Instance.transform.position = GameReferences.Instance.Player.position;
+                    GM.CurrentPlayerBody.HealPercent(1f);
 
-            yield return new WaitForSeconds(10f);
-
-            IsInvincible = false;
+                    if (PlayerSpawner.BeingRevivedEvent != null)
+                        PlayerSpawner.BeingRevivedEvent.Invoke();
+                }
+            }
         }
 
+        public void OnRevive()
+        {
+            NeedsRevive = false;
+            GM.CurrentPlayerBody.EnableHands();
+            GM.CurrentPlayerBody.EnableHitBoxes();
+            
+            SteamVR_Fade.Start(Color.clear, 0.25f);
+            
+            if (PlayerSpawner.BeingRevivedEvent != null)
+                PlayerSpawner.BeingRevivedEvent.Invoke();
+        }
+        
         private void OnDestroy()
         {
             RoundManager.OnRoundChanged -= OnRoundAdvance;
-
-            GM.Options.MovementOptions.ArmSwingerBaseSpeeMagnitudes = new float[6]
-            {
-                0.0f,
-                0.15f,
-                0.25f,
-                0.5f,
-                0.8f,
-                1.2f
-            };
         }
     }
 }

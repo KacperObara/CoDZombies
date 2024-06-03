@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Atlas.MappingComponents.Sandbox;
+using CustomScripts.Multiplayer;
 using CustomScripts.Objects.Weapons;
 using FistVR;
 using UnityEngine;
@@ -40,7 +41,7 @@ namespace CustomScripts
             _mysteryBoxMover = GetComponent<MysteryBoxMover>();
         }
 
-        public void SpawnWeapon()
+        public void TryBuy()
         {
             if (InUse)
                 return;
@@ -48,10 +49,24 @@ namespace CustomScripts
             if (!GMgr.Instance.TryRemovePoints(Cost))
                 return;
 
+            if (Networking.IsHost())
+            {
+                SpawnWeapon();
+                CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_BOUGHT);
+            }
+            else
+            {
+                CodZNetworking.Instance.Client_CustomData_Send((int)CustomDataType.MYSTERY_BOX_BOUGHT);
+            }
+        }
+
+        public void SpawnWeapon()
+        {
             InUse = true;
             AudioManager.Instance.Play(RollSound, .25f);
-
-            StartCoroutine(DelayedSpawn());
+            
+            if (Networking.IsHost())
+                StartCoroutine(DelayedSpawn());
         }
 
         private IEnumerator DelayedSpawn()
@@ -60,8 +75,9 @@ namespace CustomScripts
 
             if (_mysteryBoxMover.TryTeleport())
             {
-                _mysteryBoxMover.StartTeleportAnim();
-                GMgr.Instance.AddPoints(Cost);
+                //GMgr.Instance.AddPoints(Cost);
+                AnimateBoxMove();
+                CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_MOVED);
             }
             else
             {
@@ -81,6 +97,11 @@ namespace CustomScripts
 
                 _mysteryBoxMover.CurrentRoll++;
             }
+        }
+
+        public void AnimateBoxMove()
+        {
+            _mysteryBoxMover.StartTeleportAnim();
         }
     }
 }

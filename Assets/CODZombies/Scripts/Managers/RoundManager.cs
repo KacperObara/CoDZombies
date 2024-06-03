@@ -19,11 +19,7 @@ namespace CustomScripts
         public static Action<GameObject> OnZombieKilled;
 
         public static Action OnGameStarted;
-
-        public int ZombieFastWalkRound = 2;
-        public int ZombieRunRound = 6;
-        public int HardModeFastWalkRound = 0;
-        public int HardModeRunRound = 3;
+        
         public int SpecialRoundInterval;
 
         [HideInInspector] public int RoundNumber = 0;
@@ -39,26 +35,6 @@ namespace CustomScripts
             }
         }
 
-        public bool IsFastWalking
-        {
-            get
-            {
-                if (GameSettings.HardMode)
-                    return RoundNumber >= HardModeFastWalkRound;
-                return RoundNumber >= ZombieFastWalkRound;
-            }
-        }
-
-        public bool IsRunning
-        {
-            get
-            {
-                if (GameSettings.HardMode)
-                    return RoundNumber >= HardModeRunRound;
-                return RoundNumber >= ZombieRunRound;
-            }
-        }
-
         public void SendStartGame()
         {
             StartGame();
@@ -67,7 +43,6 @@ namespace CustomScripts
         
         public void StartGame()
         {
-            Debug.Log("Starting game");
             if (!Application.isEditor)
             {
                 GM.CurrentMovementManager.TeleportToPoint(GMgr.Instance.StartGameWaypoint.position, true);

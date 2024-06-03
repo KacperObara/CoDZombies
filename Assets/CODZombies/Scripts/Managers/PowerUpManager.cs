@@ -1,6 +1,7 @@
 #if H3VR_IMPORTED
 using System.Collections;
 using System.Collections.Generic;
+using CustomScripts.Multiplayer;
 using CustomScripts.Powerups;
 using UnityEngine;
 namespace CustomScripts
@@ -38,6 +39,9 @@ namespace CustomScripts
 
         public void RollForPowerUp(GameObject spawnPos)
         {
+            if (Networking.ServerRunning() && Networking.IsClient())
+                return;
+            
             // // Chance for Max Ammo
             //float chance = Random.Range(0f, 100f);
             // if (GameSettings.LimitedAmmo && !_isMaxAmmoCooldown)

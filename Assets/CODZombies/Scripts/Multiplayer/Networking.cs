@@ -10,35 +10,25 @@ namespace CustomScripts.Multiplayer
 {
 	public class Networking : MonoBehaviourSingleton<Networking> 
 	{
+		public static bool IsHostOrSolo()
+		{
+			if (ServerRunning())
+			{
+				if (IsHost())
+					return true;
+				return false;
+			}
+			
+			return true;
+		}
+		
 		public static bool ServerRunning()
 		{
-			if (GMgr.H3mpEnabled)
-				return isServerRunning();
-
-			return false;
-		}
-	
-		static bool isServerRunning()
-		{
-			//if (Mod.managerObject == null)
-			//	return false;
-
 			return true;
 		}
 	
 		public static bool IsClient()
 		{
-			if (GMgr.H3mpEnabled)
-				return isClient();
-
-			return false;
-		}
-	
-		static bool isClient()
-		{
-			//if (Mod.managerObject == null)
-			//	return false;
-
 			if (ThreadManager.host == false)
 				return true;
 			return false;
@@ -46,51 +36,40 @@ namespace CustomScripts.Multiplayer
 	
 		public static bool IsHost()
 		{
-			if (GMgr.H3mpEnabled)
-				return isHosting();
-
-			return false;
-		}
-	
-		static bool isHosting()
-		{
-			//if (Mod.managerObject == null)
-			//	return false;
-
 			if (ThreadManager.host == true)
 				return true;
 			return false;
 		}
 	
-		public static int GetPlayerCount()
-		{
-			if (GMgr.H3mpEnabled)
-				return GetNetworkPlayerCount();
-			return 1;
-		}
-	
-		static int GetNetworkPlayerCount()
-		{
-			return GameManager.players.Count;
-		}
+		// public static int GetPlayerCount()
+		// {
+		// 	if (GMgr.H3mpEnabled)
+		// 		return GetNetworkPlayerCount();
+		// 	return 1;
+		// }
+		//
+		// static int GetNetworkPlayerCount()
+		// {
+		// 	return GameManager.players.Count;
+		// }
 	
 		/// <summary>
 		/// Returns array of all players (Not including local player) IDs
 		/// </summary>
 		/// <returns></returns>
-		public static int[] GetPlayerIDs()
-		{
-			int[] playerArray = new int[GameManager.players.Count];
-
-			int i = 0;
-			foreach (KeyValuePair<int, PlayerManager> entry in GameManager.players)
-			{
-				playerArray[i] = entry.Key;
-				i++;
-			}
-
-			return playerArray;
-		}
+		// public static int[] GetPlayerIDs()
+		// {
+		// 	int[] playerArray = new int[GameManager.players.Count];
+		//
+		// 	int i = 0;
+		// 	foreach (KeyValuePair<int, PlayerManager> entry in GameManager.players)
+		// 	{
+		// 		playerArray[i] = entry.Key;
+		// 		i++;
+		// 	}
+		//
+		// 	return playerArray;
+		// }
 
 		// /// <summary>
 		// /// Returns the local players id.
@@ -117,7 +96,7 @@ namespace CustomScripts.Multiplayer
 		//
 		// 	return id;
 		// }
-	
+
 		/// <summary>
 		/// Returns the Gamemanager player at index i, does not include the local player.
 		/// </summary>
@@ -129,8 +108,26 @@ namespace CustomScripts.Multiplayer
 		// 	return PlayerH3MPData.GetPlayer(i);
 		// }
 
+		// Players don't include host, so -1 is host
+		public static int GetRandomPlayerId()
+		{
+			if (!ServerRunning())
+				return -1;
+			
+			if (GameManager.players.Count > 0)
+			{
+				int randomPlayer = Random.Range(0, GameManager.players.Count + 1);
+				if (randomPlayer == GameManager.players.Count)
+					return -1;
+				return randomPlayer;
+			}
+			else
+			{
+				return -1;
+			}
+		}
 
-		public bool IsMineIFF(int iff)
+		public static bool IsMineIFF(int iff)
 		{
 			if (GM.CurrentPlayerBody.GetPlayerIFF() == iff)
 				return true;

@@ -867,7 +867,7 @@ MonoBehaviour:
   IsAlsoThrowable: 0
   m_backupType: 0
   PrimesOnFirstSwing: 0
-  IsDroppedOnStrongHit: 1
+  IsDroppedOnStrongHit: 0
   AmmoType: 0
   ShotLoudness: 0
   SosigHoldingThis: {fileID: 0}
