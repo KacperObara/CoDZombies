@@ -67,20 +67,16 @@ namespace CustomScripts.Player
             QuickRevivePerkActivated = false;
             StaminUpPerkActivated = false;
         }
-
+        
         private void Update()
         {
-            if (NeedsRevive)
+            if (NeedsRevive && !IsDead)
             {
                 _downTimer += Time.deltaTime;
                 if (_downTimer >= _downTime)
                 {
-                    // Player is fully dead
-                    IsDead = true;
-                    NeedsRevive = false;
                     _downTimer = 0f;
-                    GM.CurrentPlayerBody.DisableHands();
-                    GM.CurrentPlayerBody.DisableHitBoxes();
+                    PlayerSpawner.Instance.DieFully();
                 }
             }
         }
@@ -160,55 +156,7 @@ namespace CustomScripts.Player
             yield return new WaitForSeconds(5f);
             stunThrottle = false;
         }
-
-
-
-        [HarmonyPatch(typeof(GM), "BringBackPlayer")]
-        [HarmonyPostfix]
-        private static void AfterPlayerDeath()
-        {
-            Instance.OnPlayerDeath();
-        }
         
-        public void OnPlayerDeath()
-        {
-            if (Networking.ServerRunning())
-            {
-                // Put into revive state
-                NeedsRevive = true;
-                PlayerSpawner.Instance.transform.position = GameReferences.Instance.Player.position;
-                GM.CurrentPlayerBody.HealPercent(1f);
-                
-                GM.CurrentPlayerBody.DisableHands();
-                GM.CurrentPlayerBody.DisableHitBoxes();
-                
-                SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
-            }
-            else
-            {
-                if (QuickRevivePerkActivated)
-                {
-                    QuickRevivePerkActivated = false;
-                    PlayerSpawner.Instance.transform.position = GameReferences.Instance.Player.position;
-                    GM.CurrentPlayerBody.HealPercent(1f);
-
-                    if (PlayerSpawner.BeingRevivedEvent != null)
-                        PlayerSpawner.BeingRevivedEvent.Invoke();
-                }
-            }
-        }
-
-        public void OnRevive()
-        {
-            NeedsRevive = false;
-            GM.CurrentPlayerBody.EnableHands();
-            GM.CurrentPlayerBody.EnableHitBoxes();
-            
-            SteamVR_Fade.Start(Color.clear, 0.25f);
-            
-            if (PlayerSpawner.BeingRevivedEvent != null)
-                PlayerSpawner.BeingRevivedEvent.Invoke();
-        }
         
         private void OnDestroy()
         {

@@ -27,8 +27,6 @@ namespace CustomScripts
         [HideInInspector] public bool GameStarted = false;
         [HideInInspector] public bool GameEnded = false;
 
-        public Transform StartGameWaypoint;
-
         public bool PowerEnabled;
 
         [HideInInspector]public int Kills;

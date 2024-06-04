@@ -3,8 +3,10 @@ using System.Collections;
 using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
+using H3MP;
 using HarmonyLib;
 using UnityEngine;
+using Valve.VR;
 
 namespace CustomScripts.Gamemode
 {
@@ -12,19 +14,9 @@ namespace CustomScripts.Gamemode
     {
         public static Action BeingRevivedEvent;
 
-        public Transform EndGameSpawnerPos;
-
-        public override void Awake()
-        {
-            base.Awake();
-            RoundManager.OnGameStarted += OnGameStarted;
-        }
-
-        private void OnGameStarted()
-        {
-            // When game starts, move respawn Pos to end game area
-            transform.position = EndGameSpawnerPos.position;
-        }
+        public Transform EndGameSpawnerPos; // On game end
+        public Transform RespawnPos; // On spawn on respawn next round
+        public Vector3 DownedPos; // On downed
 
         private IEnumerator Start()
         {
@@ -34,24 +26,118 @@ namespace CustomScripts.Gamemode
             GM.CurrentMovementManager.TeleportToPoint(transform.position, true, transform.position + transform.forward);
         }
         
-        // [HarmonyPatch(typeof(GM), "BringBackPlayer")]
-        // [HarmonyPrefix]
-        // private static void BeforePlayerDeath()
-        // {
-        //     //PlayerData.Instance.AfterPlayerDeath();
-        // }
-
-        // [HarmonyPatch(typeof(GM), "BringBackPlayer")]
-        // [HarmonyPostfix]
-        // private static void AfterPlayerDeath()
-        // {
-        //     PlayerData.Instance.AfterPlayerDeath();
-        //     //Instance.transform.position = Instance.EndGameSpawnerPos.position;
-        // }
-
-        private void OnDestroy()
+        [HarmonyPatch(typeof(GM), "BringBackPlayer")]
+        [HarmonyPrefix]
+        private static void BeforePlayerDeath()
         {
-            RoundManager.OnGameStarted -= OnGameStarted;
+            Instance.DownedPos = GM.CurrentPlayerBody.transform.position;
+        }
+        
+        public void SpawnPlayer()
+        {
+            GM.CurrentPlayerBody.HealPercent(1f);
+            GM.CurrentPlayerBody.EnableHands();
+            GM.CurrentPlayerBody.EnableHitBoxes();
+            GM.CurrentPlayerBody.WipeQuickbeltContents();
+            PlayerData.Instance.IsDead = false;
+            PlayerData.Instance.NeedsRevive = false;
+            GM.CurrentMovementManager.TeleportToPoint(RespawnPos.position, true);
+            
+            SpawnStartingLoadout();
+        }
+        
+        private void SpawnStartingLoadout()
+        {
+            //Equip starting weapon
+            string weaponString = "M1911";
+            FVRObject obj = null;
+            if (!IM.OD.TryGetValue(weaponString, out obj))
+            {
+                Debug.LogError("No object found with id: " + weaponString);
+            }
+            var callback = obj.GetGameObject();
+            FVRPhysicalObject physicalObject = Instantiate(callback, transform.position + Vector3.up, transform.rotation).GetComponent<FVRPhysicalObject>();
+            physicalObject.gameObject.SetActive(true);
+            
+            physicalObject.ForceObjectIntoInventorySlot(GM.CurrentPlayerBody.QBSlots_Internal[0]);
+            
+            //Equip starting ammo
+            string ammoString = "MagazineM1911";
+            obj = null;
+            if (!IM.OD.TryGetValue(ammoString, out obj))
+            {
+                Debug.LogError("No object found with id: " + ammoString);
+            }
+            callback = obj.GetGameObject();
+            physicalObject = Instantiate(callback, transform.position + Vector3.up, transform.rotation).GetComponent<FVRPhysicalObject>();
+            physicalObject.gameObject.SetActive(true);
+            
+            physicalObject.ForceObjectIntoInventorySlot(GM.CurrentPlayerBody.QBSlots_Internal[1]);
+            physicalObject.m_isSpawnLock = true;
+        }
+        
+        [HarmonyPatch(typeof(GM), "BringBackPlayer")]
+        [HarmonyPostfix]
+        private static void AfterPlayerDeath()
+        {
+            Instance.OnPlayerDeath();
+        }
+        
+        public void OnPlayerDeath()
+        {
+            if (Networking.ServerRunning() )//&& GameManager.players.Count > 0)
+            {
+                // Put into revive state
+                PlayerData.Instance.NeedsRevive = true;
+                GM.CurrentMovementManager.TeleportToPoint(DownedPos, true, transform.position + transform.forward);
+                GM.CurrentPlayerBody.HealPercent(1f);
+                
+                GM.CurrentPlayerBody.DisableHands();
+                GM.CurrentPlayerBody.DisableHitBoxes();
+                
+                SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
+            }
+            else
+            {
+                if (PlayerData.Instance.QuickRevivePerkActivated)
+                {
+                    PlayerData.Instance.QuickRevivePerkActivated = false;
+                    GM.CurrentMovementManager.TeleportToPoint(DownedPos, true, transform.position + transform.forward);
+                    GM.CurrentPlayerBody.HealPercent(1f);
+
+                    if (BeingRevivedEvent != null)
+                        BeingRevivedEvent.Invoke();
+                }
+                else
+                {
+                    MoveToEndGameArea();
+                }
+            }
+        }
+
+        public void OnRevive()
+        {
+            PlayerData.Instance.NeedsRevive = false;
+            GM.CurrentPlayerBody.EnableHands();
+            GM.CurrentPlayerBody.EnableHitBoxes();
+            
+            SteamVR_Fade.Start(Color.clear, 0.25f);
+            
+            if (BeingRevivedEvent != null)
+                BeingRevivedEvent.Invoke();
+        }
+
+        public void DieFully()
+        {
+            PlayerData.Instance.IsDead = true;
+            PlayerData.Instance.NeedsRevive = false;
+            GM.CurrentPlayerBody.WipeQuickbeltContents();
+            SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f); 
+        }
+        
+        public void MoveToEndGameArea()
+        {
+            GM.CurrentMovementManager.TeleportToPoint(EndGameSpawnerPos.position, true, transform.position + transform.forward);
         }
 
         private void OnDrawGizmos()

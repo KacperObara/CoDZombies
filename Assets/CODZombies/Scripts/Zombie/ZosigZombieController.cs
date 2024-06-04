@@ -31,14 +31,16 @@ namespace CustomScripts.Zombie
 
         public override void Initialize()
         {
-            // If solo, target you, otherwise target random player (It's more complicated to include host in random player selection)
+            //// If solo, target you, otherwise target random player (It's more complicated to include host in random player selection)
             if (Networking.IsHostOrSolo())
             {
-                int randomPlayerId = Networking.GetRandomPlayerId();
-                if (randomPlayerId == -1)
-                    Target = GM.CurrentPlayerBody.Head;
-                else
-                    Target = GameManager.players.ElementAt(randomPlayerId).Value.head;
+                Target = Networking.Instance.GetRandomPlayer().GetHead();
+                
+                // int randomPlayerId = Networking.GetRandomPlayerId();
+                // if (randomPlayerId == -1)
+                //     Target = GM.CurrentPlayerBody.Head;
+                // else
+                //     Target = GameManager.players.ElementAt(randomPlayerId).Value.head;
             }
             
             _sosig = GetComponent<Sosig>();

@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CustomScripts;
 using FistVR;
 using H3MP;
 using H3MP.Networking;
 using H3MP.Scripts;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CustomScripts.Multiplayer
 {
@@ -134,29 +136,73 @@ namespace CustomScripts.Multiplayer
 
 			return false;
 		}
-	}
+		
+		public List<PlayerH3MPData> Players = new List<PlayerH3MPData>();
 
-	// public class PlayerH3MPData
-	// {
-	// 	public Transform head;
-	// 	public string username;
-	// 	public Transform handLeft;
-	// 	public Transform handRight;
-	// 	public int ID;
-	// 	public float health;
-	// 	public int iff;
-	//
-	// 	public static PlayerH3MPData GetPlayer(int i)
-	// 	{
-	// 		return new PlayerH3MPData
-	// 		{
-	// 			head = GameManager.players[i].head,
-	// 			username = GameManager.players[i].username,
-	// 			handLeft = GameManager.players[i].leftHand,
-	// 			handRight = GameManager.players[i].rightHand,
-	// 			iff = i + 5, // Every player has unique IFF so we know who killed zombies
-	// 			
-	// 		};
-	// 	}
-	// }
+		public PlayerH3MPData GetRandomPlayer()
+		{
+			int randomPlayer = Random.Range(0, Players.Count);
+			return Players[randomPlayer];
+		}
+
+		private void Start()
+		{
+			//AddHost();
+			//GameManager.OnSceneJoined
+		}
+
+		public void AddHost(int ID)
+		{
+			Players.Add(new PlayerH3MPData
+			{
+				ID = ID,
+				IsHost = true,
+				PlayerManager = null
+			});
+		}
+
+		public void AddClient(PlayerManager playerManager)
+		{
+			Players.Add(new PlayerH3MPData
+			{
+				ID = playerManager.ID,
+				IsHost = true,
+				PlayerManager = playerManager
+			});
+		}
+	}
+	
+	public class PlayerH3MPData
+	{
+		public int ID;
+		public bool IsHost;
+		public PlayerManager PlayerManager;
+		
+		public Transform GetHead()
+		{
+			if (IsHost)
+				return GM.CurrentPlayerBody.Head;
+			return PlayerManager.head;
+		}
+		
+		//public string username;
+		//public Transform head;
+		//public Transform handLeft;
+		//public Transform handRight;
+		//public float health;
+		//public int iff;
+
+		// public static PlayerH3MPData GetPlayer(int i)
+		// {
+		// 	return new PlayerH3MPData
+		// 	{
+		// 		head = GameManager.players[i].head,
+		// 		username = GameManager.players[i].username,
+		// 		handLeft = GameManager.players[i].leftHand,
+		// 		handRight = GameManager.players[i].rightHand,
+		// 		iff = i + 5, // Every player has unique IFF so we know who killed zombies
+		// 		
+		// 	};
+		// }
+	}
 }

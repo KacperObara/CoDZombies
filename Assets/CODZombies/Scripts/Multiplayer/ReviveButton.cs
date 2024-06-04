@@ -25,7 +25,7 @@ public class ReviveButton : MonoBehaviour
 			
 			if (_handReviving.Input.GripPressed)
 			{
-				_timer += Time.deltaTime;
+				_timer += Time.fixedDeltaTime;
 				if (_timer >= _reviveTime)
 				{
 					//PlayerData.Instance.Revive();

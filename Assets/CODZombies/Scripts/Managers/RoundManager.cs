@@ -1,6 +1,7 @@
 #if H3VR_IMPORTED
 using System;
 using System.Collections;
+using CustomScripts.Gamemode;
 using CustomScripts.Managers;
 using CustomScripts.Multiplayer;
 using FistVR;
@@ -45,13 +46,14 @@ namespace CustomScripts
         {
             if (!Application.isEditor)
             {
-                GM.CurrentMovementManager.TeleportToPoint(GMgr.Instance.StartGameWaypoint.position, true);
+                PlayerSpawner.Instance.SpawnPlayer();
             }
 
             GMgr.Instance.GameStarted = true;
 
             RoundNumber = 0;
 
+            
             AdvanceRound();
 
             if (OnGameStarted != null)
