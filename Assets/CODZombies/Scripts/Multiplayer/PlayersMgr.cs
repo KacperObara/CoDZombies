@@ -27,6 +27,15 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 		{
 			AddClient(player.Value);
 		}
+
+		Debug.Log("Connected Players");
+		foreach (var player in Players)
+		{
+			if (player.IsMe)
+				Debug.Log("Me " + GameManager.ID);
+			else
+				Debug.Log(player.PlayerManager.username + " " + player.PlayerManager.ID);
+		}
 	}
 
 	public PlayerH3MPData GetRandomPlayer()

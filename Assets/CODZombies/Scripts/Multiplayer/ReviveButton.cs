@@ -16,7 +16,10 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 	
 	private FVRViveHand _handReviving;
 
-	private float _reviveTime = PlayerData.Instance.QuickRevivePerkActivated ? 1.5f : 3f;
+	private float ReviveTime
+	{
+		get { return PlayerData.Instance.QuickRevivePerkActivated ? 1.5f : 3f; }
+	}
 	private float _timer = 0f;
 
 	private Color _defaultColor = Color.yellow;
@@ -45,7 +48,7 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 			{
 				ReviveIcon.color = _reviveColor;
 				_timer += Time.fixedDeltaTime;
-				if (_timer >= _reviveTime)
+				if (_timer >= ReviveTime)
 				{
 					if (Networking.IsHost())
 					{

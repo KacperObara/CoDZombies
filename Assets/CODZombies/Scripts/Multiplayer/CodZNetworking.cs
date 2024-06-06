@@ -245,6 +245,9 @@ namespace CustomScripts.Multiplayer
             Packet packet = new Packet(customData_playerID_ID);
             packet.Write(playerID);
             packet.Write(customDataID);
+            
+            Debug.Log("Host sending custom data with player ID: " + playerID + " " + (CustomPlayerDataType)customData_ID);
+            
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
@@ -274,6 +277,8 @@ namespace CustomScripts.Multiplayer
             Packet packet = new Packet(customData_playerID_Client_ID);
             packet.Write(playerID);
             packet.Write(customDataID);
+            
+            Debug.Log("Client sending custom data with player ID: " + playerID + " " + (CustomPlayerDataType)customData_ID);
             ClientSend.SendTCPData(packet, true);
         }
         
@@ -373,6 +378,8 @@ namespace CustomScripts.Multiplayer
             Packet packet = new Packet(customData_ID);
             packet.Write(customDataID);
             
+            Debug.Log("Host sending custom data: " + (CustomDataType)customData_ID);
+            
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
@@ -400,6 +407,8 @@ namespace CustomScripts.Multiplayer
             
             Packet packet = new Packet(customData_Client_ID);
             packet.Write(customDataId);
+
+            Debug.Log("Client sending custom data: " + (CustomDataType)customData_ID);
             
             ClientSend.SendTCPData(packet, true);
         }
