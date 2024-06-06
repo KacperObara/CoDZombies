@@ -110,24 +110,24 @@ namespace CustomScripts.Multiplayer
 		// 	return PlayerH3MPData.GetPlayer(i);
 		// }
 
-		// Players don't include host, so -1 is host
-		public static int GetRandomPlayerId()
-		{
-			if (!ServerRunning())
-				return -1;
-			
-			if (GameManager.players.Count > 0)
-			{
-				int randomPlayer = Random.Range(0, GameManager.players.Count + 1);
-				if (randomPlayer == GameManager.players.Count)
-					return -1;
-				return randomPlayer;
-			}
-			else
-			{
-				return -1;
-			}
-		}
+		// // Players don't include host, so -1 is host
+		// public static int GetRandomPlayerId()
+		// {
+		// 	if (!ServerRunning())
+		// 		return -1;
+		// 	
+		// 	if (GameManager.players.Count > 0)
+		// 	{
+		// 		int randomPlayer = Random.Range(0, GameManager.players.Count + 1);
+		// 		if (randomPlayer == GameManager.players.Count)
+		// 			return -1;
+		// 		return randomPlayer;
+		// 	}
+		// 	else
+		// 	{
+		// 		return -1;
+		// 	}
+		// }
 
 		public static bool IsMineIFF(int iff)
 		{
@@ -136,73 +136,5 @@ namespace CustomScripts.Multiplayer
 
 			return false;
 		}
-		
-		public List<PlayerH3MPData> Players = new List<PlayerH3MPData>();
-
-		public PlayerH3MPData GetRandomPlayer()
-		{
-			int randomPlayer = Random.Range(0, Players.Count);
-			return Players[randomPlayer];
-		}
-
-		private void Start()
-		{
-			//AddHost();
-			//GameManager.OnSceneJoined
-		}
-
-		public void AddHost(int ID)
-		{
-			Players.Add(new PlayerH3MPData
-			{
-				ID = ID,
-				IsHost = true,
-				PlayerManager = null
-			});
-		}
-
-		public void AddClient(PlayerManager playerManager)
-		{
-			Players.Add(new PlayerH3MPData
-			{
-				ID = playerManager.ID,
-				IsHost = true,
-				PlayerManager = playerManager
-			});
-		}
-	}
-	
-	public class PlayerH3MPData
-	{
-		public int ID;
-		public bool IsHost;
-		public PlayerManager PlayerManager;
-		
-		public Transform GetHead()
-		{
-			if (IsHost)
-				return GM.CurrentPlayerBody.Head;
-			return PlayerManager.head;
-		}
-		
-		//public string username;
-		//public Transform head;
-		//public Transform handLeft;
-		//public Transform handRight;
-		//public float health;
-		//public int iff;
-
-		// public static PlayerH3MPData GetPlayer(int i)
-		// {
-		// 	return new PlayerH3MPData
-		// 	{
-		// 		head = GameManager.players[i].head,
-		// 		username = GameManager.players[i].username,
-		// 		handLeft = GameManager.players[i].leftHand,
-		// 		handRight = GameManager.players[i].rightHand,
-		// 		iff = i + 5, // Every player has unique IFF so we know who killed zombies
-		// 		
-		// 	};
-		// }
 	}
 }

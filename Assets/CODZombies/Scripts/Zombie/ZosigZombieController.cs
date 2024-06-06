@@ -29,18 +29,16 @@ namespace CustomScripts.Zombie
 
         private Coroutine _tearingPlanksCoroutine;
 
+        // Every 5 seconds, change target if other is closer
+        private float _zombieTargetTime = 5f;
+        private float _zombieTargetTimer;
+
         public override void Initialize()
         {
             //// If solo, target you, otherwise target random player (It's more complicated to include host in random player selection)
             if (Networking.IsHostOrSolo())
             {
-                Target = Networking.Instance.GetRandomPlayer().GetHead();
-                
-                // int randomPlayerId = Networking.GetRandomPlayerId();
-                // if (randomPlayerId == -1)
-                //     Target = GM.CurrentPlayerBody.Head;
-                // else
-                //     Target = GameManager.players.ElementAt(randomPlayerId).Value.head;
+                Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
             }
             
             _sosig = GetComponent<Sosig>();
@@ -148,6 +146,13 @@ namespace CustomScripts.Zombie
                 _sosig.Speed_Turning = _cachedSpeed;
                 _sosig.Speed_Crawl = _cachedSpeed;
                 _sosig.Speed_Sneak = _cachedSpeed;
+            }
+            
+            _zombieTargetTimer += Time.deltaTime;
+            if (_zombieTargetTimer >= _zombieTargetTime)
+            {
+                _zombieTargetTimer -= _zombieTargetTime;
+                Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
             }
         }
 

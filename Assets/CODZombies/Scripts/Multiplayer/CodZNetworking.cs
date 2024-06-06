@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CustomScripts.Gamemode;
 using FistVR;
 using H3MP;
 using H3MP.Networking;
@@ -12,14 +13,16 @@ namespace CustomScripts.Multiplayer
         //Packet IDs
         private int gameStarted_ID = -1;
         
-        private int powerEnabled_ID = -1;
-        private int powerEnabled_Client_ID = -1;
-        
         private int blockadeCleared_ID = -1;
         private int blockadeCleared_Client_ID = -1;
         
+        // Send int value
         private int customData_ID = -1;
         private int customData_Client_ID = -1;
+        
+        // Send playerID + int value
+        private int customData_playerID_ID = -1;
+        private int customData_playerID_Client_ID = -1;
         
         // private int mysteryBoxMoved_ID = -1;
         // private int powerUpSpawned_ID = -1;
@@ -27,10 +30,8 @@ namespace CustomScripts.Multiplayer
         
         void Start()
         {
-            if(GMgr.H3mpEnabled)
-                StartNetworking();
+            StartNetworking();
         }
-
         
         private void StartNetworking()
         {
@@ -50,20 +51,6 @@ namespace CustomScripts.Multiplayer
                     gameStarted_ID = Server.RegisterCustomPacketType("CodZ_GameStarted");
                 Mod.customPacketHandlers[gameStarted_ID] = StartGame_Handler;
                 
-                // Power Enabled
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_PowerEnabled"))
-                    powerEnabled_ID = Mod.registeredCustomPacketIDs["CodZ_PowerEnabled"];
-                else
-                    powerEnabled_ID = Server.RegisterCustomPacketType("CodZ_PowerEnabled");
-                Mod.customPacketHandlers[powerEnabled_ID] = PowerEnabled_Handler;       
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_PowerEnabled"))
-                    powerEnabled_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_PowerEnabled"];
-                else
-                    powerEnabled_Client_ID = Server.RegisterCustomPacketType("CodZ_Client_PowerEnabled");
-                Mod.customPacketHandlers[powerEnabled_Client_ID] = Client_PowerEnabled_Handler;       
-                
-                
                 // Blockade Cleared
                 if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_BlockadeCleared"))
                     blockadeCleared_ID = Mod.registeredCustomPacketIDs["CodZ_BlockadeCleared"];
@@ -77,8 +64,7 @@ namespace CustomScripts.Multiplayer
                     blockadeCleared_Client_ID = Server.RegisterCustomPacketType("CodZ_Client_BlockadeCleared");
                 Mod.customPacketHandlers[blockadeCleared_Client_ID] = Client_BlockadeCleared_Handler;
                 
-                
-                // Custom Data
+                // Custom Data (int value)
                 if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData"))
                     customData_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData"];
                 else
@@ -90,6 +76,19 @@ namespace CustomScripts.Multiplayer
                 else
                     customData_Client_ID = Server.RegisterCustomPacketType("CodZ_Client_CustomData");
                 Mod.customPacketHandlers[customData_Client_ID] = Client_CustomData_Handler;
+                
+                // Custom Data (PlayerID + int value)
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData_PlayerID"))
+                    customData_playerID_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData_PlayerID"];
+                else
+                    customData_playerID_ID = Server.RegisterCustomPacketType("CodZ_CustomData_PlayerID");
+                Mod.customPacketHandlers[customData_playerID_ID] = CustomData_PlayerID_Handler;       
+                
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_CustomData_PlayerID"))
+                    customData_playerID_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_CustomData_PlayerID"];
+                else
+                    customData_playerID_Client_ID = Server.RegisterCustomPacketType("CodZ_Client_CustomData_PlayerID");
+                Mod.customPacketHandlers[customData_playerID_Client_ID] = Client_CustomData_PlayerID_Handler;  
             }
             else
             {
@@ -104,29 +103,6 @@ namespace CustomScripts.Multiplayer
                     ClientSend.RegisterCustomPacketType("CodZ_GameStarted");
                     Mod.CustomPacketHandlerReceived += StartGame_Received;
                 }
-                
-                //Power Enabled
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_PowerEnabled"))
-                {
-                    powerEnabled_ID = Mod.registeredCustomPacketIDs["CodZ_PowerEnabled"];
-                    Mod.customPacketHandlers[powerEnabled_ID] = PowerEnabled_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_PowerEnabled");
-                    Mod.CustomPacketHandlerReceived += PowerEnabled_Received;
-                }   
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_PowerEnabled"))
-                {
-                    powerEnabled_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_PowerEnabled"];
-                    Mod.customPacketHandlers[powerEnabled_Client_ID] = Client_PowerEnabled_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_Client_PowerEnabled");
-                    Mod.CustomPacketHandlerReceived += Client_PowerEnabled_Received;
-                } 
                 
                 //Blockade Cleared
                 if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_BlockadeCleared"))
@@ -151,7 +127,7 @@ namespace CustomScripts.Multiplayer
                     Mod.CustomPacketHandlerReceived += Client_BlockadeCleared_Received;
                 }
                 
-                //Custom Data
+                //Custom Data (int value)
                 if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData"))
                 {
                     customData_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData"];
@@ -173,6 +149,29 @@ namespace CustomScripts.Multiplayer
                     ClientSend.RegisterCustomPacketType("CodZ_Client_CustomData");
                     Mod.CustomPacketHandlerReceived += Client_CustomData_Received;
                 }
+                
+                // Custom Data (PlayerID + int value)
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData_PlayerID"))
+                {
+                    customData_playerID_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData_PlayerID"];
+                    Mod.customPacketHandlers[customData_playerID_ID] = CustomData_PlayerID_Handler;
+                }
+                else
+                {
+                    ClientSend.RegisterCustomPacketType("CodZ_CustomData_PlayerID");
+                    Mod.CustomPacketHandlerReceived += CustomData_PlayerID_Received;
+                }   
+                
+                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_CustomData_PlayerID"))
+                {
+                    customData_playerID_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_CustomData_PlayerID"];
+                    Mod.customPacketHandlers[customData_playerID_Client_ID] = Client_CustomData_PlayerID_Handler;
+                }
+                else
+                {
+                    ClientSend.RegisterCustomPacketType("CodZ_Client_CustomData_PlayerID");
+                    Mod.CustomPacketHandlerReceived += Client_CustomData_PlayerID_Received;
+                } 
             }
         }
 
@@ -191,11 +190,13 @@ namespace CustomScripts.Multiplayer
 
             try
             {
+                // Give all players a unique IFF so we know who award points to for sosig kills
                 GM.CurrentPlayerBody.SetPlayerIFF(5);
-                for (int i = 0; i < GameManager.players.Count; i++)
+                int iff = 6;
+                foreach (var player in GameManager.players)
                 {
-                    //GameManager.players[i].SetIFF(i + 5);
-                    ServerSend.PlayerIFF(GameManager.players.ElementAt(i).Key, i + 6);
+                    ServerSend.PlayerIFF(player.Key, iff);
+                    iff++;
                 }
             }
             catch (Exception e)
@@ -231,56 +232,66 @@ namespace CustomScripts.Multiplayer
 
         #endregion
         
-        #region Power Enabled
+        #region Custom Data (PlayerID + int value)
 
         // Host
-        public void PowerEnabled_Send()
+        public void CustomData_PlayerID_Send(int playerID, int customDataID)
         {
             if (!Networking.ServerRunning() || Networking.IsClient())
                 return;
             
-            Packet packet = new Packet(powerEnabled_ID);
+            HandlePlayerCustomData(playerID, customDataID);
+            
+            Packet packet = new Packet(customData_playerID_ID);
+            packet.Write(playerID);
+            packet.Write(customDataID);
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
-        void PowerEnabled_Handler(int clientID, Packet packet)
+        void CustomData_PlayerID_Handler(int clientID, Packet packet)
         {
-            GMgr.Instance.TurnOnPower();
+            int playerID = packet.ReadInt();
+            int customDataId = packet.ReadInt();
+            HandlePlayerCustomData(playerID, customDataId);
         }
 
-        void PowerEnabled_Received(string handlerID, int index)
+        void CustomData_PlayerID_Received(string handlerID, int index)
         {
-            if (handlerID == "CodZ_PowerEnabled")
+            if (handlerID == "CodZ_CustomData_PlayerID")
             {
-                powerEnabled_ID = index;
-                Mod.customPacketHandlers[index] = PowerEnabled_Handler;
-                Mod.CustomPacketHandlerReceived -= PowerEnabled_Received;
+                customData_playerID_ID = index;
+                Mod.customPacketHandlers[index] = CustomData_PlayerID_Handler;
+                Mod.CustomPacketHandlerReceived -= CustomData_PlayerID_Received;
             }
         }
         
         // Client
-        public void Client_PowerEnabled_Send()
+        public void Client_CustomData_PlayerID_Send(int playerID, int customDataID)
         {
             if (!Networking.ServerRunning() || Networking.IsHost())
                 return;
 
-            Packet packet = new Packet(powerEnabled_Client_ID);
+            Packet packet = new Packet(customData_playerID_Client_ID);
+            packet.Write(playerID);
+            packet.Write(customDataID);
             ClientSend.SendTCPData(packet, true);
         }
         
-        void Client_PowerEnabled_Handler(int clientID, Packet packet)
+        void Client_CustomData_PlayerID_Handler(int clientID, Packet packet)
         {
-            GMgr.Instance.TurnOnPower();
-            PowerEnabled_Send();
+            int playerID = packet.ReadInt();
+            int customDataId = packet.ReadInt();
+            HandlePlayerCustomData(playerID, customDataId);
+            CustomData_PlayerID_Send(playerID, customDataId);
         }
 
-        void Client_PowerEnabled_Received(string handlerID, int index)
+        void Client_CustomData_PlayerID_Received(string handlerID, int index)
         {
-            if (handlerID == "CodZ_Client_PowerEnabled")
+            if (handlerID == "CodZ_Client_CustomData_PlayerID")
             {
-                powerEnabled_Client_ID = index;
-                Mod.customPacketHandlers[index] = Client_PowerEnabled_Handler;
-                Mod.CustomPacketHandlerReceived -= Client_PowerEnabled_Received;
+                customData_playerID_Client_ID = index;
+                Mod.customPacketHandlers[index] = Client_CustomData_PlayerID_Handler;
+                Mod.CustomPacketHandlerReceived -= Client_CustomData_PlayerID_Received;
             }
         }
         
@@ -349,13 +360,15 @@ namespace CustomScripts.Multiplayer
         #endregion
         
         
-        #region Custom Data
+        #region Custom Data (int value)
 
         // Host
         public void CustomData_Send(int customDataID)
         {
             if (!Networking.ServerRunning() || Networking.IsClient())
                 return;
+            
+            HandleCustomData(customDataID);
             
             Packet packet = new Packet(customData_ID);
             packet.Write(customDataID);
@@ -384,7 +397,7 @@ namespace CustomScripts.Multiplayer
         {
             if (!Networking.ServerRunning() || Networking.IsHost())
                 return;
-
+            
             Packet packet = new Packet(customData_Client_ID);
             packet.Write(customDataId);
             
@@ -418,8 +431,39 @@ namespace CustomScripts.Multiplayer
             {
                 Refs.MysteryBox.AnimateBoxMove();
             }
+            else if (customDataId == (int)CustomDataType.POWER_ENABLED)
+            {
+                GMgr.Instance.TurnOnPower();
+            }
+            else if (customDataId == (int)CustomDataType.EVERY_PLAYER_DEAD)
+            {
+                PlayerSpawner.Instance.MoveToEndGameArea();
+            }
         }
         
+        private void HandlePlayerCustomData(int playerID, int customDataId)
+        {
+            if (customDataId == (int)CustomPlayerDataType.PLAYER_DOWNED)
+            {
+                if (playerID == GameManager.ID)
+                    return;
+                
+                Vector3 deathPos = GameManager.players[playerID].transform.position;
+                ReviveButton.Instance.Spawn(playerID, deathPos);
+                // Spawn revive UI
+            }
+            else if (customDataId == (int)CustomPlayerDataType.PLAYER_REVIVED)
+            {
+                if (playerID == GameManager.ID)
+                { 
+                    PlayerSpawner.Instance.Revive();
+                }
+                else
+                {
+                    ReviveButton.Instance.Despawn();
+                }
+            }
+        }
         #endregion
     }
     
@@ -427,6 +471,14 @@ namespace CustomScripts.Multiplayer
     {
         MYSTERY_BOX_BOUGHT = 0,
         MYSTERY_BOX_MOVED = 1,
+        POWER_ENABLED = 2,
+        EVERY_PLAYER_DEAD = 3,
+    }
+    
+    public enum CustomPlayerDataType
+    {
+        PLAYER_DOWNED = 0,
+        PLAYER_REVIVED = 1,
     }
 }
 

@@ -46,12 +46,11 @@ namespace CustomScripts
         {
             if (Networking.IsHost())
             {
-                TurnOnPower();
-                CodZNetworking.Instance.PowerEnabled_Send();
+                CodZNetworking.Instance.CustomData_Send((int)CustomDataType.POWER_ENABLED);
             }
             else
             {
-                CodZNetworking.Instance.Client_PowerEnabled_Send();
+                CodZNetworking.Instance.Client_CustomData_Send((int)CustomDataType.POWER_ENABLED);
             }
         }
         
@@ -119,12 +118,6 @@ namespace CustomScripts
         {
             _harmony.UnpatchSelf();
         }
-        
-        ////
-        public static bool H3mpEnabled = true;
-        public bool GameServerRunning = false;
-        
-        
     }
 }
 #endif

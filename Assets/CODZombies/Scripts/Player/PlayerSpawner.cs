@@ -42,8 +42,10 @@ namespace CustomScripts.Gamemode
             PlayerData.Instance.IsDead = false;
             PlayerData.Instance.NeedsRevive = false;
             GM.CurrentMovementManager.TeleportToPoint(RespawnPos.position, true);
-            
+            SteamVR_Fade.Start(Color.clear, 0.0f); 
             SpawnStartingLoadout();
+
+            RoundManager.OnRoundChanged -= SpawnPlayer;
         }
         
         private void SpawnStartingLoadout()
@@ -94,8 +96,16 @@ namespace CustomScripts.Gamemode
                 
                 GM.CurrentPlayerBody.DisableHands();
                 GM.CurrentPlayerBody.DisableHitBoxes();
-                
                 SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
+
+                if (Networking.IsHost())
+                {
+                    CodZNetworking.Instance.CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_DOWNED);
+                }
+                else
+                {
+                    CodZNetworking.Instance.Client_CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_DOWNED);
+                }
             }
             else
             {
@@ -115,7 +125,7 @@ namespace CustomScripts.Gamemode
             }
         }
 
-        public void OnRevive()
+        public void Revive()
         {
             PlayerData.Instance.NeedsRevive = false;
             GM.CurrentPlayerBody.EnableHands();
@@ -132,7 +142,8 @@ namespace CustomScripts.Gamemode
             PlayerData.Instance.IsDead = true;
             PlayerData.Instance.NeedsRevive = false;
             GM.CurrentPlayerBody.WipeQuickbeltContents();
-            SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f); 
+            SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
+            RoundManager.OnRoundChanged += SpawnPlayer;
         }
         
         public void MoveToEndGameArea()

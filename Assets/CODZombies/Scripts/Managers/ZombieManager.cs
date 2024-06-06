@@ -22,16 +22,13 @@ namespace CustomScripts.Managers
         public Location CurrentLocation;
 
         public AnimationCurve ZombieCountCurve;
-        public AnimationCurve CustomZombieHPCurve;
         public AnimationCurve ZosigHPCurve;
         public AnimationCurve ZosigLinkIntegrityCurve;
         public AnimationCurve ZosigPerRoundSpeed;
-
-        public int CustomZombieDamage = 2000;
+        
         public int PointsOnHit = 10;
         public int PointsOnKill = 100;
-
-        public List<ZombieController> AllCustomZombies;
+        
         [HideInInspector] public List<ZombieController> ExistingZombies;
 
         public ParticleSystem HellhoundExplosionPS;

@@ -51,7 +51,7 @@ namespace CustomScripts
 
             if (Networking.IsHost())
             {
-                SpawnWeapon();
+                //SpawnWeapon();
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_BOUGHT);
             }
             else
@@ -76,7 +76,7 @@ namespace CustomScripts
             if (_mysteryBoxMover.TryTeleport())
             {
                 //GMgr.Instance.AddPoints(Cost);
-                AnimateBoxMove();
+                //AnimateBoxMove();
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_MOVED);
             }
             else
