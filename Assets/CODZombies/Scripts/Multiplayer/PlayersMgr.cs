@@ -46,14 +46,14 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	
 	public PlayerH3MPData GetRandomAlivePlayer()
 	{
-		List<PlayerH3MPData> alivePlayers = Players.FindAll(player => !player.IsDowned && !player.IsDead);
+		List<PlayerH3MPData> alivePlayers = Players.FindAll(player => player.IsAlive);
 		int randomPlayer = Random.Range(0, alivePlayers.Count);
 		return alivePlayers[randomPlayer];
 	}
 
 	public PlayerH3MPData GetClosestAlivePlayer(Vector3 origin)
 	{
-		List<PlayerH3MPData> alivePlayers = Players.FindAll(player => !player.IsDowned && !player.IsDead);
+		List<PlayerH3MPData> alivePlayers = Players.FindAll(player => player.IsAlive);
 		return alivePlayers.OrderBy(player => Vector3.Distance(player.GetHead().position, origin)).First();
 	}
 
@@ -89,7 +89,9 @@ public class PlayerH3MPData
 	public PlayerManager PlayerManager;
 	public bool IsDowned;
 	public bool IsDead;
-
+	public bool Exists { get { return IsMe || PlayerManager != null; } } // Handle disconnects
+	public bool IsAlive { get { return !IsDowned && !IsDead && Exists; } }
+	
 	public Transform GetHead()
 	{
 		if (IsMe)

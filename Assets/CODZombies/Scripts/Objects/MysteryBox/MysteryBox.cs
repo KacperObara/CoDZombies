@@ -73,13 +73,7 @@ namespace CustomScripts
         {
             yield return new WaitForSeconds(5.5f);
 
-            if (_mysteryBoxMover.TryTeleport())
-            {
-                //GMgr.Instance.AddPoints(Cost);
-                //AnimateBoxMove();
-                CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_MOVED);
-            }
-            else
+            if (!_mysteryBoxMover.TryTeleport())
             {
                 int random = Random.Range(0, LootId.Count);
                 WeaponData rolledWeapon = LootId[random];
@@ -97,11 +91,6 @@ namespace CustomScripts
 
                 _mysteryBoxMover.CurrentRoll++;
             }
-        }
-
-        public void AnimateBoxMove()
-        {
-            _mysteryBoxMover.StartTeleportAnim();
         }
     }
 }

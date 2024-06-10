@@ -28,6 +28,8 @@ namespace CustomScripts
         private MysteryBox _mysteryBox;
         private Transform _parent;
 
+        private int _nextTeleportWaypoint = -1;
+
         private void Awake()
         {
             _parent = transform.parent;
@@ -37,24 +39,25 @@ namespace CustomScripts
 
         private void Start()
         {
-            // if (Networking.IsHost())
-            // {
-            //     CodZNetworking.Instance.CustomData_Send();
-            // }
-            Teleport(true);
+            if (Networking.IsHost())
+            {
+                int waypointID = GetRandomMovePoint();
+                CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, true);
+                Teleport(true);
+            }
         }
 
         public void Teleport(bool includeCurrentPos = false)
         {
-            Transform newPos = SpawnPoints[Random.Range(0, SpawnPoints.Count)];
+            Transform newPos = SpawnPoints[_nextTeleportWaypoint];
 
-            if (!includeCurrentPos)
-            {
-                SpawnPoints.Add(CurrentPos);
-            }
+            // if (!includeCurrentPos)
+            // {
+            //     SpawnPoints.Add(CurrentPos);
+            // }
 
             CurrentPos = newPos;
-            SpawnPoints.Remove(newPos); // Exclude current transform from randomization
+            //SpawnPoints.Remove(newPos); // Exclude current transform from randomization
 
             _parent.transform.position = newPos.position;
             _parent.transform.rotation = newPos.rotation;
@@ -63,32 +66,26 @@ namespace CustomScripts
             _mysteryBox.InUse = false;
         }
 
-        // public int GetRandomMovePoint(bool includeCurrentPos = false)
-        // {
-        //     List<Transform> filteredList = new List<Transform>(SpawnPoints);
-        //
-        //     if (!includeCurrentPos)
-        //     {
-        //         filteredList.Remove(CurrentPos);
-        //     }
-        //     
-        //     return Random.Range(0, filteredList.Count);
-        // }
-        // public void Teleport(Transform newPos)
-        // {
-        //     
-        // }
-
         public bool TryTeleport()
         {
             if (CurrentRoll <= SafeRollsProvided)
                 return false;
-
-            return (Random.Range(0, 100) <= TeleportChance);
+            
+            if (Random.Range(0, 100) <= TeleportChance)
+            {
+                int waypointID = GetRandomMovePoint();
+                CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, false);
+                StartTeleportAnim(waypointID);
+                return true;
+            }
+            
+            return false;
         }
 
-        public void StartTeleportAnim()
+        public void StartTeleportAnim(int newWaypointID)
         {
+            _nextTeleportWaypoint = newWaypointID;
+            
             int secretTeddyChance = Random.Range(0, 5801);
             GameObject teddy;
 
@@ -125,12 +122,13 @@ namespace CustomScripts
         private IEnumerator DelayedTeleport()
         {
             yield return new WaitForSeconds(4.2f);
-
-            // if (Networking.IsHost())
-            // {
-            //     Transform newPos = SpawnPoints[Random.Range(0, SpawnPoints.Count)];
-            // }
             Teleport();
+        }
+
+        public int GetRandomMovePoint()
+        {
+            
+            return 0;
         }
     }
 }

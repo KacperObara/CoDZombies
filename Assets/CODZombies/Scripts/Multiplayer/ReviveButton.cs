@@ -25,6 +25,11 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 	private Color _defaultColor = Color.yellow;
 	private Color _reviveColor = Color.white;
 
+	private void Start()
+	{
+		Despawn();
+	}
+
 	public void Spawn(int playerID, Vector3 pos)
 	{
 		gameObject.SetActive(true);

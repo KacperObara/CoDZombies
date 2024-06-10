@@ -40,11 +40,13 @@ namespace CustomScripts.Zombie
             {
                 Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
             }
+
+            Debug.Log("Zombie Initialize 1");
             
             _sosig = GetComponent<Sosig>();
 
             _sosig.CoreRB.gameObject.AddComponent<ZosigTrigger>().Initialize(this);
-
+            Debug.Log("Zombie Initialize 2");
             _sosig.Speed_Run = ZombieManager.Instance.ZosigPerRoundSpeed.Evaluate(RoundManager.Instance.RoundNumber);
             if (GameSettings.HardMode)
             {
@@ -57,7 +59,7 @@ namespace CustomScripts.Zombie
                 link.SetIntegrity(
                     ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber));
             }
-
+            Debug.Log("Zombie Initialize 3");
             if (GameSettings.WeakerEnemiesEnabled)
             {
                 _sosig.Mustard *= .6f;
@@ -66,7 +68,7 @@ namespace CustomScripts.Zombie
                     link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .6f);
                 }
             }
-
+            Debug.Log("Zombie Initialize 4");
             if (RoundManager.Instance.IsRoundSpecial)
             {
                 _sosig.Mustard *= .65f;
@@ -78,7 +80,7 @@ namespace CustomScripts.Zombie
                         link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .65f);
                 }
             }
-            
+            Debug.Log("Zombie Initialize 5");
             _sosig.Speed_Walk = _sosig.Speed_Run;
             _sosig.Speed_Turning = _sosig.Speed_Run;
             _sosig.Speed_Sneak = _sosig.Speed_Run;
@@ -93,12 +95,12 @@ namespace CustomScripts.Zombie
                     _sosig.Hands[i].HeldObject.E.IFFCode = _sosig.E.IFFCode;
                 }
             }
-
+            Debug.Log("Zombie Initialize 6");
             _sosig.Hand_Primary.HeldObject.SourceIFF = _sosig.E.IFFCode;
             _sosig.Hand_Primary.HeldObject.E.IFFCode = _sosig.E.IFFCode;
 
             _cachedSpeed = _sosig.Speed_Run;
-
+            Debug.Log("Zombie Initialize 7");
             CheckPerks();
         }
 
