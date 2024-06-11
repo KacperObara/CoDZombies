@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
+using H3MP;
 using UnityEngine;
 
 namespace CustomScripts.Gamemode
@@ -11,6 +13,8 @@ namespace CustomScripts.Gamemode
     /// </summary>
     public class WeaponWrapper : MonoBehaviour
     {
+        public int OwnerIFF;
+        
         public bool DoubleTapActivated = false;
         public bool SpeedColaActivated = false;
 
@@ -18,6 +22,17 @@ namespace CustomScripts.Gamemode
 
         public bool PackAPunchDeactivated = false;
         public int TimesPackAPunched = 0;
+
+        public bool IsWeaponMine()
+        {
+            if (!Networking.IsHostOrSolo())
+                return true;
+            return false;
+            
+            // if (OwnerIFF == GameManager.ID)
+            //     return true;
+            // return false;
+        }
 
         public void Initialize(FVRFireArm weapon)
         {
@@ -32,6 +47,9 @@ namespace CustomScripts.Gamemode
         // Called when the weapon is in hand
         public void OnWeaponGrabbed()
         {
+            if (!IsWeaponMine())
+                return;
+            
             if (!DoubleTapActivated && PlayerData.Instance.DoubleTapPerkActivated)
             {
                 DoubleTapActivated = true;

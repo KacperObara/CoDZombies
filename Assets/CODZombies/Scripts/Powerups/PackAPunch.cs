@@ -49,7 +49,7 @@ namespace CustomScripts.Powerups
                 }
             }
         }
-
+        
         public void TryBuying(FVRPhysicalObject fvrPhysicalObject)
         {
             WeaponWrapper weaponWrapper = fvrPhysicalObject.GetComponent<WeaponWrapper>();

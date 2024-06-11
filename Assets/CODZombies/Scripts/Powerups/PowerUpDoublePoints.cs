@@ -1,6 +1,7 @@
 #if H3VR_IMPORTED
 using System;
 using System.Collections;
+using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using UnityEngine;
 namespace CustomScripts
@@ -26,7 +27,7 @@ namespace CustomScripts
             StartCoroutine(DespawnDelay());
         }
 
-        public override void ApplyModifier()
+        public override void OnCollect()
         {
             PlayerData.Instance.MoneyModifier = 2f;
             PlayerData.Instance.DoublePointsPowerUpIndicator.Activate(30f);
@@ -38,6 +39,13 @@ namespace CustomScripts
                 PickedUpEvent.Invoke();
 
             Despawn();
+        }
+        
+        public override void ApplyModifier()
+        {
+            SyncData();
+            if (Networking.IsHostOrSolo())
+                ApplyModifier();
         }
 
         private IEnumerator DisablePowerUpDelay(float time)

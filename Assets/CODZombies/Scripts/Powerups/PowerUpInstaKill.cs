@@ -1,5 +1,6 @@
 #if H3VR_IMPORTED
 using System.Collections;
+using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using UnityEngine;
 namespace CustomScripts.Powerups
@@ -22,17 +23,23 @@ namespace CustomScripts.Powerups
             _animator.Play("Rotating");
             StartCoroutine(DespawnDelay());
         }
+        
+        public override void OnCollect()
+        {
+            PlayerData.Instance.InstaKill = true;
+            PlayerData.Instance.InstaKillPowerUpIndicator.Activate(30f);
+            StartCoroutine(DisablePowerUpDelay(30f));
+            AudioManager.Instance.Play(ApplyAudio, .2f);
+            
+            Despawn();
+        }
 
         public override void ApplyModifier()
         {
-            PlayerData.Instance.InstaKill = true;
+            SyncData();
+            if (Networking.IsHostOrSolo())
+                ApplyModifier();
 
-            PlayerData.Instance.InstaKillPowerUpIndicator.Activate(30f);
-            StartCoroutine(DisablePowerUpDelay(30f));
-
-            AudioManager.Instance.Play(ApplyAudio, .2f);
-
-            Despawn();
         }
 
         private IEnumerator DisablePowerUpDelay(float time)

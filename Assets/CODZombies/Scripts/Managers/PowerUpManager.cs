@@ -1,9 +1,12 @@
 #if H3VR_IMPORTED
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using CustomScripts.Multiplayer;
 using CustomScripts.Powerups;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
 namespace CustomScripts
 {
     public class PowerUpManager : MonoBehaviourSingleton<PowerUpManager>
@@ -21,15 +24,18 @@ namespace CustomScripts
 
         private bool _isPowerUpCooldown;
         private bool _isMaxAmmoCooldown;
-
-        public override void Awake()
+        
+        public int GetIndexOf(PowerUp powerUp) { return PowerUps.IndexOf(powerUp); }
+        
+        private void Start()
         {
-            base.Awake();
+            if (Networking.IsHostOrSolo())
+            {
+                RoundManager.OnZombieKilled -= RollForPowerUp;
+                RoundManager.OnZombieKilled += RollForPowerUp;
 
-            RoundManager.OnZombieKilled -= RollForPowerUp;
-            RoundManager.OnZombieKilled += RollForPowerUp;
-
-            ShuffleIndexes();
+                ShuffleIndexes();
+            }
         }
 
         private void OnDestroy()
@@ -63,9 +69,9 @@ namespace CustomScripts
             {
                 if (_randomIndexes.Count == 0)
                     ShuffleIndexes();
-
-                //StartCoroutine(PowerUpMaxAmmoCooldown());
+                
                 SpawnPowerUp(PowerUps[_randomIndexes[0]], spawnPos.transform.position);
+                CodZNetworking.Instance.PowerUpSpawned_Send(_randomIndexes[0], spawnPos.transform.position);
 
                 _randomIndexes.RemoveAt(0);
             }
@@ -98,6 +104,19 @@ namespace CustomScripts
             StartCoroutine(PowerUpCooldown());
             powerUp.Spawn(pos + Vector3.up);
         }
+        
+        // public void Collect(int powerUpID)
+        // {
+        //     if (Networking.IsHostOrSolo())
+        //     {
+        //         PowerUps[powerUpID].ApplyModifier();
+        //         CodZNetworking.Instance.PowerUpCollected_Send(powerUpID);
+        //     }
+        //     else
+        //     {
+        //         CodZNetworking.Instance.Client_PowerUpCollected_Send(powerUpID);
+        //     }
+        // }
 
         private IEnumerator PowerUpCooldown()
         {
@@ -105,7 +124,7 @@ namespace CustomScripts
             yield return new WaitForSeconds(PowerUpCooldownTime);
             _isPowerUpCooldown = false;
         }
-
+        
         // private IEnumerator PowerUpMaxAmmoCooldown()
         // {
         //     _isMaxAmmoCooldown = true;

@@ -42,22 +42,17 @@ namespace CustomScripts
             if (Networking.IsHost())
             {
                 int waypointID = GetRandomMovePoint();
+                _nextTeleportWaypoint = waypointID;
                 CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, true);
-                Teleport(true);
+                Teleport();
             }
         }
 
-        public void Teleport(bool includeCurrentPos = false)
+        public void Teleport()
         {
             Transform newPos = SpawnPoints[_nextTeleportWaypoint];
-
-            // if (!includeCurrentPos)
-            // {
-            //     SpawnPoints.Add(CurrentPos);
-            // }
-
+            
             CurrentPos = newPos;
-            //SpawnPoints.Remove(newPos); // Exclude current transform from randomization
 
             _parent.transform.position = newPos.position;
             _parent.transform.rotation = newPos.rotation;
@@ -74,18 +69,17 @@ namespace CustomScripts
             if (Random.Range(0, 100) <= TeleportChance)
             {
                 int waypointID = GetRandomMovePoint();
+                SetNextWaypoint(waypointID);
                 CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, false);
-                StartTeleportAnim(waypointID);
+                StartTeleportAnim();
                 return true;
             }
             
             return false;
         }
 
-        public void StartTeleportAnim(int newWaypointID)
+        public void StartTeleportAnim()
         {
-            _nextTeleportWaypoint = newWaypointID;
-            
             int secretTeddyChance = Random.Range(0, 5801);
             GameObject teddy;
 
@@ -127,8 +121,12 @@ namespace CustomScripts
 
         public int GetRandomMovePoint()
         {
-            
             return 0;
+        }
+        
+        public void SetNextWaypoint(int waypointID)
+        {
+            _nextTeleportWaypoint = waypointID;
         }
     }
 }

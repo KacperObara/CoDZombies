@@ -25,10 +25,10 @@ namespace CustomScripts.Multiplayer
         // Send playerID + int value
         private int customData_playerID_ID = -1;
         private int customData_playerID_Client_ID = -1;
-        
-        // private int mysteryBoxMoved_ID = -1;
-        // private int powerUpSpawned_ID = -1;
-        // private int powerUpCollected_ID = -1;
+
+        private int powerUpSpawned_ID = -1;
+        private int powerUpCollected_ID = -1;
+        private int powerUpCollected_Client_ID = -1;
         
         void Start()
         {
@@ -45,171 +45,51 @@ namespace CustomScripts.Multiplayer
 
         private void SetupPacketTypes()
         {
+            RegisterPacket("CodZ_GameStarted", StartGame_Handler, StartGame_Received, ref gameStarted_ID);
+            RegisterPacket("CodZ_SendIFF", StartGame_Handler, SendIFF_Received, ref sendIFF_ID);
+            RegisterPacket("CodZ_MysteryBoxMoved", MysteryBoxMoved_Handler, MysteryBoxMoved_Received, ref mysteryBoxMoved_ID);
+            
+            RegisterPacket("CodZ_BlockadeCleared", BlockadeCleared_Handler, BlockadeCleared_Received, ref blockadeCleared_ID);
+            RegisterPacket("CodZ_Client_BlockadeCleared", Client_BlockadeCleared_Handler, Client_BlockadeCleared_Received, ref blockadeCleared_Client_ID);
+            
+            RegisterPacket("CodZ_CustomData", CustomData_Handler, CustomData_Received, ref customData_ID);
+            RegisterPacket("CodZ_Client_CustomData", Client_CustomData_Handler, Client_CustomData_Received, ref customData_Client_ID);
+            
+            RegisterPacket("CodZ_CustomData_PlayerID", CustomData_PlayerID_Handler, CustomData_PlayerID_Received, ref customData_playerID_ID);
+            RegisterPacket("CodZ_Client_CustomData_PlayerID", Client_CustomData_PlayerID_Handler, Client_CustomData_PlayerID_Received, ref customData_playerID_Client_ID);
+
+            RegisterPacket("CodZ_PowerUpSpawned", PowerUpSpawned_Handler, PowerUpSpawned_Received, ref powerUpSpawned_ID);
+            
+            RegisterPacket("CodZ_PowerUpCollected", PowerUpCollected_Handler, PowerUpCollected_Received, ref powerUpCollected_ID);
+            RegisterPacket("CodZ_Client_PowerUpCollected", Client_PowerUpCollected_Handler, Client_PowerUpCollected_Received, ref powerUpCollected_Client_ID);
+        }
+        
+        private void RegisterPacket(string packetName, Mod.CustomPacketHandler hostHandler, Mod.CustomPacketHandlerReceivedDelegate clientHandler, ref int packetID)
+        {
             if (Networking.IsHost())
             {
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_GameStarted"))
-                    gameStarted_ID = Mod.registeredCustomPacketIDs["CodZ_GameStarted"];
+                if (Mod.registeredCustomPacketIDs.ContainsKey(packetName))
+                {
+                    packetID = Mod.registeredCustomPacketIDs[packetName];
+                }
                 else
-                    gameStarted_ID = Server.RegisterCustomPacketType("CodZ_GameStarted");
-                Mod.customPacketHandlers[gameStarted_ID] = StartGame_Handler;
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_SendIFF"))
-                    sendIFF_ID = Mod.registeredCustomPacketIDs["CodZ_SendIFF"];
-                else
-                    sendIFF_ID = Server.RegisterCustomPacketType("CodZ_SendIFF");
-                Mod.customPacketHandlers[sendIFF_ID] = StartGame_Handler;
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_MysteryBoxMoved"))
-                    mysteryBoxMoved_ID = Mod.registeredCustomPacketIDs["CodZ_MysteryBoxMoved"];
-                else
-                    mysteryBoxMoved_ID = Server.RegisterCustomPacketType("CodZ_MysteryBoxMoved");
-                Mod.customPacketHandlers[mysteryBoxMoved_ID] = MysteryBoxMoved_Handler;
-                
-                // Blockade Cleared
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_BlockadeCleared"))
-                    blockadeCleared_ID = Mod.registeredCustomPacketIDs["CodZ_BlockadeCleared"];
-                else
-                    blockadeCleared_ID = Server.RegisterCustomPacketType("CodZ_BlockadeCleared");
-                Mod.customPacketHandlers[blockadeCleared_ID] = BlockadeCleared_Handler;
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_BlockadeCleared"))
-                    blockadeCleared_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_BlockadeCleared"];
-                else
-                    blockadeCleared_Client_ID = Server.RegisterCustomPacketType("CodZ_Client_BlockadeCleared");
-                Mod.customPacketHandlers[blockadeCleared_Client_ID] = Client_BlockadeCleared_Handler;
-                
-                // Custom Data (int value)
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData"))
-                    customData_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData"];
-                else
-                    customData_ID = Server.RegisterCustomPacketType("CodZ_CustomData");
-                Mod.customPacketHandlers[customData_ID] = CustomData_Handler;
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_CustomData"))
-                    customData_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_CustomData"];
-                else
-                    customData_Client_ID = Server.RegisterCustomPacketType("CodZ_Client_CustomData");
-                Mod.customPacketHandlers[customData_Client_ID] = Client_CustomData_Handler;
-                
-                // Custom Data (PlayerID + int value)
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData_PlayerID"))
-                    customData_playerID_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData_PlayerID"];
-                else
-                    customData_playerID_ID = Server.RegisterCustomPacketType("CodZ_CustomData_PlayerID");
-                Mod.customPacketHandlers[customData_playerID_ID] = CustomData_PlayerID_Handler;       
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_CustomData_PlayerID"))
-                    customData_playerID_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_CustomData_PlayerID"];
-                else
-                    customData_playerID_Client_ID = Server.RegisterCustomPacketType("CodZ_Client_CustomData_PlayerID");
-                Mod.customPacketHandlers[customData_playerID_Client_ID] = Client_CustomData_PlayerID_Handler;  
+                {
+                    packetID = Server.RegisterCustomPacketType(packetName);
+                }
+                Mod.customPacketHandlers[packetID] = hostHandler;
             }
             else
             {
-                //Game Started
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_GameStarted"))
+                if (Mod.registeredCustomPacketIDs.ContainsKey(packetName))
                 {
-                    gameStarted_ID = Mod.registeredCustomPacketIDs["CodZ_GameStarted"];
-                    Mod.customPacketHandlers[gameStarted_ID] = StartGame_Handler;
+                    packetID = Mod.registeredCustomPacketIDs[packetName];
+                    Mod.customPacketHandlers[packetID] = hostHandler;
                 }
                 else
                 {
-                    ClientSend.RegisterCustomPacketType("CodZ_GameStarted");
-                    Mod.CustomPacketHandlerReceived += StartGame_Received;
+                    ClientSend.RegisterCustomPacketType(packetName);
+                    Mod.CustomPacketHandlerReceived += clientHandler;
                 }
-                
-                //Send IFF
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_SendIFF"))
-                {
-                    sendIFF_ID = Mod.registeredCustomPacketIDs["CodZ_SendIFF"];
-                    Mod.customPacketHandlers[sendIFF_ID] = SendIFF_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_SendIFF");
-                    Mod.CustomPacketHandlerReceived += SendIFF_Received;
-                }   
-                
-                //Mystery Box Moved
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_MysteryBoxMoved"))
-                {
-                    mysteryBoxMoved_ID = Mod.registeredCustomPacketIDs["CodZ_MysteryBoxMoved"];
-                    Mod.customPacketHandlers[mysteryBoxMoved_ID] = MysteryBoxMoved_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_MysteryBoxMoved");
-                    Mod.CustomPacketHandlerReceived += MysteryBoxMoved_Received;
-                }
-                
-                //Blockade Cleared
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_BlockadeCleared"))
-                {
-                    blockadeCleared_ID = Mod.registeredCustomPacketIDs["CodZ_BlockadeCleared"];
-                    Mod.customPacketHandlers[blockadeCleared_ID] = BlockadeCleared_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_BlockadeCleared");
-                    Mod.CustomPacketHandlerReceived += BlockadeCleared_Received;
-                }
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_BlockadeCleared"))
-                {
-                    blockadeCleared_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_BlockadeCleared"];
-                    Mod.customPacketHandlers[blockadeCleared_Client_ID] = Client_BlockadeCleared_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_Client_BlockadeCleared");
-                    Mod.CustomPacketHandlerReceived += Client_BlockadeCleared_Received;
-                }
-                
-                //Custom Data (int value)
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData"))
-                {
-                    customData_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData"];
-                    Mod.customPacketHandlers[customData_ID] = CustomData_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_CustomData");
-                    Mod.CustomPacketHandlerReceived += CustomData_Received;
-                }
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_CustomData"))
-                {
-                    customData_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_CustomData"];
-                    Mod.customPacketHandlers[customData_Client_ID] = Client_CustomData_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_Client_CustomData");
-                    Mod.CustomPacketHandlerReceived += Client_CustomData_Received;
-                }
-                
-                // Custom Data (PlayerID + int value)
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_CustomData_PlayerID"))
-                {
-                    customData_playerID_ID = Mod.registeredCustomPacketIDs["CodZ_CustomData_PlayerID"];
-                    Mod.customPacketHandlers[customData_playerID_ID] = CustomData_PlayerID_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_CustomData_PlayerID");
-                    Mod.CustomPacketHandlerReceived += CustomData_PlayerID_Received;
-                }   
-                
-                if (Mod.registeredCustomPacketIDs.ContainsKey("CodZ_Client_CustomData_PlayerID"))
-                {
-                    customData_playerID_Client_ID = Mod.registeredCustomPacketIDs["CodZ_Client_CustomData_PlayerID"];
-                    Mod.customPacketHandlers[customData_playerID_Client_ID] = Client_CustomData_PlayerID_Handler;
-                }
-                else
-                {
-                    ClientSend.RegisterCustomPacketType("CodZ_Client_CustomData_PlayerID");
-                    Mod.CustomPacketHandlerReceived += Client_CustomData_PlayerID_Received;
-                } 
             }
         }
 
@@ -316,9 +196,10 @@ namespace CustomScripts.Multiplayer
             int newWaypointID = packet.ReadInt();
             bool immediate = packet.ReadBool();
             
-            //TODO Tu zepsute jeszcze, nie ustawiam nowego waypointa
+            Refs.MysteryBoxMover.SetNextWaypoint(newWaypointID);
+
             if (immediate)
-                Refs.MysteryBoxMover.StartTeleportAnim(newWaypointID);
+                Refs.MysteryBoxMover.StartTeleportAnim();
             else
                 Refs.MysteryBoxMover.Teleport();
         }
@@ -395,6 +276,105 @@ namespace CustomScripts.Multiplayer
             }
         }
         
+        #endregion
+        
+        #region PowerUpSpawned
+
+        // Host
+        public void PowerUpSpawned_Send(int powerUpId, Vector3 pos)
+        {
+            if (!Networking.ServerRunning() || Networking.IsClient())
+                return;
+    
+            Packet packet = new Packet(powerUpSpawned_ID);
+            packet.Write(powerUpId);
+            packet.Write(pos);
+    
+            ServerSend.SendTCPDataToAll(packet, true);
+        }
+
+        void PowerUpSpawned_Handler(int clientID, Packet packet)
+        {
+            int powerUpId = packet.ReadInt();
+            Vector3 pos = packet.ReadVector3();
+            PowerUpManager.Instance.SpawnPowerUp(PowerUpManager.Instance.PowerUps[powerUpId], pos);
+        }
+
+        void PowerUpSpawned_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_PowerUpSpawned")
+            {
+                powerUpSpawned_ID = index;
+                Mod.customPacketHandlers[index] = PowerUpSpawned_Handler;
+                Mod.CustomPacketHandlerReceived -= PowerUpSpawned_Received;
+            }
+        }
+        
+        #endregion
+
+        
+        #region PowerUpCollected
+
+        // Host
+        public void PowerUpCollected_Send(int powerUpId)
+        {
+            if (!Networking.ServerRunning() || Networking.IsClient())
+                return;
+    
+            Packet packet = new Packet(powerUpCollected_ID);
+            packet.Write(powerUpId);
+    
+            ServerSend.SendTCPDataToAll(packet, true);
+        }
+
+        void PowerUpCollected_Handler(int clientID, Packet packet)
+        {
+            int powerUpId = packet.ReadInt();
+            PowerUp powerUp = PowerUpManager.Instance.PowerUps[powerUpId];
+            powerUp.ApplyModifier();
+        }
+
+        void PowerUpCollected_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_PowerUpCollected")
+            {
+                powerUpCollected_ID = index;
+                Mod.customPacketHandlers[index] = PowerUpCollected_Handler;
+                Mod.CustomPacketHandlerReceived -= PowerUpCollected_Received;
+            }
+        }
+
+        // Client
+        public void Client_PowerUpCollected_Send(int powerUpId)
+        {
+            if (!Networking.ServerRunning() || Networking.IsHost())
+                return;
+
+            Packet packet = new Packet(powerUpCollected_Client_ID);
+            packet.Write(powerUpId);
+    
+            ClientSend.SendTCPData(packet, true);
+        }
+
+        void Client_PowerUpCollected_Handler(int clientID, Packet packet)
+        {
+            int powerUpId = packet.ReadInt();
+            PowerUp powerUp = PowerUpManager.Instance.PowerUps[powerUpId];
+            powerUp.ApplyModifier();
+    
+            PowerUpCollected_Send(powerUpId);
+        }
+
+        void Client_PowerUpCollected_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_Client_PowerUpCollected")
+            {
+                powerUpCollected_Client_ID = index;
+                Mod.customPacketHandlers[index] = Client_PowerUpCollected_Handler;
+                Mod.CustomPacketHandlerReceived -= Client_PowerUpCollected_Received;
+            }
+        }
+
         #endregion
         
         #region Custom Data (int value)
@@ -488,7 +468,6 @@ namespace CustomScripts.Multiplayer
                 
                 Vector3 deathPos = GameManager.players[playerID].transform.position;
                 ReviveButton.Instance.Spawn(playerID, deathPos);
-                // Spawn revive UI
             }
             else if (customDataId == (int)CustomPlayerDataType.PLAYER_REVIVED)
             {
@@ -578,7 +557,7 @@ namespace CustomScripts.Multiplayer
     public enum CustomDataType
     {
         MYSTERY_BOX_BOUGHT = 0,
-        //MYSTERY_BOX_MOVED = 1,
+        PACK_A_PUNCH_BUSY = 1,
         POWER_ENABLED = 2,
         EVERY_PLAYER_DEAD = 3,
     }

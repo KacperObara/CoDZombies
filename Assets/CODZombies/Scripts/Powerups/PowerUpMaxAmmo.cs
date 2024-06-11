@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using CustomScripts.Gamemode;
+using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
 using UnityEngine;
@@ -25,8 +26,8 @@ namespace CustomScripts.Powerups
             animator.Play("Rotating");
             StartCoroutine(DespawnDelay());
         }
-
-        public override void ApplyModifier()
+        
+        public override void OnCollect()
         {
             TryToLoadAmmoInQuickbelt();
             TryToLoadAmmoInHand(PlayerData.Instance.LeftHand);
@@ -34,6 +35,14 @@ namespace CustomScripts.Powerups
 
             AudioManager.Instance.Play(ApplyAudio, .5f);
             Despawn();
+        }
+
+        public override void ApplyModifier()
+        {
+            SyncData();
+            if (Networking.IsHostOrSolo())
+                ApplyModifier();
+
         }
 
         private void TryToLoadAmmoInHand(FVRViveHand hand)

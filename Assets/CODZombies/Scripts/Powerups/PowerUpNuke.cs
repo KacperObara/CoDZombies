@@ -1,6 +1,7 @@
 #if H3VR_IMPORTED
 using System.Collections;
 using CustomScripts.Managers;
+using CustomScripts.Multiplayer;
 using UnityEngine;
 namespace CustomScripts
 {
@@ -22,13 +23,20 @@ namespace CustomScripts
             StartCoroutine(DespawnDelay());
         }
 
+        public override void OnCollect()
+        {
+            if (Networking.IsHostOrSolo())
+                StartCoroutine(DelayedKillAll());
+            
+            AudioManager.Instance.Play(ApplyAudio, .5f);
+            Despawn();
+        }
+        
         public override void ApplyModifier()
         {
-            StartCoroutine(DelayedKillAll());
-
-            AudioManager.Instance.Play(ApplyAudio, .5f);
-
-            Despawn();
+            SyncData();
+            if (Networking.IsHostOrSolo())
+                ApplyModifier();
         }
 
         // Partially to make better visuals, partially for better performance (not everything at once)

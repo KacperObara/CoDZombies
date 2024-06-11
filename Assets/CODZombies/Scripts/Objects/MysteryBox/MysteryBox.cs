@@ -65,14 +65,19 @@ namespace CustomScripts
             InUse = true;
             AudioManager.Instance.Play(RollSound, .25f);
             
-            if (Networking.IsHost())
-                StartCoroutine(DelayedSpawn());
+            StartCoroutine(DelayedSpawn());
         }
 
         private IEnumerator DelayedSpawn()
         {
             yield return new WaitForSeconds(5.5f);
 
+            if (!Networking.IsHost())
+            {
+                InUse = false;
+                yield break;
+            }
+            
             if (!_mysteryBoxMover.TryTeleport())
             {
                 int random = Random.Range(0, LootId.Count);

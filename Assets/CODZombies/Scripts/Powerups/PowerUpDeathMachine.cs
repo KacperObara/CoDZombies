@@ -1,6 +1,7 @@
 #if H3VR_IMPORTED
 using System.Collections;
 using CustomScripts.Gamemode.GMDebug;
+using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
 using UnityEngine;
@@ -32,46 +33,43 @@ namespace CustomScripts.Powerups
             _animator.Play("Rotating");
             StartCoroutine(DespawnDelay());
         }
-
-        public override void ApplyModifier()
+        
+        public override void OnCollect()
         {
-            MinigunSpawner.Spawn();
-            MagazineSpawner.Spawn();
-
-            _minigunObject = MinigunSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
-            _minigunObject.SpawnLockable = false;
-            _minigunObject.UsesGravity = false;
-
-            _minigunObject.RootRigidbody.isKinematic = true;
-
-            _magazineObject = MagazineSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
-            _magazineObject.SpawnLockable = false;
-            _magazineObject.UsesGravity = false;
-
-            _magazineObject.RootRigidbody.isKinematic = true;
-
-            (_magazineObject as FVRFireArmMagazine).Load(_minigunObject as FVRFireArm);
-
-            FVRViveHand hand = PlayerData.Instance.RightHand;
-            // If players has empty right hand and is holding the grip, then auto equip minigun
-            if (hand.CurrentInteractable == null &&
-                hand.Grip_Button.stateDown)
+            if (Networking.IsHostOrSolo())
             {
-                Debug.Log("Player should grab minigun");
-                hand.RetrieveObject(_minigunObject);
-                // hand.CurrentInteractable = _minigunObject;
-                // //this.m_state = FVRViveHand.HandState.GripInteracting;
-                // _minigunObject.BeginInteraction(hand);
-                // hand.Buzz(hand.Buzzer.Buzz_BeginInteraction);
+                MinigunSpawner.Spawn();
+                MagazineSpawner.Spawn();
+
+                _minigunObject = MinigunSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
+                _minigunObject.SpawnLockable = false;
+                _minigunObject.UsesGravity = false;
+
+                _minigunObject.RootRigidbody.isKinematic = true;
+
+                _magazineObject = MagazineSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
+                _magazineObject.SpawnLockable = false;
+                _magazineObject.UsesGravity = false;
+
+                _magazineObject.RootRigidbody.isKinematic = true;
+
+                (_magazineObject as FVRFireArmMagazine).Load(_minigunObject as FVRFireArm);
+
+                PlayerData.Instance.DeathMachinePowerUpIndicator.Activate(30f);
+
+                StartCoroutine(DisablePowerUpDelay(30f));
             }
-
-            PlayerData.Instance.DeathMachinePowerUpIndicator.Activate(30f);
-
-            StartCoroutine(DisablePowerUpDelay(30f));
-
+            
             AudioManager.Instance.Play(ApplyAudio, .5f);
 
             Despawn();
+        }
+
+        public override void ApplyModifier()
+        {
+            SyncData();
+            if (Networking.IsHostOrSolo())
+                ApplyModifier();
         }
 
         private IEnumerator DisablePowerUpDelay(float time)

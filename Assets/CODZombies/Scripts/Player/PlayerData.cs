@@ -105,8 +105,8 @@ namespace CustomScripts.Player
         /// Place in which weapon or magazine wrapper classes are added to the objects
         /// </summary>
         [HarmonyPatch(typeof(FVRPhysicalObject), "BeginInteraction")]
-        [HarmonyPostfix]
-        private static void OnPhysicalObjectStartInteraction(FVRPhysicalObject __instance, FVRViveHand hand)
+        [HarmonyPrefix]
+        private static bool OnPhysicalObjectStartInteraction(FVRPhysicalObject __instance, FVRViveHand hand)
         {
             if (__instance as FVRFireArm)
             {
@@ -118,6 +118,7 @@ namespace CustomScripts.Player
                 }
 
                 wrapper.OnWeaponGrabbed();
+                return wrapper.IsWeaponMine();
             }
             else if (__instance as FVRFireArmMagazine)
             {
@@ -128,6 +129,8 @@ namespace CustomScripts.Player
                     wrapper.Initialize((FVRFireArmMagazine) __instance);
                 }
             }
+            
+            return true;
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]

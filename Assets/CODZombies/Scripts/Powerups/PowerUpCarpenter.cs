@@ -1,5 +1,6 @@
 #if H3VR_IMPORTED
 using System.Collections;
+using CustomScripts.Multiplayer;
 using UnityEngine;
 namespace CustomScripts.Powerups
 {
@@ -20,14 +21,21 @@ namespace CustomScripts.Powerups
             _animator.Play("Rotating");
             StartCoroutine(DespawnDelay());
         }
-
-        public override void ApplyModifier()
+        
+        public override void OnCollect()
         {
             StartCoroutine(DelayedApply());
 
             AudioManager.Instance.Play(ApplyAudio, .3f);
-
+            
             Despawn();
+        }
+
+        public override void ApplyModifier()
+        {
+            SyncData();
+            if (Networking.IsHostOrSolo())
+                ApplyModifier();
         }
 
         private IEnumerator DelayedApply()
