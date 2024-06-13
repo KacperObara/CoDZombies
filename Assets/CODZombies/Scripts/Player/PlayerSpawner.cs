@@ -39,8 +39,8 @@ namespace CustomScripts.Gamemode
             GM.CurrentPlayerBody.EnableHands();
             GM.CurrentPlayerBody.EnableHitBoxes();
             GM.CurrentPlayerBody.WipeQuickbeltContents();
-            PlayerData.Instance.IsDead = false;
-            PlayerData.Instance.NeedsRevive = false;
+            PlayersMgr.Me.IsDead = false;
+            PlayersMgr.Me.IsDowned = false;
             GM.CurrentMovementManager.TeleportToPoint(RespawnPos.position, true);
             SteamVR_Fade.Start(Color.clear, 0.0f); 
             SpawnStartingLoadout();
@@ -82,21 +82,21 @@ namespace CustomScripts.Gamemode
         [HarmonyPostfix]
         private static void AfterPlayerDeath()
         {
-            Instance.OnPlayerDeath();
+            Instance.OnPlayerDowned();
         }
         
-        public void OnPlayerDeath()
+        public void OnPlayerDowned()
         {
             if (Networking.ServerRunning() )//&& GameManager.players.Count > 0)
             {
                 // Put into revive state
-                PlayerData.Instance.NeedsRevive = true;
+                PlayersMgr.Me.IsDowned = true;
                 GM.CurrentMovementManager.TeleportToPoint(DownedPos, true, transform.position + transform.forward);
                 GM.CurrentPlayerBody.HealPercent(1f);
                 
                 GM.CurrentPlayerBody.DisableHands();
                 GM.CurrentPlayerBody.DisableHitBoxes();
-                SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
+                SteamVR_Fade.Start(new Color(0.5f, 0, 0, 0.5f), 0.25f);
 
                 if (Networking.IsHost())
                 {
@@ -127,7 +127,7 @@ namespace CustomScripts.Gamemode
 
         public void Revive()
         {
-            PlayerData.Instance.NeedsRevive = false;
+            PlayersMgr.Me.IsDowned = false;
             GM.CurrentPlayerBody.EnableHands();
             GM.CurrentPlayerBody.EnableHitBoxes();
             
@@ -139,11 +139,20 @@ namespace CustomScripts.Gamemode
 
         public void DieFully()
         {
-            PlayerData.Instance.IsDead = true;
-            PlayerData.Instance.NeedsRevive = false;
+            PlayersMgr.Me.IsDead = true;
+            PlayersMgr.Me.IsDowned = false;
             GM.CurrentPlayerBody.WipeQuickbeltContents();
-            SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
+            SteamVR_Fade.Start(new Color(0, 0, 0, 0.5f), 0.25f);
             RoundManager.OnRoundChanged += SpawnPlayer;
+            
+            if (Networking.IsHost())
+            {
+                CodZNetworking.Instance.CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_DEAD);
+            }
+            else
+            {
+                CodZNetworking.Instance.Client_CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_DEAD);
+            }
         }
         
         public void MoveToEndGameArea()

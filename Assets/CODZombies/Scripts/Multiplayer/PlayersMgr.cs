@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr> 
 {
 	public List<PlayerH3MPData> Players = new List<PlayerH3MPData>();
-	//public static PlayerH3MPData HostData { get { return Instance.Players[0]; } }
+	public static PlayerH3MPData Me;
 	
 	private void Start()
 	{
@@ -56,6 +56,11 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 		List<PlayerH3MPData> alivePlayers = Players.FindAll(player => player.IsAlive);
 		return alivePlayers.OrderBy(player => Vector3.Distance(player.GetHead().position, origin)).First();
 	}
+	
+	public bool AllPlayersDowned()
+	{
+		return Players.All(player => !player.IsAlive);
+	}
 
 	public void AddMe()
 	{
@@ -64,6 +69,7 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 			IsMe = true,
 			PlayerManager = null
 		});
+		Me = Players[Players.Count - 1];
 	}
 
 	public void AddClient(PlayerManager playerManager)
@@ -78,6 +84,11 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	private void OnDestroy()
 	{
 		RoundManager.OnGameStarted -= AddClients;
+	}
+
+	public static PlayerH3MPData GetPlayer(int playerID)
+	{
+		return Instance.Players.Find(player => player.PlayerManager.ID == playerID);
 	}
 }
 

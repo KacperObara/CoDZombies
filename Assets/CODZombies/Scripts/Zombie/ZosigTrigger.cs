@@ -4,21 +4,21 @@ namespace CustomScripts.Zombie
 {
     public class ZosigTrigger : MonoBehaviour
     {
-        private ZosigZombieController _zosigController;
+        public ZosigZombieController ZosigController;
 
         private void OnTriggerEnter(Collider other)
         {
-            _zosigController.OnTriggerEntered(other);
+            ZosigController.OnTriggerEntered(other);
         }
 
         public void Initialize(ZosigZombieController controller)
         {
-            _zosigController = controller;
+            ZosigController = controller;
         }
 
         private void OnTriggerExit(Collider other)
         {
-            _zosigController.OnTriggerExited(other);
+            ZosigController.OnTriggerExited(other);
         }
     }
 }

@@ -84,20 +84,26 @@ namespace CustomScripts.Gamemode.GMDebug
 
             if (Input.GetKeyDown(KeyCode.I))
             {
-                TeleportToSecondArea.OnLeverPull();
+                int random = Random.Range(0, GameRefs.Windows.Count);
+                if (!GameRefs.Windows[random].IsBroken)
+                    GameRefs.Windows[random].TearPlank();
             }
             if (Input.GetKeyDown(KeyCode.O))
             {
-                TeleportToMainArea.OnLeverPull();
+                int random = Random.Range(0, GameRefs.Windows.Count);
+                if (!GameRefs.Windows[random].IsFullyRepaired())
+                    GameRefs.Windows[random].RepairWindow();
             }
             
 
             if (Input.GetKeyDown(KeyCode.M))
             {
-                GameSettings.Instance.ToggleBackgroundMusic();
+                SpawnTestObject();
             }
-            
+
+#if !UNITY_EDITOR
             IFFText.text = "IFF: " + GM.CurrentPlayerBody.GetPlayerIFF();
+#endif
         }
 
         public void SpawnCarpenter()
@@ -151,27 +157,10 @@ namespace CustomScripts.Gamemode.GMDebug
             }
         }
 
-        private bool _isGodMode;
-        public void ToggleGodMode()
+        public GameObject Prefab;
+        public void SpawnTestObject()
         {
-            _isGodMode = !_isGodMode;
-
-            if (_isGodMode)
-            {
-                GM.CurrentPlayerBody.Health = 999999;
-                GM.CurrentPlayerBody.SetHealthThreshold(999999);
-                GM.CurrentPlayerBody.m_buffTime_DamResist = 999999;
-                GM.CurrentPlayerBody.ActivatePower(PowerupType.Invincibility, PowerUpIntensity.High,
-                    PowerUpDuration.SuperLong, false, false);
-                GM.CurrentPlayerBody.m_buffTime_DamResist = 999999;
-            }
-            else
-            {
-                GM.CurrentPlayerBody.Health = 5000;
-                GM.CurrentPlayerBody.SetHealthThreshold(5000);
-                GM.CurrentPlayerBody.m_buffTime_DamResist = 0;
-            }
-            
+            Instantiate(Prefab, Point.position, Quaternion.identity);
         }
     }
 }

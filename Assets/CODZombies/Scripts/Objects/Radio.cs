@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using CustomScripts.Managers.Sound;
+using CustomScripts.Multiplayer;
 using FistVR;
 using UnityEngine;
 namespace CustomScripts.Objects
@@ -15,28 +16,7 @@ namespace CustomScripts.Objects
         private bool _isPlaying;
 
         private Coroutine _musicEndCoroutine;
-
-        private void OnMusicSettingsChanged()
-        {
-            _isPlaying = false;
-            if (_musicEndCoroutine != null)
-                StopCoroutine(_musicEndCoroutine);
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                Damage dam = new Damage();
-                Damage(dam);
-            }
-
-            if (Input.GetKeyDown(KeyCode.V))
-            {
-                GameSettings.Instance.ToggleBackgroundMusic();
-            }
-        }
-
+        
         public void Damage(Damage dam)
         {
             if (dam.Class == FistVR.Damage.DamageClass.Explosive)
@@ -44,7 +24,20 @@ namespace CustomScripts.Objects
 
             if (_isThrottled)
                 return;
+            
+            if (Networking.IsHostOrSolo())
+            {
+                ToggleMusic();
+                CodZNetworking.Instance.CustomData_Send((int)CustomDataType.RADIO_TOGGLE);
+            }
+            else
+            {
+                CodZNetworking.Instance.Client_CustomData_Send((int)CustomDataType.RADIO_TOGGLE);
+            }
+        }
 
+        public void ToggleMusic()
+        {
             if (_isPlaying)
             {
                 _isPlaying = false;

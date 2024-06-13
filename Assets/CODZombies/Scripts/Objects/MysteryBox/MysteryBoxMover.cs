@@ -80,7 +80,7 @@ namespace CustomScripts
 
         public void StartTeleportAnim()
         {
-            int secretTeddyChance = Random.Range(0, 5801);
+            int secretTeddyChance = Random.Range(0, 1000);
             GameObject teddy;
 
             if (secretTeddyChance == 0)

@@ -16,13 +16,14 @@ namespace CustomScripts.Zombie
     public class ZosigZombieController : ZombieController
     {
         public bool CanInteractWithWindows = true;
+        public Window TargetWindow;
 
         private const float agentUpdateInterval = .5f;
         private int _hitsGivingMoney = 6;
 
         private float _agentUpdateTimer;
         private float _cachedSpeed;
-        private bool _isAttackingWindow;
+        //private bool _isAttackingWindow;
         private bool _isDead;
 
         private Sosig _sosig;
@@ -133,29 +134,44 @@ namespace CustomScripts.Zombie
             if (_sosig == null)
                 return;
 
-            if (_isAttackingWindow)
+            // if (_isAttackingWindow)
+            // {
+            //     _sosig.Speed_Run = 0;
+            //     _sosig.Speed_Walk = 0;
+            //     _sosig.Speed_Turning = 0;
+            //     _sosig.Speed_Crawl = 0;
+            //     _sosig.Speed_Sneak = 0;
+            // }
+            // else
+            // {
+            _sosig.Speed_Run = _cachedSpeed;
+            _sosig.Speed_Walk = _cachedSpeed;
+            _sosig.Speed_Turning = _cachedSpeed;
+            _sosig.Speed_Crawl = _cachedSpeed;
+            _sosig.Speed_Sneak = _cachedSpeed;
+            //}
+
+            if (TargetWindow && TargetWindow.IsBroken)
             {
-                _sosig.Speed_Run = 0;
-                _sosig.Speed_Walk = 0;
-                _sosig.Speed_Turning = 0;
-                _sosig.Speed_Crawl = 0;
-                _sosig.Speed_Sneak = 0;
-            }
-            else
-            {
-                _sosig.Speed_Run = _cachedSpeed;
-                _sosig.Speed_Walk = _cachedSpeed;
-                _sosig.Speed_Turning = _cachedSpeed;
-                _sosig.Speed_Crawl = _cachedSpeed;
-                _sosig.Speed_Sneak = _cachedSpeed;
-            }
-            
-            _zombieTargetTimer += Time.deltaTime;
-            if (_zombieTargetTimer >= _zombieTargetTime)
-            {
-                _zombieTargetTimer -= _zombieTargetTime;
+                TargetWindow = null;
                 Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
             }
+            
+            if (!TargetWindow)
+            {
+                _zombieTargetTimer += Time.deltaTime;
+                if (_zombieTargetTimer >= _zombieTargetTime)
+                {
+                    _zombieTargetTimer -= _zombieTargetTime;
+                    Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
+                }
+            }
+        }
+
+        public void AttackWindow(Window window)
+        {
+            TargetWindow = window;
+            Target = TargetWindow.ZombieWaypoint;
         }
 
         private void LateUpdate()
@@ -170,7 +186,6 @@ namespace CustomScripts.Zombie
             if (_agentUpdateTimer >= agentUpdateInterval)
             {
                 _agentUpdateTimer -= agentUpdateInterval;
-
                 _sosig.CommandAssaultPoint(Target.position);
             }
         }
@@ -219,12 +234,6 @@ namespace CustomScripts.Zombie
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
                 }
 
-                Debug.Log("Sosig Died killer: " + killerID + " and me " + GM.CurrentPlayerBody.GetPlayerIFF());
-                if (Networking.IsMineIFF(killerID))
-                {
-                    Debug.Log("That means I killed it!");
-                }
-
                 ZombieManager.Instance.OnZombieDied(this);
             }
             else
@@ -260,12 +269,7 @@ namespace CustomScripts.Zombie
             _sosig.Links[0].LinkExplodes(Damage.DamageClass.Projectile);
             _sosig.KillSosig();
         }
-
-        public void ChangeTarget(Transform newTarget)
-        {
-            Target = newTarget;
-        }
-
+        
         public void OnTriggerEntered(Collider other)
         {
             if (_isDead)
@@ -276,95 +280,71 @@ namespace CustomScripts.Zombie
                 other.GetComponent<ITrap>().OnEnemyEntered(this);
             }
 
-            if (_isAttackingWindow)
-                return;
-
-            if (CanInteractWithWindows && other.GetComponent<WindowTrigger>())
-            {
-                Window window = other.GetComponent<WindowTrigger>().Window;
-                if (window.IsOpen)
-                {
-                    ChangeTarget(GameReferences.Instance.Player);
-                    return;
-                }
-
-                _isAttackingWindow = true;
-
-                _cachedSpeed = _sosig.Speed_Run;
-                _sosig.Speed_Run = 0;
-                _sosig.Speed_Walk = 0;
-                _sosig.Speed_Turning = 0;
-                _sosig.Speed_Crawl = 0;
-                _sosig.Speed_Sneak = 0;
-
-                LastInteractedWindow = window;
-                OnTouchingWindow();
-            }
+            // if (_isAttackingWindow)
+            //     return;
+            //
+            // if (CanInteractWithWindows && other.GetComponent<WindowTrigger>())
+            // {
+            //     Window window = other.GetComponent<WindowTrigger>().Window;
+            //     if (window.IsOpen)
+            //     {
+            //         ChangeTarget(GameRefs.Instance.Player);
+            //         return;
+            //     }
+            //
+            //     _isAttackingWindow = true;
+            //
+            //     _cachedSpeed = _sosig.Speed_Run;
+            //     _sosig.Speed_Run = 0;
+            //     _sosig.Speed_Walk = 0;
+            //     _sosig.Speed_Turning = 0;
+            //     _sosig.Speed_Crawl = 0;
+            //     _sosig.Speed_Sneak = 0;
+            //
+            //     LastInteractedWindow = window;
+            //     OnTouchingWindow();
+            // }
         }
-
-        // TODO In next version, create two colliders, one for entering, second larger for exiting to avoid looping
-        // Be mindful that sosig can sometimes get stuck on the edge and enter and exit constantly,
-        // which means it will take longer to tear down planks
-        // public void OnTriggerExited(Collider other)
-        // {
-        //     if (_isDead)
-        //         return;
-        //
-        //     if (other.GetComponent<WindowTrigger>())
-        //     {
-        //         _isAttackingWindow = false;
-        //         _sosig.Speed_Run = _cachedSpeed;
-        //         _sosig.Speed_Walk = _cachedSpeed;
-        //         _sosig.Speed_Turning = _cachedSpeed;
-        //         _sosig.Speed_Crawl = _cachedSpeed;
-        //         _sosig.Speed_Sneak = _cachedSpeed;
-        //
-        //         ChangeTarget(GameReferences.Instance.Player);
-        //
-        //         if (_tearingPlanksCoroutine != null)
-        //             StopCoroutine(_tearingPlanksCoroutine);
-        //     }
-        // }
-
+        
         public void OnTriggerExited(Collider other)
         {
         }
 
-        public void OnTouchingWindow()
-        {
-            if (_tearingPlanksCoroutine == null)
-                _tearingPlanksCoroutine = StartCoroutine(TearPlankDelayed());
-        }
+        // public void OnTouchingWindow()
+        // {
+        //     if (_tearingPlanksCoroutine == null)
+        //         _tearingPlanksCoroutine = StartCoroutine(TearPlankDelayed());
+        // }
 
-        public void OnHitWindow()
-        {
-            LastInteractedWindow.OnPlankRipped();
-
-            if (LastInteractedWindow.IsOpen)
-            {
-                ChangeTarget(GameReferences.Instance.Player);
-            }
-        }
-
-        private IEnumerator TearPlankDelayed()
-        {
-            while (!LastInteractedWindow.IsOpen && !_isDead)
-            {
-                yield return new WaitForSeconds(2.5f);
-
-                if (!_isDead && _sosig.BodyState == Sosig.SosigBodyState.InControl)
-                    OnHitWindow();
-            }
-
-            _isAttackingWindow = false;
-            _sosig.Speed_Run = _cachedSpeed;
-            _sosig.Speed_Walk = _cachedSpeed;
-            _sosig.Speed_Turning = _cachedSpeed;
-            _sosig.Speed_Crawl = _cachedSpeed;
-            _sosig.Speed_Sneak = _cachedSpeed;
-
-            _tearingPlanksCoroutine = null;
-        }
+        // public void OnHitWindow()
+        // {
+        //     LastInteractedWindow.OnPlankRipped();
+        //
+        //     if (LastInteractedWindow.IsOpen)
+        //     {
+        //         ChangeTarget(GameRefs.Instance.Player);
+        //     }
+        // }
+        //
+        // private IEnumerator TearPlankDelayed()
+        // {
+        //     while (!LastInteractedWindow.IsOpen && !_isDead)
+        //     {
+        //         yield return new WaitForSeconds(2.5f);
+        //
+        //         if (!_isDead && _sosig.BodyState == Sosig.SosigBodyState.InControl)
+        //             OnHitWindow();
+        //     }
+        //
+        //     _isAttackingWindow = false;
+        //     _sosig.Speed_Run = _cachedSpeed;
+        //     _sosig.Speed_Walk = _cachedSpeed;
+        //     _sosig.Speed_Turning = _cachedSpeed;
+        //     _sosig.Speed_Crawl = _cachedSpeed;
+        //     _sosig.Speed_Sneak = _cachedSpeed;
+        //
+        //     _tearingPlanksCoroutine = null;
+        // }
 
         private IEnumerator DelayedDespawn()
         {

@@ -17,6 +17,16 @@ namespace CustomScripts.Multiplayer
         
         private int blockadeCleared_ID = -1;
         private int blockadeCleared_Client_ID = -1;
+
+        private int powerUpSpawned_ID = -1;
+        private int powerUpCollected_ID = -1;
+        private int powerUpCollected_Client_ID = -1;
+        
+        private int papPurchased_ID = -1;
+        private int papPurchased_Client_ID = -1;       
+        
+        private int windowStateChanged_ID = -1;
+        private int windowStateChanged_Client_ID = -1;
         
         // Send int value
         private int customData_ID = -1;
@@ -25,10 +35,6 @@ namespace CustomScripts.Multiplayer
         // Send playerID + int value
         private int customData_playerID_ID = -1;
         private int customData_playerID_Client_ID = -1;
-
-        private int powerUpSpawned_ID = -1;
-        private int powerUpCollected_ID = -1;
-        private int powerUpCollected_Client_ID = -1;
         
         void Start()
         {
@@ -51,17 +57,23 @@ namespace CustomScripts.Multiplayer
             
             RegisterPacket("CodZ_BlockadeCleared", BlockadeCleared_Handler, BlockadeCleared_Received, ref blockadeCleared_ID);
             RegisterPacket("CodZ_Client_BlockadeCleared", Client_BlockadeCleared_Handler, Client_BlockadeCleared_Received, ref blockadeCleared_Client_ID);
+
+            RegisterPacket("CodZ_PowerUpSpawned", PowerUpSpawned_Handler, PowerUpSpawned_Received, ref powerUpSpawned_ID);
+            
+            RegisterPacket("CodZ_PowerUpCollected", PowerUpCollected_Handler, PowerUpCollected_Received, ref powerUpCollected_ID);
+            RegisterPacket("CodZ_Client_PowerUpCollected", Client_PowerUpCollected_Handler, Client_PowerUpCollected_Received, ref powerUpCollected_Client_ID);
+            
+            RegisterPacket("CodZ_PaPPurchased", PaPPurchased_Handler, PaPPurchased_Received, ref papPurchased_ID);
+            RegisterPacket("CodZ_Client_PaPPurchased", Client_PaPPurchased_Handler, Client_PaPPurchased_Received, ref papPurchased_Client_ID);
+            
+            RegisterPacket("CodZ_WindowStateChanged", WindowStateChanged_Handler, WindowStateChanged_Received, ref windowStateChanged_ID);
+            RegisterPacket("CodZ_Client_WindowStateChanged", Client_WindowStateChanged_Handler, Client_WindowStateChanged_Received, ref windowStateChanged_Client_ID);
             
             RegisterPacket("CodZ_CustomData", CustomData_Handler, CustomData_Received, ref customData_ID);
             RegisterPacket("CodZ_Client_CustomData", Client_CustomData_Handler, Client_CustomData_Received, ref customData_Client_ID);
             
             RegisterPacket("CodZ_CustomData_PlayerID", CustomData_PlayerID_Handler, CustomData_PlayerID_Received, ref customData_playerID_ID);
             RegisterPacket("CodZ_Client_CustomData_PlayerID", Client_CustomData_PlayerID_Handler, Client_CustomData_PlayerID_Received, ref customData_playerID_Client_ID);
-
-            RegisterPacket("CodZ_PowerUpSpawned", PowerUpSpawned_Handler, PowerUpSpawned_Received, ref powerUpSpawned_ID);
-            
-            RegisterPacket("CodZ_PowerUpCollected", PowerUpCollected_Handler, PowerUpCollected_Received, ref powerUpCollected_ID);
-            RegisterPacket("CodZ_Client_PowerUpCollected", Client_PowerUpCollected_Handler, Client_PowerUpCollected_Received, ref powerUpCollected_Client_ID);
         }
         
         private void RegisterPacket(string packetName, Mod.CustomPacketHandler hostHandler, Mod.CustomPacketHandlerReceivedDelegate clientHandler, ref int packetID)
@@ -196,12 +208,12 @@ namespace CustomScripts.Multiplayer
             int newWaypointID = packet.ReadInt();
             bool immediate = packet.ReadBool();
             
-            Refs.MysteryBoxMover.SetNextWaypoint(newWaypointID);
+            GameRefs.MysteryBoxMover.SetNextWaypoint(newWaypointID);
 
             if (immediate)
-                Refs.MysteryBoxMover.StartTeleportAnim();
+                GameRefs.MysteryBoxMover.StartTeleportAnim();
             else
-                Refs.MysteryBoxMover.Teleport();
+                GameRefs.MysteryBoxMover.Teleport();
         }
         
         private void MysteryBoxMoved_Received(string handlerID, int index)
@@ -377,6 +389,142 @@ namespace CustomScripts.Multiplayer
 
         #endregion
         
+        #region PaPPurchased
+
+        // Host
+        public void PaPPurchased_Send()
+        {
+            if (!Networking.ServerRunning() || Networking.IsClient())
+                return;
+
+            Packet packet = new Packet(papPurchased_ID);
+
+            ServerSend.SendTCPDataToAll(packet, true);
+        }
+
+        void PaPPurchased_Handler(int clientID, Packet packet)
+        {
+            GameRefs.PackAPunch.OnBuying();
+        }
+
+        void PaPPurchased_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_PaPPurchased")
+            {
+                papPurchased_ID = index;
+                Mod.customPacketHandlers[index] = PaPPurchased_Handler;
+                Mod.CustomPacketHandlerReceived -= PaPPurchased_Received;
+            }
+        }
+
+        // Client
+        public void Client_PaPPurchased_Send(string weaponId)
+        {
+            if (!Networking.ServerRunning() || Networking.IsHost())
+                return;
+
+            Packet packet = new Packet(papPurchased_Client_ID);
+            packet.Write(weaponId);
+
+            ClientSend.SendTCPData(packet, true);
+        }
+
+        void Client_PaPPurchased_Handler(int clientID, Packet packet)
+        {
+            string weaponId = packet.ReadString();
+            GameRefs.PackAPunch.SpawnWeapon(weaponId);
+            GameRefs.PackAPunch.OnBuying();
+            PaPPurchased_Send();
+        }
+
+        void Client_PaPPurchased_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_Client_PaPPurchased")
+            {
+                papPurchased_Client_ID = index;
+                Mod.customPacketHandlers[index] = Client_PaPPurchased_Handler;
+                Mod.CustomPacketHandlerReceived -= Client_PaPPurchased_Received;
+            }
+        }
+
+        #endregion
+        
+        #region WindowStateChanged
+
+        // Host
+        public void WindowStateChanged_Send(int windowId, int plankId, WindowAction windowAction) // true = repairing, false = tearing
+        {
+            if (!Networking.ServerRunning() || Networking.IsClient())
+                return;
+    
+            Packet packet = new Packet(windowStateChanged_ID);
+            packet.Write(windowId);
+            packet.Write(plankId);
+            packet.Write((int)windowAction);
+    
+            ServerSend.SendTCPDataToAll(packet, true);
+        }
+
+        void WindowStateChanged_Handler(int clientID, Packet packet)
+        {
+            int windowId = packet.ReadInt();
+            int plankId = packet.ReadInt();
+            WindowAction windowAction = (WindowAction)packet.ReadInt();
+            
+            if (windowAction == WindowAction.Repair)
+            {
+                GameRefs.Windows[windowId].OnWindowRepaired(plankId);
+            }
+            else if (windowAction == WindowAction.Tear)
+            {
+                GameRefs.Windows[windowId].OnPlankTeared(plankId);
+            }
+        }
+
+        void WindowStateChanged_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_WindowStateChanged")
+            {
+                windowStateChanged_ID = index;
+                Mod.customPacketHandlers[index] = WindowStateChanged_Handler;
+                Mod.CustomPacketHandlerReceived -= WindowStateChanged_Received;
+            }
+        }
+
+        // Client
+        public void Client_WindowStateChanged_Send(int windowId, int plankId)
+        {
+            if (!Networking.ServerRunning() || Networking.IsHost())
+                return;
+
+            Packet packet = new Packet(windowStateChanged_Client_ID);
+            packet.Write(windowId);
+            packet.Write(plankId);
+    
+            ClientSend.SendTCPData(packet, true);
+        }
+
+        void Client_WindowStateChanged_Handler(int clientID, Packet packet)
+        {
+            int windowId = packet.ReadInt();
+            int plankId = packet.ReadInt();
+
+            GameRefs.Windows[windowId].OnWindowRepaired(plankId);
+            WindowStateChanged_Send(windowId, plankId, WindowAction.Repair); // client doesn't send plank tearing data
+        }
+
+        void Client_WindowStateChanged_Received(string handlerID, int index)
+        {
+            if (handlerID == "CodZ_Client_WindowStateChanged")
+            {
+                windowStateChanged_Client_ID = index;
+                Mod.customPacketHandlers[index] = Client_WindowStateChanged_Handler;
+                Mod.CustomPacketHandlerReceived -= Client_WindowStateChanged_Received;
+            }
+        }
+
+        #endregion
+        
         #region Custom Data (int value)
 
         // Host
@@ -439,46 +587,6 @@ namespace CustomScripts.Multiplayer
                 customData_Client_ID = index;
                 Mod.customPacketHandlers[index] = Client_CustomData_Handler;
                 Mod.CustomPacketHandlerReceived -= Client_CustomData_Received;
-            }
-        }
-
-        private void HandleCustomData(int customDataId)
-        {
-            if (customDataId == (int)CustomDataType.MYSTERY_BOX_BOUGHT)
-            {
-                if (Networking.IsHostOrSolo())
-                    Refs.MysteryBox.SpawnWeapon();
-            }
-            else if (customDataId == (int)CustomDataType.POWER_ENABLED)
-            {
-                GMgr.Instance.TurnOnPower();
-            }
-            else if (customDataId == (int)CustomDataType.EVERY_PLAYER_DEAD)
-            {
-                PlayerSpawner.Instance.MoveToEndGameArea();
-            }
-        }
-        
-        private void HandlePlayerCustomData(int playerID, int customDataId)
-        {
-            if (customDataId == (int)CustomPlayerDataType.PLAYER_DOWNED)
-            {
-                if (playerID == GameManager.ID)
-                    return;
-                
-                Vector3 deathPos = GameManager.players[playerID].transform.position;
-                ReviveButton.Instance.Spawn(playerID, deathPos);
-            }
-            else if (customDataId == (int)CustomPlayerDataType.PLAYER_REVIVED)
-            {
-                if (playerID == GameManager.ID)
-                { 
-                    PlayerSpawner.Instance.Revive();
-                }
-                else
-                {
-                    ReviveButton.Instance.Despawn();
-                }
             }
         }
         #endregion
@@ -552,20 +660,82 @@ namespace CustomScripts.Multiplayer
         }
         
         #endregion
+        
+        
+        private void HandleCustomData(int customDataId)
+        {
+            if (customDataId == (int)CustomDataType.MYSTERY_BOX_BOUGHT)
+            {
+                if (Networking.IsHostOrSolo())
+                    GameRefs.MysteryBox.SpawnWeapon();
+            }
+            else if (customDataId == (int)CustomDataType.POWER_ENABLED)
+            {
+                GMgr.Instance.TurnOnPower();
+            }
+            else if (customDataId == (int)CustomDataType.EVERY_PLAYER_DEAD)
+            {
+                PlayerSpawner.Instance.MoveToEndGameArea();
+            }
+            else if (customDataId == (int)CustomDataType.RADIO_TOGGLE)
+            {
+                GameRefs.Radio.ToggleMusic();
+            }
+        }
+        
+        private void HandlePlayerCustomData(int playerID, int customDataId)
+        {
+            if (customDataId == (int)CustomPlayerDataType.PLAYER_DOWNED)
+            {
+                if (Networking.IsHost() && PlayersMgr.Instance.AllPlayersDowned())
+                {
+                    CustomData_Send((int)CustomDataType.EVERY_PLAYER_DEAD);
+                }
+                
+                if (playerID == GameManager.ID)
+                    return;
+                
+                Vector3 deathPos = GameManager.players[playerID].transform.position;
+                ReviveButton.Instance.Spawn(playerID, deathPos);
+                PlayersMgr.GetPlayer(playerID).IsDowned = true;
+            }
+            else if (customDataId == (int)CustomPlayerDataType.PLAYER_DEAD)
+            {
+                if (playerID == GameManager.ID)
+                    return;
+                
+                PlayersMgr.GetPlayer(playerID).IsDowned = false;
+                PlayersMgr.GetPlayer(playerID).IsDead = true;
+                ReviveButton.Instance.Despawn();
+            }
+            else if (customDataId == (int)CustomPlayerDataType.PLAYER_REVIVED)
+            {
+                if (playerID == GameManager.ID)
+                { 
+                    PlayerSpawner.Instance.Revive();
+                }
+                else
+                {
+                    PlayersMgr.GetPlayer(playerID).IsDowned = false;
+                    ReviveButton.Instance.Despawn();
+                }
+            }
+        }
     }
     
     public enum CustomDataType
     {
         MYSTERY_BOX_BOUGHT = 0,
-        PACK_A_PUNCH_BUSY = 1,
-        POWER_ENABLED = 2,
-        EVERY_PLAYER_DEAD = 3,
+        POWER_ENABLED = 1,
+        EVERY_PLAYER_DEAD = 2,
+        RADIO_TOGGLE = 3,
     }
     
     public enum CustomPlayerDataType
     {
         PLAYER_DOWNED = 0,
-        PLAYER_REVIVED = 1,
+        PLAYER_DEAD = 1,
+        PLAYER_REVIVED = 2,
     }
 }
 

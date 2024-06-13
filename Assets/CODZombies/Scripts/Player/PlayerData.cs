@@ -16,10 +16,6 @@ namespace CustomScripts.Player
     public class PlayerData : MonoBehaviourSingleton<PlayerData>
     {
         public static Action GettingHitEvent;
-
-        public bool IsDead;
-        public bool NeedsRevive;
-        public bool Exists { get { return !IsDead && !NeedsRevive; } }
             
         private float _downTime = 30f;
         private float _downTimer = 0f;
@@ -70,7 +66,7 @@ namespace CustomScripts.Player
         
         private void Update()
         {
-            if (NeedsRevive && !IsDead)
+            if (PlayersMgr.Me.IsDowned && !PlayersMgr.Me.IsDead)
             {
                 _downTimer += Time.deltaTime;
                 if (_downTimer >= _downTime)

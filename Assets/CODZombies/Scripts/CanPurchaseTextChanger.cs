@@ -35,7 +35,7 @@ namespace CustomScripts
                     for (int i = 0; i < _texts.Count; i++)
                     {
                         _texts[i].text = "No power";
-                        _texts[i].color = GameReferences.Instance.CannotBuyColor;
+                        _texts[i].color = GameRefs.Instance.CannotBuyColor;
                     }
                     return;
                 }
@@ -46,7 +46,7 @@ namespace CustomScripts
                 for (int i = 0; i < _texts.Count; i++)
                 {
                     _texts[i].text = "Out of stock";
-                    _texts[i].color = GameReferences.Instance.CannotBuyColor;
+                    _texts[i].color = GameRefs.Instance.CannotBuyColor;
                 }
                 return;
             }
@@ -56,7 +56,7 @@ namespace CustomScripts
                 for (int i = 0; i < _texts.Count; i++)
                 {
                     _texts[i].text = _texts[i].text = _purchasable.PurchaseCost.ToString();
-                    _texts[i].color = GameReferences.Instance.CanBuyColor;
+                    _texts[i].color = GameRefs.Instance.CanBuyColor;
                 }
             }
             else
@@ -64,7 +64,7 @@ namespace CustomScripts
                 for (int i = 0; i < _texts.Count; i++)
                 {
                     _texts[i].text = _texts[i].text = _purchasable.PurchaseCost.ToString();
-                    _texts[i].color = GameReferences.Instance.CannotBuyColor;
+                    _texts[i].color = GameRefs.Instance.CannotBuyColor;
                 }
             }
         }

@@ -42,7 +42,7 @@ namespace CustomScripts.Powerups
         {
             yield return new WaitForSeconds(1f);
 
-            foreach (var window in GameReferences.Instance.Windows)
+            foreach (var window in GameRefs.Windows)
             {
                 window.RepairAll();
             }

@@ -25,9 +25,9 @@ namespace CustomScripts
 
         private void Update()
         {
-            _transform.position = GameReferences.Instance.PlayerHead.position;
+            _transform.position = GameRefs.Instance.PlayerHead.position;
 
-            float yRot = GameReferences.Instance.PlayerHead.rotation.eulerAngles.y;
+            float yRot = GameRefs.Instance.PlayerHead.rotation.eulerAngles.y;
             Vector3 newRot = _transform.rotation.eulerAngles;
             newRot.y = yRot;
             _transform.rotation = Quaternion.Euler(newRot);

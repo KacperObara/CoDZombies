@@ -93,6 +93,14 @@ namespace CustomScripts
 
             return false;
         }
+        
+        public void RemovePoints(int amount)
+        {
+            Points -= amount;
+
+            if (OnPointsChanged != null)
+                OnPointsChanged.Invoke();
+        }
 
         public void KillPlayer()
         {

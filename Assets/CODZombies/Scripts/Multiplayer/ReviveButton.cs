@@ -35,6 +35,8 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 		gameObject.SetActive(true);
 		_affectedPlayerID = playerID;
 		transform.position = pos;
+		_timer = 0f;
+		ReviveIcon.color = _defaultColor;
 	}
 
 	public void Despawn()

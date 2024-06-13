@@ -28,7 +28,7 @@ namespace CustomScripts
                     AudioManager.Instance.HellHoundsSounds[
                         Random.Range(0, AudioManager.Instance.HellHoundsSounds.Count)];
             }
-            else if (GameReferences.Instance.IsPlayerClose(transform, 5f))
+            else if (GameRefs.Instance.IsPlayerClose(transform, 5f))
             {
                 soundPoolable.AudioSource.clip =
                     AudioManager.Instance.CloseZombieSounds[

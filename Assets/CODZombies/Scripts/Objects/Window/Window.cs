@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CustomScripts.Player;
-using FistVR;
-using CustomScripts.Objects.Windows;
+using CustomScripts.Multiplayer;
 using UnityEngine;
 
 namespace CustomScripts
@@ -12,99 +10,83 @@ namespace CustomScripts
     public class Window : MonoBehaviour
     {
         public static Action BarricadedEvent;
-
+        public int ID { get; set; }
+        
         public Transform ZombieWaypoint;
-
-        public List<WindowPlank> PlankSlots;
-
-        public List<Plank> AllPlanks;
+        
+        private List<Plank> _planks;
 
         private AudioSource _tearPlankAudio;
 
-        public int PlanksRemain { get; set; } // Overcomplicated a little
-
-        public bool IsOpen
-        {
-            get { return PlanksRemain == 0; }
-        }
-
+        public bool IsBroken;
+        
         private void Start()
         {
+            _planks = GetComponentsInChildren<Plank>().ToList();
             _tearPlankAudio = GetComponent<AudioSource>();
-            RepairAll(false);
-        }
 
-        private void OnTriggerEnter(Collider other)
+            ID = GameRefs.Windows.FindIndex(window => window == this);
+        }
+        
+        public bool IsFullyRepaired()
         {
-            if (other.GetComponent<Plank>())
+            return _planks.All(plank => !plank.IsBroken);
+        }
+        
+        //Data sender
+        public void TearPlank()
+        {
+            if (Networking.IsHostOrSolo())
             {
-                OnPlankTouch(other.GetComponent<Plank>());
+                int plankId = _planks.FindIndex(plank => !plank.IsBroken);
+                OnPlankTeared(plankId);
+                CodZNetworking.Instance.WindowStateChanged_Send(ID, plankId, WindowAction.Tear);
             }
         }
 
-        public void RepairAll(bool playSound = false)
+        // Data receiver
+        public void OnPlankTeared(int plankId)
         {
-            for (int i = 0; i < PlankSlots.Count; i++)
-            {
-                PlankSlots[i].Plank = AllPlanks[i];
-                AllPlanks[i].transform.position = PlankSlots[i].transform.position;
-                AllPlanks[i].transform.rotation = PlankSlots[i].transform.rotation;
-                AllPlanks[i].PhysicalObject.ForceBreakInteraction();
-                AllPlanks[i].PhysicalObject.IsPickUpLocked = true;
-            }
-
-            PlanksRemain = PlankSlots.Count;
-
-            if (playSound)
-                AudioManager.Instance.Play(AudioManager.Instance.BarricadeRepairSound, .5f);
-        }
-
-        public void OnPlankTouch(Plank plank)
-        {
-            if (BarricadedEvent != null && GMgr.Instance.GameStarted)
-                BarricadedEvent.Invoke();
-
-            if (PlayerData.Instance.SpeedColaPerkActivated)
-            {
-                RepairAll(true);
-                return;
-            }
-
-            WindowPlank windowPlank = PlankSlots.FirstOrDefault(x => x.Plank == null);
-            if (!windowPlank)
-            {
-                RepairAll(false); // temporary fix, sometimes last plank cant be connected
-                return;
-            }
-
-            windowPlank.Plank = plank;
-
-            plank.PhysicalObject.ForceBreakInteraction();
-            plank.PhysicalObject.IsPickUpLocked = true;
-
-            plank.OnRepairDrop(windowPlank.transform);
-
-            PlanksRemain++;
-        }
-
-        public void OnPlankRipped()
-        {
-            WindowPlank windowPlank = PlankSlots.LastOrDefault(x => x.Plank != null);
-            if (!windowPlank)
-                return;
-
-
-            Plank plank = windowPlank.Plank;
-            plank.ReturnToRest();
-
-            FVRPhysicalObject physicalObject = plank.GetComponent<FVRPhysicalObject>();
-            physicalObject.IsPickUpLocked = false;
-
-            windowPlank.Plank = null;
-
+            _planks[plankId].Tear();
             _tearPlankAudio.Play();
-            PlanksRemain--;
         }
+
+        public void RepairWindow()
+        {
+            int plankId = _planks.FindIndex(plank => plank.IsBroken);
+            if (Networking.IsHostOrSolo())
+            {
+                OnWindowRepaired(plankId);
+                CodZNetworking.Instance.WindowStateChanged_Send(ID, plankId, WindowAction.Repair);
+            }
+            else
+            {
+                CodZNetworking.Instance.Client_WindowStateChanged_Send(ID, plankId);
+            }
+        }
+
+        public void OnWindowRepaired(int plankId)
+        {
+            _planks[plankId].Repair();
+            AudioManager.Instance.Play(AudioManager.Instance.BarricadeRepairSound, .5f);
+            
+            if (BarricadedEvent != null)
+                BarricadedEvent.Invoke();
+        }
+
+        public void RepairAll()
+        {
+            foreach (var plank in _planks)
+            {
+                plank.Repair();
+            }
+        }
+    }
+    
+    public enum WindowAction
+    {
+        Tear,
+        Repair
     }
 }
 #endif

@@ -7,6 +7,7 @@ using CustomScripts.Multiplayer;
 using CustomScripts.Objects.Weapons;
 using FistVR;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace CustomScripts
@@ -24,12 +25,15 @@ namespace CustomScripts
         private bool _alreadyBought;
         public bool AlreadyBought { get { return _alreadyBought; } }
 
-        [HideInInspector] public List<WeaponData> LootId;
-        [HideInInspector] public List<WeaponData> LimitedAmmoLootId;
-
+        [FormerlySerializedAs("LootId")] public List<WeaponData> Loot;
+        public List<WeaponData> RareLoot;
+        [Range(0f, 1f)]
+        public float RareChance = 0.05f;
+        
+        
         public ObjectSpawnPoint WeaponSpawner;
         public ObjectSpawnPoint AmmoSpawner;
-
+        
         public AudioClip RollSound;
 
         [HideInInspector] public bool InUse = false;
@@ -80,8 +84,20 @@ namespace CustomScripts
             
             if (!_mysteryBoxMover.TryTeleport())
             {
-                int random = Random.Range(0, LootId.Count);
-                WeaponData rolledWeapon = LootId[random];
+                bool isRare = Random.Range(0f, 1f) <= RareChance;
+
+                WeaponData rolledWeapon = null;
+                if (isRare)
+                {
+                    int random = Random.Range(0, RareLoot.Count);
+                    rolledWeapon = RareLoot[random];
+                }
+                else
+                {
+                    int random = Random.Range(0, Loot.Count);
+                    rolledWeapon = Loot[random];
+                }
+                
 
                 WeaponSpawner.ObjectId = rolledWeapon.DefaultSpawners[0];
                 AmmoSpawner.ObjectId = rolledWeapon.DefaultSpawners[1];
