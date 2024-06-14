@@ -34,9 +34,9 @@ namespace CustomScripts
         
         public override void ApplyModifier()
         {
-            SyncData();
             if (Networking.IsHostOrSolo())
-                ApplyModifier();
+                OnCollect();
+            SyncData();
         }
 
         // Partially to make better visuals, partially for better performance (not everything at once)

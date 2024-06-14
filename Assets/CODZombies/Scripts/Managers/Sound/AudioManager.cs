@@ -15,8 +15,6 @@ namespace CustomScripts
         public AudioSource MusicAudioSource;
 
         [Space(20)]
-        public AudioClip Music;
-
         public AudioClip BuySound;
         public AudioClip DrinkSound;
 

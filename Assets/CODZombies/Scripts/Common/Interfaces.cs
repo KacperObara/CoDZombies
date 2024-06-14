@@ -2,6 +2,7 @@
 
 using CustomScripts.Multiplayer;
 using CustomScripts.Zombie;
+using H3MP;
 using UnityEngine;
 using UnityEngine.UI;
 

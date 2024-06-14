@@ -12,6 +12,7 @@ namespace CustomScripts
     public class MysteryBoxMover : MonoBehaviour
     {
         public List<Transform> SpawnPoints;
+        public int CurrentSpawnPoint;
 
         [Range(0, 100)] public float TeleportChance = 20f;
         public int SafeRollsProvided = 3;
@@ -51,6 +52,7 @@ namespace CustomScripts
         public void Teleport()
         {
             Transform newPos = SpawnPoints[_nextTeleportWaypoint];
+            CurrentSpawnPoint = _nextTeleportWaypoint;
             
             CurrentPos = newPos;
 
@@ -61,21 +63,23 @@ namespace CustomScripts
             _mysteryBox.InUse = false;
         }
 
-        public bool TryTeleport()
+        public bool CheckForTeleport()
         {
             if (CurrentRoll <= SafeRollsProvided)
                 return false;
-            
+
             if (Random.Range(0, 100) <= TeleportChance)
-            {
-                int waypointID = GetRandomMovePoint();
-                SetNextWaypoint(waypointID);
-                CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, false);
-                StartTeleportAnim();
                 return true;
-            }
-            
+
             return false;
+        }
+        
+        public void StartTeleporting()
+        {
+            int waypointID = GetRandomMovePoint();
+            SetNextWaypoint(waypointID);
+            CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, false);
+            StartTeleportAnim();
         }
 
         public void StartTeleportAnim()
@@ -121,7 +125,15 @@ namespace CustomScripts
 
         public int GetRandomMovePoint()
         {
-            return 0;
+            List<int> availablePoints = new List<int>();
+            for (int i = 0; i < SpawnPoints.Count; i++)
+            {
+                if (i == CurrentSpawnPoint)
+                    continue;
+
+                availablePoints.Add(i);
+            }
+            return availablePoints[Random.Range(0, availablePoints.Count)];
         }
         
         public void SetNextWaypoint(int waypointID)

@@ -26,7 +26,7 @@ namespace CustomScripts.Zombie
         //private bool _isAttackingWindow;
         private bool _isDead;
 
-        private Sosig _sosig;
+        public Sosig Sosig;
 
         private Coroutine _tearingPlanksCoroutine;
 
@@ -44,18 +44,18 @@ namespace CustomScripts.Zombie
 
             Debug.Log("Zombie Initialize 1");
             
-            _sosig = GetComponent<Sosig>();
+            Sosig = GetComponent<Sosig>();
 
-            _sosig.CoreRB.gameObject.AddComponent<ZosigTrigger>().Initialize(this);
+            Sosig.CoreRB.gameObject.AddComponent<ZosigTrigger>().Initialize(this);
             Debug.Log("Zombie Initialize 2");
-            _sosig.Speed_Run = ZombieManager.Instance.ZosigPerRoundSpeed.Evaluate(RoundManager.Instance.RoundNumber);
+            Sosig.Speed_Run = ZombieManager.Instance.ZosigPerRoundSpeed.Evaluate(RoundManager.Instance.RoundNumber);
             if (GameSettings.HardMode)
             {
-                _sosig.Speed_Run += 1.12f;
+                Sosig.Speed_Run += 1.12f;
             }
 
-            _sosig.Mustard = ZombieManager.Instance.ZosigHPCurve.Evaluate(RoundManager.Instance.RoundNumber);
-            foreach (SosigLink link in _sosig.Links)
+            Sosig.Mustard = ZombieManager.Instance.ZosigHPCurve.Evaluate(RoundManager.Instance.RoundNumber);
+            foreach (SosigLink link in Sosig.Links)
             {
                 link.SetIntegrity(
                     ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber));
@@ -63,8 +63,8 @@ namespace CustomScripts.Zombie
             Debug.Log("Zombie Initialize 3");
             if (GameSettings.WeakerEnemiesEnabled)
             {
-                _sosig.Mustard *= .6f;
-                foreach (SosigLink link in _sosig.Links)
+                Sosig.Mustard *= .6f;
+                foreach (SosigLink link in Sosig.Links)
                 {
                     link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .6f);
                 }
@@ -72,8 +72,8 @@ namespace CustomScripts.Zombie
             Debug.Log("Zombie Initialize 4");
             if (RoundManager.Instance.IsRoundSpecial)
             {
-                _sosig.Mustard *= .65f;
-                foreach (SosigLink link in _sosig.Links)
+                Sosig.Mustard *= .65f;
+                foreach (SosigLink link in Sosig.Links)
                 {
                     if (GameSettings.WeakerEnemiesEnabled)
                         link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .45f);
@@ -82,25 +82,25 @@ namespace CustomScripts.Zombie
                 }
             }
             Debug.Log("Zombie Initialize 5");
-            _sosig.Speed_Walk = _sosig.Speed_Run;
-            _sosig.Speed_Turning = _sosig.Speed_Run;
-            _sosig.Speed_Sneak = _sosig.Speed_Run;
-            _sosig.Speed_Crawl = _sosig.Speed_Run;
+            Sosig.Speed_Walk = Sosig.Speed_Run;
+            Sosig.Speed_Turning = Sosig.Speed_Run;
+            Sosig.Speed_Sneak = Sosig.Speed_Run;
+            Sosig.Speed_Crawl = Sosig.Speed_Run;
 
             // Setting weapon IFF for disabling Friendly damage
-            for (int i = 0; i < _sosig.Hands.Count; i++)
+            for (int i = 0; i < Sosig.Hands.Count; i++)
             {
-                if (_sosig.Hands[i].HeldObject != null)
+                if (Sosig.Hands[i].HeldObject != null)
                 {
-                    _sosig.Hands[i].HeldObject.SourceIFF = _sosig.E.IFFCode;
-                    _sosig.Hands[i].HeldObject.E.IFFCode = _sosig.E.IFFCode;
+                    Sosig.Hands[i].HeldObject.SourceIFF = Sosig.E.IFFCode;
+                    Sosig.Hands[i].HeldObject.E.IFFCode = Sosig.E.IFFCode;
                 }
             }
             Debug.Log("Zombie Initialize 6");
-            _sosig.Hand_Primary.HeldObject.SourceIFF = _sosig.E.IFFCode;
-            _sosig.Hand_Primary.HeldObject.E.IFFCode = _sosig.E.IFFCode;
+            Sosig.Hand_Primary.HeldObject.SourceIFF = Sosig.E.IFFCode;
+            Sosig.Hand_Primary.HeldObject.E.IFFCode = Sosig.E.IFFCode;
 
-            _cachedSpeed = _sosig.Speed_Run;
+            _cachedSpeed = Sosig.Speed_Run;
             Debug.Log("Zombie Initialize 7");
             CheckPerks();
         }
@@ -113,11 +113,11 @@ namespace CustomScripts.Zombie
         private IEnumerator SpawnSpecialEnemy()
         {
             _cachedSpeed = 5f;
-            _sosig.Speed_Run = 5f;
-            _sosig.Speed_Walk = 5f;
-            _sosig.Speed_Turning = 5f;
-            _sosig.Speed_Sneak = 5f;
-            _sosig.Speed_Crawl = 5f;
+            Sosig.Speed_Run = 5f;
+            Sosig.Speed_Walk = 5f;
+            Sosig.Speed_Turning = 5f;
+            Sosig.Speed_Sneak = 5f;
+            Sosig.Speed_Crawl = 5f;
 
             //_sosig.Agent.agentTypeID = 1; // Changing zombies agent type to crawlers(Hellhounds)
 
@@ -131,7 +131,7 @@ namespace CustomScripts.Zombie
             if (!Networking.IsHostOrSolo())
                 return;
             
-            if (_sosig == null)
+            if (Sosig == null)
                 return;
 
             // if (_isAttackingWindow)
@@ -144,17 +144,21 @@ namespace CustomScripts.Zombie
             // }
             // else
             // {
-            _sosig.Speed_Run = _cachedSpeed;
-            _sosig.Speed_Walk = _cachedSpeed;
-            _sosig.Speed_Turning = _cachedSpeed;
-            _sosig.Speed_Crawl = _cachedSpeed;
-            _sosig.Speed_Sneak = _cachedSpeed;
+            Sosig.Speed_Run = _cachedSpeed;
+            Sosig.Speed_Walk = _cachedSpeed;
+            Sosig.Speed_Turning = _cachedSpeed;
+            Sosig.Speed_Crawl = _cachedSpeed;
+            Sosig.Speed_Sneak = _cachedSpeed;
             //}
 
-            if (TargetWindow && TargetWindow.IsBroken)
+            if (TargetWindow && TargetWindow.IsBroken())
             {
+                Sosig.HasABrain = true;
                 TargetWindow = null;
                 Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
+                Sosig.MaxHearingRange = 300;
+                Sosig.MaxSightRange = 300;
+                Sosig.CommandAssaultPoint(Target.position);
             }
             
             if (!TargetWindow)
@@ -172,6 +176,11 @@ namespace CustomScripts.Zombie
         {
             TargetWindow = window;
             Target = TargetWindow.ZombieWaypoint;
+
+            Sosig.MaxHearingRange = 0;
+            Sosig.MaxSightRange = 0;
+            Sosig.SetCurrentOrder(Sosig.SosigOrder.Idle);
+            Sosig.HasABrain = false;
         }
 
         private void LateUpdate()
@@ -179,14 +188,14 @@ namespace CustomScripts.Zombie
             if (!Networking.IsHostOrSolo())
                 return;
             
-            if (_sosig == null)
+            if (Sosig == null)
                 return;
 
             _agentUpdateTimer += Time.deltaTime;
             if (_agentUpdateTimer >= agentUpdateInterval)
             {
                 _agentUpdateTimer -= agentUpdateInterval;
-                _sosig.CommandAssaultPoint(Target.position);
+                Sosig.CommandAssaultPoint(Target.position);
             }
         }
 
@@ -195,20 +204,20 @@ namespace CustomScripts.Zombie
             if (_isDead)
                 return;
 
-            _sosig.Stun(time);
-            _sosig.Shudder(.75f);
+            Sosig.Stun(time);
+            Sosig.Shudder(.75f);
         }
 
         public void CheckPerks()
         {
             if (PlayerData.Instance.DeadShotPerkActivated)
             {
-                _sosig.Links[0].DamMult = 1.35f;
+                Sosig.Links[0].DamMult = 1.35f;
             }
 
             if (PlayerData.Instance.DoubleTapPerkActivated)
             {
-                _sosig.DamMult_Projectile = 1.25f;
+                Sosig.DamMult_Projectile = 1.25f;
             }
         }
 
@@ -228,7 +237,7 @@ namespace CustomScripts.Zombie
             
             if (awardPoints)
             {
-                int killerID = _sosig.GetDiedFromIFF();
+                int killerID = Sosig.GetDiedFromIFF();
                 if (Networking.IsMineIFF(killerID))
                 {
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
@@ -251,7 +260,7 @@ namespace CustomScripts.Zombie
 
             if (PlayerData.Instance.InstaKill)
             {
-                _sosig.KillSosig();
+                Sosig.KillSosig();
             }
 
             if (_hitsGivingMoney <= 0)
@@ -266,8 +275,8 @@ namespace CustomScripts.Zombie
         public override void OnHit(float damage, bool headHit)
         {
             //nuke
-            _sosig.Links[0].LinkExplodes(Damage.DamageClass.Projectile);
-            _sosig.KillSosig();
+            Sosig.Links[0].LinkExplodes(Damage.DamageClass.Projectile);
+            Sosig.KillSosig();
         }
         
         public void OnTriggerEntered(Collider other)
@@ -348,7 +357,7 @@ namespace CustomScripts.Zombie
 
         private IEnumerator DelayedDespawn()
         {
-            if (_sosig == null)
+            if (Sosig == null)
             {
                 Debug.Log("Sosig is null");
                 yield break;
@@ -359,7 +368,7 @@ namespace CustomScripts.Zombie
                 yield return new WaitForSeconds(5);
             }
             
-            _sosig.DeSpawnSosig();
+            Sosig.DeSpawnSosig();
         }
     }
 }

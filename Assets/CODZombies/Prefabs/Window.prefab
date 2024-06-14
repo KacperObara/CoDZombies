@@ -296,7 +296,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1484949329338594}
   m_LocalRotation: {x: -0.009530379, y: -0.010413704, z: -0.7138221, w: 0.7001848}
-  m_LocalPosition: {x: -0.518, y: 0.42999756, z: 0.028}
+  m_LocalPosition: {x: -0.518, y: 0.8189975, z: 0.028}
   m_LocalScale: {x: 0.14442006, y: 0.04131002, z: 1.2791498}
   m_Children:
   - {fileID: 4834703858583168}
@@ -358,7 +358,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1266685459098706}
   m_LocalRotation: {x: -0.06418514, y: -0.06722796, z: -0.7106751, w: 0.69735324}
-  m_LocalPosition: {x: -0.51799774, y: 0.756, z: 0.027999878}
+  m_LocalPosition: {x: -0.51799774, y: 1.145, z: 0.027999878}
   m_LocalScale: {x: 0.14442003, y: 0.04131002, z: 1.27915}
   m_Children:
   - {fileID: 4273993385086776}
@@ -437,7 +437,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1129029509567802}
   m_LocalRotation: {x: 0.0603478, y: 0.061600212, z: -0.7112439, w: 0.69763577}
-  m_LocalPosition: {x: -0.518, y: 1.0019976, z: 0.018}
+  m_LocalPosition: {x: -0.518, y: 1.3909975, z: 0.018}
   m_LocalScale: {x: 0.14442003, y: 0.04131002, z: 1.27915}
   m_Children:
   - {fileID: 4029846768570488}
@@ -451,7 +451,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1812332680386938}
   m_LocalRotation: {x: 0.067905486, y: 0.06977582, z: -0.7104837, w: 0.69694567}
-  m_LocalPosition: {x: -0.518, y: 0.26099765, z: 0.015}
+  m_LocalPosition: {x: -0.518, y: 0.6499976, z: 0.015}
   m_LocalScale: {x: 0.14442003, y: 0.041309997, z: 1.27915}
   m_Children:
   - {fileID: 4544719495315928}
@@ -465,7 +465,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1369987054788288}
   m_LocalRotation: {x: -0.039163224, y: -0.038706996, z: -0.7128297, w: 0.69917226}
-  m_LocalPosition: {x: -0.523, y: 1.4039977, z: 0.015}
+  m_LocalPosition: {x: -0.523, y: 1.793, z: 0.015}
   m_LocalScale: {x: 0.14442016, y: 0.041310016, z: 1.279153}
   m_Children:
   - {fileID: 4633420858680664}
@@ -713,8 +713,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 2, z: 1}
-  m_Center: {x: -0.25, y: 1, z: 0}
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: -1, y: 1, z: 0}
 --- !u!65 &65493065428906310
 BoxCollider:
   m_ObjectHideFlags: 1

@@ -7,6 +7,7 @@ using CustomScripts.Gamemode.GMDebug;
 using CustomScripts.Multiplayer;
 using CustomScripts.Objects.Weapons;
 using FistVR;
+using H3MP;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -54,15 +55,21 @@ namespace CustomScripts.Powerups
 
         private bool CanBuy(FVRPhysicalObject fvrPhysicalObject)
         {
-            WeaponWrapper weaponWrapper = fvrPhysicalObject.GetComponent<WeaponWrapper>();
-
+            if (fvrPhysicalObject == null)
+                return false;
+            
             if (fvrPhysicalObject as FVRFireArm == null)
+                return false;
+
+            if (fvrPhysicalObject.ObjectWrapper == null)
                 return false;
             
             // Disabling minigun since it could break the DeathMachine
             if (fvrPhysicalObject.ObjectWrapper.ItemID == "M134Minigun")
                 return false;
 
+            WeaponWrapper weaponWrapper = fvrPhysicalObject.GetComponent<WeaponWrapper>();
+            
             if (weaponWrapper == null)
                 return false;
             if (weaponWrapper.PackAPunchDeactivated)
@@ -92,14 +99,15 @@ namespace CustomScripts.Powerups
 
             if (Networking.IsHostOrSolo())
             {
-                SpawnWeapon(weapon.Id);
-                OnBuying();
                 CodZNetworking.Instance.PaPPurchased_Send();
+                OnBuying();
             }
             else
             {
-                CodZNetworking.Instance.Client_PaPPurchased_Send(weapon.Id);
+                CodZNetworking.Instance.Client_PaPPurchased_Send();
             }
+            
+            SpawnWeapon(weapon.Id, GameManager.ID);
             
             if (PurchaseEvent != null)
                 PurchaseEvent.Invoke();
@@ -115,20 +123,26 @@ namespace CustomScripts.Powerups
             AudioManager.Instance.Play(UpgradeSound, .3f);
         }
         
-        public void SpawnWeapon(string weaponId)
+        public void SpawnWeapon(string weaponId, int ownerId)
         {
             WeaponData weapon = WeaponsData.FirstOrDefault(x => x.Id == weaponId);
-            StartCoroutine(DelayedSpawn(weapon));
+            StartCoroutine(DelayedSpawn(weapon, ownerId));
         }
 
-        private IEnumerator DelayedSpawn(WeaponData weapon)
+        private IEnumerator DelayedSpawn(WeaponData weaponData, int ownerId)
         {
             yield return new WaitForSeconds(5f);
 
-            for (int i = 0; i < weapon.UpgradedWeapon.DefaultSpawners.Count; i++)
+            Spawners[0].ObjectId = weaponData.UpgradedWeapon.DefaultSpawners[0];
+            GameObject weapon = Spawners[0].Spawn();
+            
+            Spawners[1].ObjectId = weaponData.UpgradedWeapon.DefaultSpawners[1];
+            Spawners[1].Spawn();
+            
+            WeaponWrapper weaponWrapper = weapon.GetComponent<WeaponWrapper>();
+            if (weaponWrapper)
             {
-                Spawners[i].ObjectId = weapon.UpgradedWeapon.DefaultSpawners[i];
-                Spawners[i].Spawn();
+                weaponWrapper.SetOwner(ownerId);
             }
 
             InUse = false;

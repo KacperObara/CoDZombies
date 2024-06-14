@@ -36,9 +36,9 @@ namespace CustomScripts.Powerups
 
         public override void ApplyModifier()
         {
-            SyncData();
             if (Networking.IsHostOrSolo())
-                ApplyModifier();
+                OnCollect();
+            SyncData();
 
         }
 

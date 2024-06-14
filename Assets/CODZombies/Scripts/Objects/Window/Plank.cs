@@ -1,5 +1,6 @@
 #if H3VR_IMPORTED
 
+using System;
 using System.Collections;
 using FistVR;
 using UnityEngine;
@@ -7,42 +8,91 @@ namespace CustomScripts
 {
     public class Plank : MonoBehaviour
     {
-        public bool IsBroken = false;
+        [HideInInspector] public Window Window;
+        private Transform _parentTransform;
         
+        public bool IsBroken;
+
+        private Vector3 _destroyedPos;
+
+        private void Awake()
+        {
+            _parentTransform = transform.parent;
+            _destroyedPos = Window.transform.position - (transform.forward * 2f);
+            gameObject.SetActive(false);
+        }
+
         public void Tear()
         {
             IsBroken = true;
-            transform.localPosition = new Vector3(0, -10f, -10f);
-            transform.rotation = Quaternion.Euler(0, 0, 0);
+            StartCoroutine(TearAnimation());
         }
         
         public void Repair()
         {
             IsBroken = false;
+            gameObject.SetActive(true);
+            StartCoroutine(RepairAnimation());
+        }
+        
+        private IEnumerator RepairAnimation()
+        { 
+            // Rise and rotate
+            Vector3 targetPosition = _destroyedPos;
+            targetPosition.y = _parentTransform.position.y;
+            
+            Quaternion targetRotation = Quaternion.identity;
+            Quaternion startRotation = transform.localRotation;
+            
+            float elapsedTime = 0;
+            while (elapsedTime < 0.5f)
+            {
+                transform.position = Vector3.Lerp(_destroyedPos, targetPosition, elapsedTime / 0.5f);
+                transform.localRotation = Quaternion.Lerp(startRotation, targetRotation, elapsedTime / 0.5f);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            transform.position = targetPosition;
+            transform.localRotation = targetRotation;
+            
+            // Pause
+            yield return new WaitForSeconds(1f);
+            
+            // Move to window
+            Vector3 localPos = transform.localPosition;
+            elapsedTime = 0;
+            while (elapsedTime < 0.5f)
+            {
+                transform.localPosition = Vector3.Lerp(localPos, Vector3.zero, elapsedTime / 0.5f);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
         }
 
-        // public IEnumerator MoveTo(Transform destination, float time)
-        // {
-        //     Vector3 startingPos = transform.position;
-        //     Vector3 finalPos = destination.position;
-        //     Quaternion startingRot = transform.rotation;
-        //     Quaternion finalRot = destination.rotation;
-        //
-        //     float elapsedTime = 0;
-        //
-        //     while (elapsedTime < time)
-        //     {
-        //         transform.position = Vector3.Lerp(startingPos, finalPos, (elapsedTime / time));
-        //         transform.rotation = Quaternion.Lerp(startingRot, finalRot, (elapsedTime / time));
-        //         elapsedTime += Time.deltaTime;
-        //         yield return null;
-        //     }
-        //
-        //     transform.position = finalPos;
-        //     transform.rotation = finalRot;
-        // }
+        public IEnumerator TearAnimation()
+        {
+            Vector3 startingPos = transform.position;
+            Vector3 finalPos = _destroyedPos;
+            Quaternion startingRot = transform.rotation;
+            Quaternion finalRot = Quaternion.identity;
+        
+            float elapsedTime = 0;
+        
+            while (elapsedTime < 0.75f)
+            {
+                transform.position = Vector3.Lerp(startingPos, finalPos, (elapsedTime / 0.75f));
+                transform.rotation = Quaternion.Lerp(startingRot, finalRot, (elapsedTime / 0.75f));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+        
+            transform.position = finalPos;
+            transform.rotation = finalRot;
+            gameObject.SetActive(false);
+        }
     }
 }
 #endif

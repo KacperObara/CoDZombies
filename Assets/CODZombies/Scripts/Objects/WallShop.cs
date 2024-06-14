@@ -3,8 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Atlas.MappingComponents.Sandbox;
+using CustomScripts.Gamemode;
+using CustomScripts.Gamemode.GMDebug;
 using CustomScripts.Objects.Weapons;
 using FistVR;
+using H3MP;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +30,8 @@ namespace CustomScripts.Objects
         public Text NameText;
         public Text CostText;
 
-        public List<ObjectSpawnPoint> ItemSpawners;
+        public CustomItemSpawner WeaponSpawner;
+        public CustomItemSpawner AmmoSpawner;
         
         private void Start()
         {
@@ -39,13 +43,14 @@ namespace CustomScripts.Objects
         {
             if (GMgr.Instance.TryRemovePoints(Cost))
             {
-                // spawning weapons in unlimited
-                for (int i = 0; i < Weapon.DefaultSpawners.Count; i++)
-                {
-                    ItemSpawners[i].ObjectId = Weapon.DefaultSpawners[i];
-                    ItemSpawners[i].Spawn();
-                }
+                WeaponSpawner.ObjectId = Weapon.DefaultSpawners[0];
+                GameObject weapon = WeaponSpawner.Spawn();
+                
+                AmmoSpawner.ObjectId = Weapon.DefaultSpawners[1];
+                AmmoSpawner.Spawn();
 
+                weapon.GetComponent<WeaponWrapper>().SetOwner(GameManager.ID);
+                
                 if (!_alreadyBought)
                     _alreadyBought = true;
                 AudioManager.Instance.Play(AudioManager.Instance.BuySound, .5f);

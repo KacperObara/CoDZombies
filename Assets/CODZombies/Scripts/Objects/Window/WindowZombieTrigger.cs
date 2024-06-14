@@ -1,5 +1,6 @@
 #if H3VR_IMPORTED
 
+using CustomScripts.Multiplayer;
 using CustomScripts.Zombie;
 using UnityEngine;
 namespace CustomScripts
@@ -12,20 +13,27 @@ namespace CustomScripts
         private float _timeToTrigger = 2.5f;
         private void OnTriggerStay(Collider other)
         {
-            if (Window.IsBroken)
+            if (!Networking.IsHostOrSolo())
+                return;
+            
+            if (Window.IsBroken())
                 return;
             
             if (other.GetComponent<ZosigTrigger>())
             {
                 ZosigZombieController zombie = other.GetComponent<ZosigTrigger>().ZosigController;
-                if (zombie.TargetWindow == null)
-                    zombie.AttackWindow(Window);
-                
-                _timer += Time.deltaTime;
-                if (_timer >= _timeToTrigger)
+
+                if (Vector3.Distance(zombie.Sosig.transform.position, transform.position) < 2f)
                 {
-                    Window.TearPlank();
-                    _timer = 0;
+                    if (zombie.TargetWindow == null)
+                        zombie.AttackWindow(Window);
+                
+                    _timer += Time.deltaTime;
+                    if (_timer >= _timeToTrigger)
+                    {
+                        Window.TearPlank();
+                        _timer = 0;
+                    }
                 }
             }
         }

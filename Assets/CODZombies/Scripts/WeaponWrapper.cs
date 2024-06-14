@@ -13,7 +13,7 @@ namespace CustomScripts.Gamemode
     /// </summary>
     public class WeaponWrapper : MonoBehaviour
     {
-        public int OwnerIFF;
+        public int OwnerId;
         
         public bool DoubleTapActivated = false;
         public bool SpeedColaActivated = false;
@@ -25,13 +25,22 @@ namespace CustomScripts.Gamemode
 
         public bool IsWeaponMine()
         {
-            if (!Networking.IsHostOrSolo())
-                return true;
-            return false;
+            if (Networking.IsHostOrSolo())
+                return false;
+            return true;
             
             // if (OwnerIFF == GameManager.ID)
             //     return true;
             // return false;
+        }
+
+        public void SetOwner(int ownerId)
+        {
+            OwnerId = ownerId;
+            if (GameManager.ID == OwnerId)
+            {
+                weapon.IsPickUpLocked = false;
+            }
         }
 
         public void Initialize(FVRFireArm weapon)

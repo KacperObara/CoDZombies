@@ -102,7 +102,7 @@ namespace CustomScripts.Player
         /// </summary>
         [HarmonyPatch(typeof(FVRPhysicalObject), "BeginInteraction")]
         [HarmonyPrefix]
-        private static bool OnPhysicalObjectStartInteraction(FVRPhysicalObject __instance, FVRViveHand hand)
+        private static void OnPhysicalObjectStartInteraction(FVRPhysicalObject __instance, FVRViveHand hand)
         {
             if (__instance as FVRFireArm)
             {
@@ -112,9 +112,8 @@ namespace CustomScripts.Player
                     wrapper = __instance.gameObject.AddComponent<WeaponWrapper>();
                     wrapper.Initialize((FVRFireArm) __instance);
                 }
-
+                
                 wrapper.OnWeaponGrabbed();
-                return wrapper.IsWeaponMine();
             }
             else if (__instance as FVRFireArmMagazine)
             {
@@ -125,8 +124,15 @@ namespace CustomScripts.Player
                     wrapper.Initialize((FVRFireArmMagazine) __instance);
                 }
             }
-            
-            return true;
+        }
+        
+        [HarmonyPatch(typeof(FVRFireArm), "Awake")]
+        [HarmonyPostfix]
+        private static void OnWeaponSpawned(FVRFireArm __instance)
+        {
+            WeaponWrapper wrapper = __instance.gameObject.AddComponent<WeaponWrapper>();
+            wrapper.Initialize(__instance);
+            __instance.IsPickUpLocked = true;
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "Release")]

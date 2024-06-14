@@ -14,7 +14,7 @@ public class WindowRepairTrigger : MonoBehaviour
         if (Window.IsFullyRepaired())
             return;
             
-        if (other.GetComponent<PlayerCollider>())
+        if (other.GetComponent<PlayerTrigger>())
         {
             _timer += Time.deltaTime;
             if (_timer >= _timeToTrigger)

@@ -3,9 +3,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Atlas.MappingComponents.Sandbox;
+using CustomScripts.Gamemode;
+using CustomScripts.Gamemode.GMDebug;
 using CustomScripts.Multiplayer;
 using CustomScripts.Objects.Weapons;
 using FistVR;
+using H3MP;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -30,9 +33,8 @@ namespace CustomScripts
         [Range(0f, 1f)]
         public float RareChance = 0.05f;
         
-        
-        public ObjectSpawnPoint WeaponSpawner;
-        public ObjectSpawnPoint AmmoSpawner;
+        public CustomItemSpawner WeaponSpawner;
+        public CustomItemSpawner AmmoSpawner;
         
         public AudioClip RollSound;
 
@@ -40,6 +42,9 @@ namespace CustomScripts
 
         private MysteryBoxMover _mysteryBoxMover;
 
+        public bool WillTeleport;
+        public bool DidIRoll;
+        
         private void Awake()
         {
             _mysteryBoxMover = GetComponent<MysteryBoxMover>();
@@ -53,21 +58,31 @@ namespace CustomScripts
             if (!GMgr.Instance.TryRemovePoints(Cost))
                 return;
 
+            DidIRoll = true;
             if (Networking.IsHost())
             {
-                //SpawnWeapon();
-                CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_BOUGHT);
+                CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_ROLLED);
             }
             else
             {
-                CodZNetworking.Instance.Client_CustomData_Send((int)CustomDataType.MYSTERY_BOX_BOUGHT);
+                CodZNetworking.Instance.Client_CustomData_Send((int)CustomDataType.MYSTERY_BOX_ROLLED);
             }
         }
 
-        public void SpawnWeapon()
+        public void OnBuying()
         {
             InUse = true;
+            WillTeleport = false;
             AudioManager.Instance.Play(RollSound, .25f);
+
+            if (Networking.IsHost())
+            {
+                bool willTeleport = _mysteryBoxMover.CheckForTeleport();
+                if (willTeleport)
+                {
+                    CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_TELEPORT);
+                }
+            }
             
             StartCoroutine(DelayedSpawn());
         }
@@ -76,40 +91,48 @@ namespace CustomScripts
         {
             yield return new WaitForSeconds(5.5f);
 
-            if (!Networking.IsHost())
+            if (WillTeleport)
             {
-                InUse = false;
-                yield break;
+                if (Networking.IsHost())
+                {
+                    _mysteryBoxMover.StartTeleporting();
+                }
             }
-            
-            if (!_mysteryBoxMover.TryTeleport())
+            else
             {
-                bool isRare = Random.Range(0f, 1f) <= RareChance;
+                if (DidIRoll)
+                {
+                    bool isRare = Random.Range(0f, 1f) <= RareChance;
 
-                WeaponData rolledWeapon = null;
-                if (isRare)
-                {
-                    int random = Random.Range(0, RareLoot.Count);
-                    rolledWeapon = RareLoot[random];
-                }
-                else
-                {
-                    int random = Random.Range(0, Loot.Count);
-                    rolledWeapon = Loot[random];
-                }
+                    WeaponData rolledWeapon = null;
+                    if (isRare)
+                    {
+                        int random = Random.Range(0, RareLoot.Count);
+                        rolledWeapon = RareLoot[random];
+                    }
+                    else
+                    {
+                        int random = Random.Range(0, Loot.Count);
+                        rolledWeapon = Loot[random];
+                    }
+                    
+                    WeaponSpawner.ObjectId = rolledWeapon.DefaultSpawners[0];
+                    AmmoSpawner.ObjectId = rolledWeapon.DefaultSpawners[1];
+
+                    GameObject weapon = WeaponSpawner.Spawn();
+                    AmmoSpawner.Spawn();
                 
+                    weapon.GetComponent<WeaponWrapper>().SetOwner(GameManager.ID);
 
-                WeaponSpawner.ObjectId = rolledWeapon.DefaultSpawners[0];
-                AmmoSpawner.ObjectId = rolledWeapon.DefaultSpawners[1];
-
-                WeaponSpawner.Spawn();
-                AmmoSpawner.Spawn();
-
-                if (WeaponSpawnedEvent != null)
-                    WeaponSpawnedEvent.Invoke(rolledWeapon);
+                    if (WeaponSpawnedEvent != null)
+                        WeaponSpawnedEvent.Invoke(rolledWeapon);
+                }
 
                 InUse = false;
+            }
 
+            if (Networking.IsHost())
+            {
                 _mysteryBoxMover.CurrentRoll++;
             }
         }

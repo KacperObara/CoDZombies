@@ -27,7 +27,7 @@ namespace CustomScripts.Objects
             
             if (Networking.IsHostOrSolo())
             {
-                ToggleMusic();
+                //ToggleMusic();
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.RADIO_TOGGLE);
             }
             else
@@ -40,17 +40,17 @@ namespace CustomScripts.Objects
         {
             if (_isPlaying)
             {
+                Debug.Log("Stopping music");
                 _isPlaying = false;
 
                 AudioManager.Instance.MusicAudioSource.Stop();
-
-                AudioManager.Instance.PlayMusic(AudioManager.Instance.Music, .08f);
 
                 if (_musicEndCoroutine != null)
                     StopCoroutine(_musicEndCoroutine);
             }
             else
             {
+                Debug.Log("Starting music");
                 _isPlaying = true;
 
                 var musicLength = Song.length;
@@ -74,8 +74,6 @@ namespace CustomScripts.Objects
             yield return new WaitForSeconds(endTimer);
 
             _isPlaying = false;
-
-            AudioManager.Instance.PlayMusic(AudioManager.Instance.Music, .08f);
         }
     }
 }

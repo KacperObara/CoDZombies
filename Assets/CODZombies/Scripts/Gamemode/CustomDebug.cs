@@ -85,7 +85,7 @@ namespace CustomScripts.Gamemode.GMDebug
             if (Input.GetKeyDown(KeyCode.I))
             {
                 int random = Random.Range(0, GameRefs.Windows.Count);
-                if (!GameRefs.Windows[random].IsBroken)
+                if (!GameRefs.Windows[random].IsBroken())
                     GameRefs.Windows[random].TearPlank();
             }
             if (Input.GetKeyDown(KeyCode.O))
@@ -101,9 +101,7 @@ namespace CustomScripts.Gamemode.GMDebug
                 SpawnTestObject();
             }
 
-#if !UNITY_EDITOR
             IFFText.text = "IFF: " + GM.CurrentPlayerBody.GetPlayerIFF();
-#endif
         }
 
         public void SpawnCarpenter()

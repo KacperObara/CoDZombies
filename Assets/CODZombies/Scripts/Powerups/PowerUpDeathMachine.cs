@@ -1,9 +1,11 @@
 #if H3VR_IMPORTED
 using System.Collections;
+using CustomScripts.Gamemode;
 using CustomScripts.Gamemode.GMDebug;
 using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
+using H3MP;
 using UnityEngine;
 namespace CustomScripts.Powerups
 {
@@ -18,8 +20,8 @@ namespace CustomScripts.Powerups
 
         private Animator _animator;
         private FVRPhysicalObject _magazineObject;
-
-        private FVRPhysicalObject _minigunObject;
+        
+        public FVRPhysicalObject MinigunObject;
 
         private void Awake()
         {
@@ -36,30 +38,6 @@ namespace CustomScripts.Powerups
         
         public override void OnCollect()
         {
-            if (Networking.IsHostOrSolo())
-            {
-                MinigunSpawner.Spawn();
-                MagazineSpawner.Spawn();
-
-                _minigunObject = MinigunSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
-                _minigunObject.SpawnLockable = false;
-                _minigunObject.UsesGravity = false;
-
-                _minigunObject.RootRigidbody.isKinematic = true;
-
-                _magazineObject = MagazineSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
-                _magazineObject.SpawnLockable = false;
-                _magazineObject.UsesGravity = false;
-
-                _magazineObject.RootRigidbody.isKinematic = true;
-
-                (_magazineObject as FVRFireArmMagazine).Load(_minigunObject as FVRFireArm);
-
-                PlayerData.Instance.DeathMachinePowerUpIndicator.Activate(30f);
-
-                StartCoroutine(DisablePowerUpDelay(30f));
-            }
-            
             AudioManager.Instance.Play(ApplyAudio, .5f);
 
             Despawn();
@@ -67,9 +45,31 @@ namespace CustomScripts.Powerups
 
         public override void ApplyModifier()
         {
-            SyncData();
+            MinigunSpawner.Spawn();
+            MagazineSpawner.Spawn();
+
+            MinigunObject = MinigunSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
+            MinigunObject.SpawnLockable = false;
+            MinigunObject.UsesGravity = false;
+
+            MinigunObject.RootRigidbody.isKinematic = true;
+            MinigunObject.GetComponent<WeaponWrapper>().SetOwner(GameManager.ID);
+
+            _magazineObject = MagazineSpawner.SpawnedObject.GetComponent<FVRPhysicalObject>();
+            _magazineObject.SpawnLockable = false;
+            _magazineObject.UsesGravity = false;
+
+            _magazineObject.RootRigidbody.isKinematic = true;
+
+            (_magazineObject as FVRFireArmMagazine).Load(MinigunObject as FVRFireArm);
+
+            PlayerData.Instance.DeathMachinePowerUpIndicator.Activate(30f);
+
+            StartCoroutine(DisablePowerUpDelay(30f));
+            
             if (Networking.IsHostOrSolo())
-                ApplyModifier();
+                OnCollect();
+            SyncData();
         }
 
         private IEnumerator DisablePowerUpDelay(float time)
@@ -77,9 +77,9 @@ namespace CustomScripts.Powerups
             yield return new WaitForSeconds(time);
             AudioManager.Instance.Play(EndAudio, .5f);
 
-            _minigunObject.ForceBreakInteraction();
-            _minigunObject.IsPickUpLocked = true;
-            Destroy(_minigunObject.gameObject);
+            MinigunObject.ForceBreakInteraction();
+            MinigunObject.IsPickUpLocked = true;
+            Destroy(MinigunObject.gameObject);
 
             _magazineObject.ForceBreakInteraction();
             _magazineObject.IsPickUpLocked = true;

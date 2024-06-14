@@ -17,15 +17,23 @@ namespace CustomScripts
         private List<Plank> _planks;
 
         private AudioSource _tearPlankAudio;
-
-        public bool IsBroken;
         
         private void Start()
         {
             _planks = GetComponentsInChildren<Plank>().ToList();
             _tearPlankAudio = GetComponent<AudioSource>();
 
+            foreach (var plank in _planks)
+            {
+                plank.Window = this;
+            }
+
             ID = GameRefs.Windows.FindIndex(window => window == this);
+        }
+        
+        public bool IsBroken()
+        {
+            return _planks.All(plank => plank.IsBroken);
         }
         
         public bool IsFullyRepaired()
@@ -47,6 +55,7 @@ namespace CustomScripts
         // Data receiver
         public void OnPlankTeared(int plankId)
         {
+            Debug.Log("Plank Tearing: " + plankId + " " + _planks.Count + " " + _tearPlankAudio);
             _planks[plankId].Tear();
             _tearPlankAudio.Play();
         }

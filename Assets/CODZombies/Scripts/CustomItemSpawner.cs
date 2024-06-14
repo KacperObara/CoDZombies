@@ -17,7 +17,7 @@ namespace CustomScripts.Gamemode.GMDebug
             Gizmos.DrawSphere(Vector3.zero, 0.1f);
         }
 
-        public void Spawn()
+        public GameObject Spawn()
         {
             FVRObject obj = IM.OD[ObjectId];
             GameObject callback = obj.GetGameObject();
@@ -26,6 +26,8 @@ namespace CustomScripts.Gamemode.GMDebug
             go.SetActive(true);
 
             SpawnedObject = go;
+
+            return go;
         }
     }
 }

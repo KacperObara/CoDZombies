@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CustomScripts.Gamemode;
+using CustomScripts.Powerups;
 using FistVR;
 using H3MP;
 using H3MP.Networking;
@@ -211,9 +212,9 @@ namespace CustomScripts.Multiplayer
             GameRefs.MysteryBoxMover.SetNextWaypoint(newWaypointID);
 
             if (immediate)
-                GameRefs.MysteryBoxMover.StartTeleportAnim();
-            else
                 GameRefs.MysteryBoxMover.Teleport();
+            else
+                GameRefs.MysteryBoxMover.StartTeleportAnim();
         }
         
         private void MysteryBoxMoved_Received(string handlerID, int index)
@@ -343,7 +344,7 @@ namespace CustomScripts.Multiplayer
         {
             int powerUpId = packet.ReadInt();
             PowerUp powerUp = PowerUpManager.Instance.PowerUps[powerUpId];
-            powerUp.ApplyModifier();
+            powerUp.OnCollect();
         }
 
         void PowerUpCollected_Received(string handlerID, int index)
@@ -372,7 +373,7 @@ namespace CustomScripts.Multiplayer
         {
             int powerUpId = packet.ReadInt();
             PowerUp powerUp = PowerUpManager.Instance.PowerUps[powerUpId];
-            powerUp.ApplyModifier();
+            powerUp.OnCollect();
     
             PowerUpCollected_Send(powerUpId);
         }
@@ -398,7 +399,6 @@ namespace CustomScripts.Multiplayer
                 return;
 
             Packet packet = new Packet(papPurchased_ID);
-
             ServerSend.SendTCPDataToAll(packet, true);
         }
 
@@ -418,21 +418,18 @@ namespace CustomScripts.Multiplayer
         }
 
         // Client
-        public void Client_PaPPurchased_Send(string weaponId)
+        public void Client_PaPPurchased_Send()
         {
             if (!Networking.ServerRunning() || Networking.IsHost())
                 return;
 
             Packet packet = new Packet(papPurchased_Client_ID);
-            packet.Write(weaponId);
 
             ClientSend.SendTCPData(packet, true);
         }
 
         void Client_PaPPurchased_Handler(int clientID, Packet packet)
         {
-            string weaponId = packet.ReadString();
-            GameRefs.PackAPunch.SpawnWeapon(weaponId);
             GameRefs.PackAPunch.OnBuying();
             PaPPurchased_Send();
         }
@@ -664,10 +661,13 @@ namespace CustomScripts.Multiplayer
         
         private void HandleCustomData(int customDataId)
         {
-            if (customDataId == (int)CustomDataType.MYSTERY_BOX_BOUGHT)
+            if (customDataId == (int)CustomDataType.MYSTERY_BOX_ROLLED)
             {
-                if (Networking.IsHostOrSolo())
-                    GameRefs.MysteryBox.SpawnWeapon();
+                GameRefs.MysteryBox.OnBuying();
+            }
+            else if (customDataId == (int)CustomDataType.MYSTERY_BOX_TELEPORT)
+            {
+                GameRefs.MysteryBox.WillTeleport = true;
             }
             else if (customDataId == (int)CustomDataType.POWER_ENABLED)
             {
@@ -725,10 +725,12 @@ namespace CustomScripts.Multiplayer
     
     public enum CustomDataType
     {
-        MYSTERY_BOX_BOUGHT = 0,
-        POWER_ENABLED = 1,
-        EVERY_PLAYER_DEAD = 2,
-        RADIO_TOGGLE = 3,
+        MYSTERY_BOX_ROLLED = 0,
+        MYSTERY_BOX_TELEPORT = 1,
+        //MYSTERY_BOX_GUN_SPAWNED = 2,
+        POWER_ENABLED = 3,
+        EVERY_PLAYER_DEAD = 4,
+        RADIO_TOGGLE = 5,
     }
     
     public enum CustomPlayerDataType
