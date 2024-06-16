@@ -49,7 +49,7 @@ namespace CustomScripts
                 if (ZombieManager.Instance.ExistingZombies.Count > i) // temporary solution, until I think of better one
                 {
                     ZombieManager.Instance.ExistingZombies[i].OnHit(9999);
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.5f);
                 }
             }
 

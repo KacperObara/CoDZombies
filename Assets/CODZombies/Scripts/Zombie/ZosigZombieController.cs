@@ -36,18 +36,15 @@ namespace CustomScripts.Zombie
 
         public override void Initialize()
         {
-            //// If solo, target you, otherwise target random player (It's more complicated to include host in random player selection)
             if (Networking.IsHostOrSolo())
             {
                 Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
             }
-
-            Debug.Log("Zombie Initialize 1");
             
             Sosig = GetComponent<Sosig>();
 
             Sosig.CoreRB.gameObject.AddComponent<ZosigTrigger>().Initialize(this);
-            Debug.Log("Zombie Initialize 2");
+
             Sosig.Speed_Run = ZombieManager.Instance.ZosigPerRoundSpeed.Evaluate(RoundManager.Instance.RoundNumber);
             if (GameSettings.HardMode)
             {
@@ -60,7 +57,7 @@ namespace CustomScripts.Zombie
                 link.SetIntegrity(
                     ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber));
             }
-            Debug.Log("Zombie Initialize 3");
+
             if (GameSettings.WeakerEnemiesEnabled)
             {
                 Sosig.Mustard *= .6f;
@@ -69,7 +66,7 @@ namespace CustomScripts.Zombie
                     link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .6f);
                 }
             }
-            Debug.Log("Zombie Initialize 4");
+
             if (RoundManager.Instance.IsRoundSpecial)
             {
                 Sosig.Mustard *= .65f;
@@ -81,7 +78,6 @@ namespace CustomScripts.Zombie
                         link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .65f);
                 }
             }
-            Debug.Log("Zombie Initialize 5");
             Sosig.Speed_Walk = Sosig.Speed_Run;
             Sosig.Speed_Turning = Sosig.Speed_Run;
             Sosig.Speed_Sneak = Sosig.Speed_Run;
@@ -96,12 +92,14 @@ namespace CustomScripts.Zombie
                     Sosig.Hands[i].HeldObject.E.IFFCode = Sosig.E.IFFCode;
                 }
             }
-            Debug.Log("Zombie Initialize 6");
-            Sosig.Hand_Primary.HeldObject.SourceIFF = Sosig.E.IFFCode;
-            Sosig.Hand_Primary.HeldObject.E.IFFCode = Sosig.E.IFFCode;
-
             _cachedSpeed = Sosig.Speed_Run;
-            Debug.Log("Zombie Initialize 7");
+
+            if (Networking.IsHostOrSolo())
+            {
+                Sosig.Hand_Primary.HeldObject.SourceIFF = Sosig.E.IFFCode;
+                Sosig.Hand_Primary.HeldObject.E.IFFCode = Sosig.E.IFFCode;
+            }
+            
             CheckPerks();
         }
 
@@ -119,8 +117,6 @@ namespace CustomScripts.Zombie
             Sosig.Speed_Sneak = 5f;
             Sosig.Speed_Crawl = 5f;
 
-            //_sosig.Agent.agentTypeID = 1; // Changing zombies agent type to crawlers(Hellhounds)
-
             CanInteractWithWindows = false;
 
             yield return new WaitForSeconds(2);
@@ -134,26 +130,16 @@ namespace CustomScripts.Zombie
             if (Sosig == null)
                 return;
 
-            // if (_isAttackingWindow)
-            // {
-            //     _sosig.Speed_Run = 0;
-            //     _sosig.Speed_Walk = 0;
-            //     _sosig.Speed_Turning = 0;
-            //     _sosig.Speed_Crawl = 0;
-            //     _sosig.Speed_Sneak = 0;
-            // }
-            // else
-            // {
+
             Sosig.Speed_Run = _cachedSpeed;
             Sosig.Speed_Walk = _cachedSpeed;
             Sosig.Speed_Turning = _cachedSpeed;
             Sosig.Speed_Crawl = _cachedSpeed;
             Sosig.Speed_Sneak = _cachedSpeed;
-            //}
 
             if (TargetWindow && TargetWindow.IsBroken())
             {
-                Sosig.HasABrain = true;
+                Sosig.Agent.isStopped = false;
                 TargetWindow = null;
                 Target = PlayersMgr.Instance.GetClosestAlivePlayer(transform.position).GetHead();
                 Sosig.MaxHearingRange = 300;
@@ -180,7 +166,7 @@ namespace CustomScripts.Zombie
             Sosig.MaxHearingRange = 0;
             Sosig.MaxSightRange = 0;
             Sosig.SetCurrentOrder(Sosig.SosigOrder.Idle);
-            Sosig.HasABrain = false;
+            Sosig.Agent.isStopped = true;
         }
 
         private void LateUpdate()
@@ -242,13 +228,12 @@ namespace CustomScripts.Zombie
                 {
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
                 }
-
-                ZombieManager.Instance.OnZombieDied(this);
+                GMgr.Instance.Kills++;
             }
-            else
-            {
-                ZombieManager.Instance.ExistingZombies.Remove(this);
-            }
+            
+            ZombieManager.Instance.OnZombieDied(this);
+            
+            Debug.Log("After Zombie Killed, existing zombies: " + ZombieManager.Instance.ExistingZombies.Count + " Zombies remaining: " + ZombieManager.Instance.ZombiesRemaining);
 
             StartCoroutine(DelayedDespawn());
         }
@@ -277,6 +262,7 @@ namespace CustomScripts.Zombie
             //nuke
             Sosig.Links[0].LinkExplodes(Damage.DamageClass.Projectile);
             Sosig.KillSosig();
+            Debug.Log("Sosig was nuked");
         }
         
         public void OnTriggerEntered(Collider other)

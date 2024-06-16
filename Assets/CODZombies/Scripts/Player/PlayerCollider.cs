@@ -9,15 +9,8 @@ namespace CustomScripts
 {
     public class PlayerCollider : MonoBehaviour
     {
-        public LayerMask EnemyLayer;
-
         private Transform _transform;
         
-        private Coroutine _dealDamageCoroutine;
-
-        private const float DamageInterval = 1.5f;
-        private float _damageTimer;
-
         private void Awake()
         {
             _transform = transform;

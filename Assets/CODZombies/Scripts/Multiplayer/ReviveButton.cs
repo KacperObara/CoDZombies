@@ -32,9 +32,10 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 
 	public void Spawn(int playerID, Vector3 pos)
 	{
+		Debug.Log("Revive button spawned");
 		gameObject.SetActive(true);
 		_affectedPlayerID = playerID;
-		transform.position = pos;
+		transform.position = pos + Vector3.up;
 		_timer = 0f;
 		ReviveIcon.color = _defaultColor;
 	}
@@ -50,9 +51,12 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 		{
 			if (_handReviving == null)
 				_handReviving = other.GetComponent<FVRViveHand>();
-			
+
+			Debug.Log("Hand inside revive trigger");
 			if (_handReviving.Input.GripPressed)
 			{
+				Debug.Log("Grip pressed on revive button");
+				
 				ReviveIcon.color = _reviveColor;
 				_timer += Time.fixedDeltaTime;
 				if (_timer >= ReviveTime)

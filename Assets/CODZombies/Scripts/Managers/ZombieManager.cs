@@ -110,10 +110,6 @@ namespace CustomScripts.Managers
                 CustomSosigSpawnPoint spawner =
                     CurrentLocation.ZombieSpawnPoints[Random.Range(0, CurrentLocation.ZombieSpawnPoints.Count)].GetComponent<CustomSosigSpawnPoint>();
 
-                //Window targetWindow = spawner.GetComponent<ZombieSpawner>().WindowWaypoint;
-                //if (targetWindow != null)
-                //    _zombieTarget = targetWindow.ZombieWaypoint;
-
                 spawner.Spawn();
             }
         }
@@ -136,6 +132,8 @@ namespace CustomScripts.Managers
             {
                 controller.InitializeSpecialType();
             }
+
+            Debug.Log("After Zombie spawned, existing zombies: " + ExistingZombies.Count + " Zombies remaining: " + ZombiesRemaining);
         }
 
         #endregion
@@ -158,14 +156,17 @@ namespace CustomScripts.Managers
                 LocationChangedEvent.Invoke();
         }
 
-        public void OnZombieDied(ZombieController controller, bool awardKill = true)
+        public void ForceKillZosig(Sosig sosig)
         {
-            GMgr.Instance.Kills++;
-            
+            sosig.DeSpawnSosig();
+        }
+
+        public void OnZombieDied(ZombieController controller)
+        {
             ExistingZombies.Remove(controller);
 
-            if (!awardKill)
-                return;
+            // if (!awardKill)
+            //     return;
 
             ZombiesRemaining--;
 

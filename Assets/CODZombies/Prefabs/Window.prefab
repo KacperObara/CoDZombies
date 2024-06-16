@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4694318325776930}
   - component: {fileID: 65503439890332442}
   - component: {fileID: 114613786768127866}
-  m_Layer: 10
+  m_Layer: 16
   m_Name: RepairTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -713,8 +713,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: -1, y: 1, z: 0}
+  m_Size: {x: 0.5, y: 2, z: 2}
+  m_Center: {x: -0.25, y: 1, z: 0}
 --- !u!65 &65493065428906310
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -737,8 +737,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.88, y: 2, z: 1}
-  m_Center: {x: -0.25, y: 1, z: 0}
+  m_Size: {x: 0.88, y: 2.25, z: 1}
+  m_Center: {x: -0.25, y: 1.1275, z: 0}
 --- !u!65 &65516083668306366
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -872,6 +872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114266159802838934
 MonoBehaviour:
@@ -884,6 +885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114416806152031814
 MonoBehaviour:
@@ -897,7 +899,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ZombieWaypoint: {fileID: 4005669731502110}
-  IsBroken: 0
 --- !u!114 &114613786768127866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -933,6 +934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114975080017776186
 MonoBehaviour:
@@ -945,6 +947,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114984425841910324
 MonoBehaviour:
@@ -957,4 +960,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Window: {fileID: 0}
   IsBroken: 0

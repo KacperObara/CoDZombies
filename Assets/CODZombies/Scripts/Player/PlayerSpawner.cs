@@ -97,7 +97,7 @@ namespace CustomScripts.Gamemode
                 
                 GM.CurrentPlayerBody.DisableHands();
                 GM.CurrentPlayerBody.DisableHitBoxes();
-                SteamVR_Fade.Start(new Color(0.5f, 0, 0, 0.3f), 0.25f);
+                SteamVR_Fade.Start(new Color(0.5f, 0, 0, 0.2f), 0.25f);
 
                 if (Networking.IsHost())
                 {
@@ -143,7 +143,7 @@ namespace CustomScripts.Gamemode
             PlayersMgr.Me.IsDead = true;
             PlayersMgr.Me.IsDowned = false;
             GM.CurrentPlayerBody.WipeQuickbeltContents();
-            SteamVR_Fade.Start(new Color(0, 0, 0, 0.3f), 0.25f);
+            SteamVR_Fade.Start(new Color(0, 0, 0, 0.2f), 0.25f);
             RoundManager.OnRoundChanged += SpawnPlayer;
             
             if (Networking.IsHost())

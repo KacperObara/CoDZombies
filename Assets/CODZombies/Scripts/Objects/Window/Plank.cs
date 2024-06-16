@@ -8,18 +8,19 @@ namespace CustomScripts
 {
     public class Plank : MonoBehaviour
     {
-        [HideInInspector] public Window Window;
+        private Window _window;
         private Transform _parentTransform;
         
         public bool IsBroken;
 
         private Vector3 _destroyedPos;
 
-        private void Awake()
+        public void Initialize(Window window)
         {
+            _window = window;
             _parentTransform = transform.parent;
-            _destroyedPos = Window.transform.position - (transform.forward * 2f);
-            gameObject.SetActive(false);
+            _destroyedPos = _window.transform.position + (transform.forward * 2f);
+            gameObject.SetActive(true);
         }
 
         public void Tear()

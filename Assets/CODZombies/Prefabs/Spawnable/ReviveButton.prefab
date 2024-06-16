@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4782005818345606}
   - component: {fileID: 135631881222997602}
   - component: {fileID: 114640722934843568}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ReviveButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -25,7 +25,7 @@ namespace CustomScripts
 
             foreach (var plank in _planks)
             {
-                plank.Window = this;
+                plank.Initialize(this);
             }
 
             ID = GameRefs.Windows.FindIndex(window => window == this);
