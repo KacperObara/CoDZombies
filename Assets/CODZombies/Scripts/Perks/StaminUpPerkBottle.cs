@@ -15,7 +15,7 @@ namespace CustomScripts.Powerups.Perks
             GM.CurrentSceneSettings.MaxSpeedClamp = 6f;
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
         }
     }
 }

@@ -8,13 +8,13 @@ public class WindowRepairTrigger : MonoBehaviour
 {
     public Window Window;
 
-    private float _timer;
+    private float _timer = 1.5f;
     private float _timeToTrigger = 1.5f;
     private void OnTriggerStay(Collider other)
     {
         if (Window.IsFullyRepaired())
         {
-            Debug.Log("Touching window, but is fully repaired");    
+            //Debug.Log("Touching window, but is fully repaired");    
             return;
         }
         
@@ -29,8 +29,8 @@ public class WindowRepairTrigger : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("window touching object: " + other.name);
-    }
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     Debug.Log("window touching object: " + other.name);
+    // }
 }

@@ -30,6 +30,7 @@ namespace CustomScripts.Gamemode.GMDebug
         public DeadShotPerkBottle DeadShotPerkBottle;
 
         public Text IFFText;
+        public Text LayerText;
         
         private void Update()
         {
@@ -84,6 +85,7 @@ namespace CustomScripts.Gamemode.GMDebug
 
             if (Input.GetKeyDown(KeyCode.I))
             {
+                Debug.Log("I pressed");
                 int random = Random.Range(0, GameRefs.Windows.Count);
                 if (!GameRefs.Windows[random].IsBroken())
                     GameRefs.Windows[random].TearPlank();
@@ -101,7 +103,9 @@ namespace CustomScripts.Gamemode.GMDebug
                 SpawnTestObject();
             }
 
-            IFFText.text = "IFF: " + GM.CurrentPlayerBody.GetPlayerIFF();
+            //IFFText.text = "IFF: " + GM.CurrentPlayerBody.GetPlayerIFF();
+            //LayerText.text = LayerMask.LayerToName(GM.CurrentMovementManager.Hands[0].gameObject.layer);
+            
         }
 
         public void SpawnCarpenter()

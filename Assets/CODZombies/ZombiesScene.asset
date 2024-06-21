@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: ZombiesScene
   m_EditorClassIdentifier: 
   SceneFile: {fileID: 102900000, guid: f1da1eba2d1ca934a94109157024aa0c, type: 3}
-  SceneName: CodZombiesMulti
+  SceneName: CoDZombiesH3MP
   GameMode: sandbox
   DisplayMode: sandbox
-  Thumbnail: {fileID: 2800000, guid: 3ccbef88a8f68454bad5324d9f420654, type: 3}
+  Thumbnail: {fileID: 2800000, guid: f13b7b28b608c584d99939f0bb062715, type: 3}
   Author: Kodeman
-  Description: Yes
+  Description: CoD Zombies H3MP Beta Test Scene

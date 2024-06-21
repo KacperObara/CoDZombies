@@ -162,6 +162,7 @@ namespace CustomScripts.Gamemode
             GM.CurrentPlayerBody.EnableHands();
             GM.CurrentPlayerBody.EnableHitBoxes();
             SteamVR_Fade.Start(Color.clear, 0.25f);
+            GMgr.Instance.EndGame();
         }
 
         private void OnDrawGizmos()
@@ -169,6 +170,11 @@ namespace CustomScripts.Gamemode
             Gizmos.color = new Color(0.2f, 0.8f, 0.2f, 0.5f);
             Gizmos.DrawSphere(transform.position, 0.1f);
             Gizmos.DrawLine(transform.position, transform.position + transform.forward * 0.25f);
+        }
+
+        private void OnDestroy()
+        {
+            RoundManager.OnRoundChanged -= SpawnPlayer;
         }
     }
 }

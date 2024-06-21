@@ -9,7 +9,7 @@ namespace CustomScripts.Powerups.Perks
         {
             PlayerData.Instance.PHDFlopperPerkActivated = true;
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
         }
     }
 }

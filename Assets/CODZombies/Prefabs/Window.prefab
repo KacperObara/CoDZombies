@@ -282,9 +282,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1923308133142094}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.0000000037252903, y: -0.000000011175871, z: -0.000000044237822,
+    w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: -0}
+  m_LocalScale: {x: 0.14442018, y: 0.04131004, z: 1.2791505}
   m_Children: []
   m_Father: {fileID: 4884235703222604}
   m_RootOrder: 0
@@ -297,7 +298,7 @@ Transform:
   m_GameObject: {fileID: 1484949329338594}
   m_LocalRotation: {x: -0.009530379, y: -0.010413704, z: -0.7138221, w: 0.7001848}
   m_LocalPosition: {x: -0.518, y: 0.8189975, z: 0.028}
-  m_LocalScale: {x: 0.14442006, y: 0.04131002, z: 1.2791498}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4834703858583168}
   m_Father: {fileID: 4411026102012806}
@@ -326,9 +327,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1051343503016760}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.0000000121071935, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 0.14442001, y: 0.041310027, z: 1.2791497}
   m_Children: []
   m_Father: {fileID: 4418461697097766}
   m_RootOrder: 0
@@ -359,7 +360,7 @@ Transform:
   m_GameObject: {fileID: 1266685459098706}
   m_LocalRotation: {x: -0.06418514, y: -0.06722796, z: -0.7106751, w: 0.69735324}
   m_LocalPosition: {x: -0.51799774, y: 1.145, z: 0.027999878}
-  m_LocalScale: {x: 0.14442003, y: 0.04131002, z: 1.27915}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4273993385086776}
   m_Father: {fileID: 4411026102012806}
@@ -384,9 +385,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1687094837230568}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.000000048428767, y: -0.00000004470348, z: 0.000000080559396,
+    w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1444202, y: 0.041310042, z: 1.2791508}
   m_Children: []
   m_Father: {fileID: 4887036464567242}
   m_RootOrder: 0
@@ -397,9 +399,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1906416210887856}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.000000027939674, y: 0.00000004470348, z: -0.000000025145706,
+    w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.14442022, y: 0.04131003, z: 1.2791531}
   m_Children: []
   m_Father: {fileID: 4932636958142542}
   m_RootOrder: 0
@@ -423,9 +426,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1788690747055254}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.00000003073364, y: 0.000000009778886, z: -0.000000004554749,
+    w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: -0}
+  m_LocalScale: {x: 0.14442013, y: 0.041310057, z: 1.2791505}
   m_Children: []
   m_Father: {fileID: 4215521588099114}
   m_RootOrder: 0
@@ -438,7 +442,7 @@ Transform:
   m_GameObject: {fileID: 1129029509567802}
   m_LocalRotation: {x: 0.0603478, y: 0.061600212, z: -0.7112439, w: 0.69763577}
   m_LocalPosition: {x: -0.518, y: 1.3909975, z: 0.018}
-  m_LocalScale: {x: 0.14442003, y: 0.04131002, z: 1.27915}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4029846768570488}
   m_Father: {fileID: 4411026102012806}
@@ -452,7 +456,7 @@ Transform:
   m_GameObject: {fileID: 1812332680386938}
   m_LocalRotation: {x: 0.067905486, y: 0.06977582, z: -0.7104837, w: 0.69694567}
   m_LocalPosition: {x: -0.518, y: 0.6499976, z: 0.015}
-  m_LocalScale: {x: 0.14442003, y: 0.041309997, z: 1.27915}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4544719495315928}
   m_Father: {fileID: 4411026102012806}
@@ -466,7 +470,7 @@ Transform:
   m_GameObject: {fileID: 1369987054788288}
   m_LocalRotation: {x: -0.039163224, y: -0.038706996, z: -0.7128297, w: 0.69917226}
   m_LocalPosition: {x: -0.523, y: 1.793, z: 0.015}
-  m_LocalScale: {x: 0.14442016, y: 0.041310016, z: 1.279153}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4633420858680664}
   m_Father: {fileID: 4411026102012806}
@@ -782,10 +786,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1
-  MaxDistance: 20
+  MinDistance: 3
+  MaxDistance: 13
   Pan2D: 0
-  rolloffMode: 2
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -793,34 +797,10 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.002
-      value: 1
+      time: 0.12358627
+      value: 0.64258957
       inSlope: -7.156604
       outSlope: -7.156604
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.12477742
-      value: 0.5860596
-      inSlope: -1.104823
-      outSlope: -1.104823
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.30712244
-      value: 0.33291626
-      inSlope: -0.34920707
-      outSlope: -0.34920707
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.606028
-      value: 0.1592102
-      inSlope: -0.021507023
-      outSlope: -0.021507023
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 0.055603027
-      inSlope: -0.11999105
-      outSlope: -0.11999105
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -872,7 +852,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114266159802838934
 MonoBehaviour:
@@ -885,7 +864,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114416806152031814
 MonoBehaviour:
@@ -899,6 +877,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ZombieWaypoint: {fileID: 4005669731502110}
+  TearingPlankSounds:
+  - {fileID: 8300000, guid: 74e28b9673e0b4542985e3232513d416, type: 3}
+  - {fileID: 8300000, guid: c8d113ceb69b7d54493aff236e17d4a9, type: 3}
+  - {fileID: 8300000, guid: 5c52ea38154d7de44ae0dfa7206bd0d4, type: 3}
+  - {fileID: 8300000, guid: 659b65669f1ed984996acbc1c4f52049, type: 3}
+  - {fileID: 8300000, guid: 3f8307f8d734f164eafac26ea1598f68, type: 3}
+  - {fileID: 8300000, guid: fb958b725abfd274798b2219f19956a9, type: 3}
+  RepairingPlankSounds:
+  - {fileID: 8300000, guid: 70aadd22ca0d60b4aa062a076aa4509a, type: 3}
+  - {fileID: 8300000, guid: 749ddea0355f5bb4cb8fc107c34a3592, type: 3}
+  - {fileID: 8300000, guid: 386b749b04985cd44a5d3c08bd4d09c3, type: 3}
+  - {fileID: 8300000, guid: fe12734ce91ba2e4b9301139306b5dbd, type: 3}
+  - {fileID: 8300000, guid: 5ec3a92fb6ca1024fb80310dbd3de188, type: 3}
+  - {fileID: 8300000, guid: 279c59d23bc248c4db7c6782c58445fc, type: 3}
+  PlankFloatSound: {fileID: 8300000, guid: be0f20f4042740c44bc3a95b70bd6457, type: 3}
+  WindowRepairSound: {fileID: 8300000, guid: a859b0aa833d03a4b886bea7b7a08f05, type: 3}
 --- !u!114 &114613786768127866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -934,7 +928,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114975080017776186
 MonoBehaviour:
@@ -947,7 +940,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Window: {fileID: 0}
   IsBroken: 0
 --- !u!114 &114984425841910324
 MonoBehaviour:
@@ -960,5 +952,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed006540c06841158681f3ecef7b15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Window: {fileID: 0}
   IsBroken: 0

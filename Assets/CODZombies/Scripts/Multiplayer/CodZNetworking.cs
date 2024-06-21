@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using CustomScripts.Gamemode;
 using CustomScripts.Powerups;
@@ -36,17 +37,27 @@ namespace CustomScripts.Multiplayer
         private int customData_playerID_ID = -1;
         private int customData_playerID_Client_ID = -1;
         
-        void Start()
+        private IEnumerator Start()
         {
+            // Wait one frame so that everything is all setup
+            yield return null;
             StartNetworking();
         }
         
         private void StartNetworking()
         {
+            Mod.customPacketHandlers = new Mod.CustomPacketHandler[20];
+            
             if (Networking.ServerRunning())
             {
                 SetupPacketTypes();
                 GM.CurrentPlayerBody.SetPlayerIFF(GameManager.ID + 5);
+            }
+
+            // log all packet IDs
+            foreach (var packet in Mod.registeredCustomPacketIDs)
+            {
+                Debug.Log("Packet ID: " + packet.Key + " = " + packet.Value);
             }
         }
 
@@ -76,6 +87,8 @@ namespace CustomScripts.Multiplayer
             RegisterPacket("CodZ_Client_CustomData_PlayerID", Client_CustomData_PlayerID_Handler, Client_CustomData_PlayerID_Received, ref customData_playerID_Client_ID);
         }
         
+        
+        
         private void RegisterPacket(string packetName, Mod.CustomPacketHandler hostHandler, Mod.CustomPacketHandlerReceivedDelegate clientHandler, ref int packetID)
         {
             if (Networking.IsHost())
@@ -86,7 +99,7 @@ namespace CustomScripts.Multiplayer
                 }
                 else
                 {
-                    packetID = Server.RegisterCustomPacketType(packetName);
+                    packetID = Networking.RegisterCustomPacketType(packetName);
                 }
                 Mod.customPacketHandlers[packetID] = hostHandler;
             }
@@ -111,6 +124,7 @@ namespace CustomScripts.Multiplayer
         {
             if (!Networking.ServerRunning() || Networking.IsClient())
                 return;
+            
             
             Packet packet = new Packet(gameStarted_ID);
             packet.Write(GameSettings.HardMode);
@@ -434,6 +448,8 @@ namespace CustomScripts.Multiplayer
         {
             if (!Networking.ServerRunning() || Networking.IsClient())
                 return;
+
+            Debug.Log("Window state changed: Sending ID: " + windowStateChanged_ID);
     
             Packet packet = new Packet(windowStateChanged_ID);
             packet.Write(windowId);
@@ -447,6 +463,7 @@ namespace CustomScripts.Multiplayer
         void WindowStateChanged_Handler(int clientID, Packet packet)
         {
             Debug.Log("Received WindowStateChanged packet from host: " + clientID);
+            
             int windowId = packet.ReadInt();
             int plankId = packet.ReadInt();
             WindowAction windowAction = (WindowAction)packet.ReadInt();
@@ -694,15 +711,15 @@ namespace CustomScripts.Multiplayer
                 
                 Vector3 deathPos = GameManager.players[playerID].transform.position;
                 ReviveButton.Instance.Spawn(playerID, deathPos);
-                PlayersMgr.GetPlayer(playerID).IsDowned = true;
+                PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = true;
             }
             else if (customDataId == (int)CustomPlayerDataType.PLAYER_DEAD)
             {
                 if (playerID == GameManager.ID)
                     return;
                 
-                PlayersMgr.GetPlayer(playerID).IsDowned = false;
-                PlayersMgr.GetPlayer(playerID).IsDead = true;
+                PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = false;
+                PlayersMgr.GetPlayerExcludingMe(playerID).IsDead = true;
                 ReviveButton.Instance.Despawn();
             }
             else if (customDataId == (int)CustomPlayerDataType.PLAYER_REVIVED)
@@ -713,7 +730,7 @@ namespace CustomScripts.Multiplayer
                 }
                 else
                 {
-                    PlayersMgr.GetPlayer(playerID).IsDowned = false;
+                    PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = false;
                     ReviveButton.Instance.Despawn();
                 }
             }

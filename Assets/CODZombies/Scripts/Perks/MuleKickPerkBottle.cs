@@ -23,7 +23,7 @@ namespace CustomScripts.Powerups.Perks
             Model.SetActive(false);
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(gameObject, 1f);
+            Destroy(transform.parent.gameObject, 1f);
         }
     }
 }

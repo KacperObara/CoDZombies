@@ -19,7 +19,7 @@ namespace CustomScripts
         {
             _window = window;
             _parentTransform = transform.parent;
-            _destroyedPos = _window.transform.position + (transform.forward * 2f);
+            _destroyedPos = _window.transform.position - (_window.transform.right * 2f);
             gameObject.SetActive(true);
         }
 
@@ -29,11 +29,20 @@ namespace CustomScripts
             StartCoroutine(TearAnimation());
         }
         
-        public void Repair()
+        public void Repair(bool instant)
         {
             IsBroken = false;
             gameObject.SetActive(true);
-            StartCoroutine(RepairAnimation());
+            
+            if (instant)
+            {
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                StartCoroutine(RepairAnimation());
+            }
         }
         
         private IEnumerator RepairAnimation()
@@ -57,20 +66,21 @@ namespace CustomScripts
             transform.localRotation = targetRotation;
             
             // Pause
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.75f);
             
             // Move to window
             Vector3 localPos = transform.localPosition;
             elapsedTime = 0;
-            while (elapsedTime < 0.5f)
+            while (elapsedTime < 0.25f)
             {
-                transform.localPosition = Vector3.Lerp(localPos, Vector3.zero, elapsedTime / 0.5f);
+                transform.localPosition = Vector3.Lerp(localPos, Vector3.zero, elapsedTime / 0.25f);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
             
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
+            _window.OnPlankInPlace();
         }
 
         public IEnumerator TearAnimation()
@@ -82,10 +92,10 @@ namespace CustomScripts
         
             float elapsedTime = 0;
         
-            while (elapsedTime < 0.75f)
+            while (elapsedTime < 0.5f)
             {
-                transform.position = Vector3.Lerp(startingPos, finalPos, (elapsedTime / 0.75f));
-                transform.rotation = Quaternion.Lerp(startingRot, finalRot, (elapsedTime / 0.75f));
+                transform.position = Vector3.Lerp(startingPos, finalPos, (elapsedTime / 0.5f));
+                transform.rotation = Quaternion.Lerp(startingRot, finalRot, (elapsedTime / 0.5f));
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }

@@ -11,6 +11,8 @@ namespace CustomScripts
 {
     public class MysteryBoxMover : MonoBehaviour
     {
+        public bool MoveRandomlyOnStart = true;
+        
         public List<Transform> SpawnPoints;
         public int CurrentSpawnPoint;
 
@@ -40,7 +42,12 @@ namespace CustomScripts
 
         private void Start()
         {
-            if (Networking.IsHost())
+            RoundManager.OnGameStarted += TeleportOnStart;
+        }
+
+        public void TeleportOnStart()
+        {
+            if (Networking.IsHost() && MoveRandomlyOnStart)
             {
                 int waypointID = GetRandomMovePoint();
                 _nextTeleportWaypoint = waypointID;
@@ -139,6 +146,11 @@ namespace CustomScripts
         public void SetNextWaypoint(int waypointID)
         {
             _nextTeleportWaypoint = waypointID;
+        }
+
+        private void OnDestroy()
+        {
+            RoundManager.OnGameStarted -= TeleportOnStart;
         }
     }
 }

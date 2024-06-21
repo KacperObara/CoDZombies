@@ -16,12 +16,17 @@ namespace CustomScripts
         
         private List<Plank> _planks;
 
-        private AudioSource _tearPlankAudio;
+        private AudioSource _audioSource;
+        
+        public List<AudioClip> TearingPlankSounds;
+        public List<AudioClip> RepairingPlankSounds;
+        public AudioClip PlankFloatSound;
+        public AudioClip WindowRepairSound;
         
         private void Start()
         {
             _planks = GetComponentsInChildren<Plank>().ToList();
-            _tearPlankAudio = GetComponent<AudioSource>();
+            _audioSource = GetComponent<AudioSource>();
 
             foreach (var plank in _planks)
             {
@@ -55,9 +60,9 @@ namespace CustomScripts
         // Data receiver
         public void OnPlankTeared(int plankId)
         {
-            Debug.Log("Plank Tearing: " + plankId + " " + _planks.Count + " " + _tearPlankAudio);
+            Debug.Log("Plank Tearing: " + plankId + " " + _planks.Count + " " + _audioSource);
             _planks[plankId].Tear();
-            _tearPlankAudio.Play();
+            _audioSource.PlayOneShot(TearingPlankSounds[UnityEngine.Random.Range(0, TearingPlankSounds.Count)]);
         }
 
         public void RepairWindow()
@@ -76,19 +81,27 @@ namespace CustomScripts
 
         public void OnWindowRepaired(int plankId)
         {
-            _planks[plankId].Repair();
-            AudioManager.Instance.Play(AudioManager.Instance.BarricadeRepairSound, .5f);
+            _planks[plankId].Repair(false);
+            
+            _audioSource.PlayOneShot(PlankFloatSound);
+            _audioSource.PlayOneShot(WindowRepairSound);
             
             if (BarricadedEvent != null)
                 BarricadedEvent.Invoke();
+        }
+
+        public void OnPlankInPlace()
+        {
+            _audioSource.PlayOneShot(RepairingPlankSounds[UnityEngine.Random.Range(0, RepairingPlankSounds.Count)]);
         }
 
         public void RepairAll()
         {
             foreach (var plank in _planks)
             {
-                plank.Repair();
+                plank.Repair(true);
             }
+            _audioSource.PlayOneShot(WindowRepairSound);
         }
     }
     

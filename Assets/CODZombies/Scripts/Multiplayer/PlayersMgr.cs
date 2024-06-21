@@ -86,9 +86,9 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 		RoundManager.OnGameStarted -= AddClients;
 	}
 
-	public static PlayerH3MPData GetPlayer(int playerID)
+	public static PlayerH3MPData GetPlayerExcludingMe(int playerID)
 	{
-		return Instance.Players.Find(player => player.PlayerManager.ID == playerID);
+		return Instance.Players.Find(player => !player.IsMe && player.PlayerManager.ID == playerID);
 	}
 }
 

@@ -19,7 +19,7 @@ namespace CustomScripts
                 ConsumedEvent.Invoke();
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
         }
     }
 }

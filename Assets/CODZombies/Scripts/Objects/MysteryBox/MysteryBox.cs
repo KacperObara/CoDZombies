@@ -102,6 +102,7 @@ namespace CustomScripts
             {
                 if (DidIRoll)
                 {
+                    DidIRoll = false;
                     bool isRare = Random.Range(0f, 1f) <= RareChance;
 
                     WeaponData rolledWeapon = null;

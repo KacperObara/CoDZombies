@@ -10,7 +10,7 @@ namespace CustomScripts.Powerups.Perks
         {
             PlayerData.Instance.QuickRevivePerkActivated = true;
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
         }
     }
 }

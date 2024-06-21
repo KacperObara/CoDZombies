@@ -28,6 +28,7 @@ namespace CustomScripts
         [HideInInspector] public bool GameEnded = false;
 
         public bool PowerEnabled;
+        public Transform PowerSwitchLever;
 
         [HideInInspector]public int Kills;
 
@@ -63,6 +64,8 @@ namespace CustomScripts
             AudioManager.Instance.Play(AudioManager.Instance.PowerOnSound, .8f);
             if (OnPowerEnabled != null)
                 OnPowerEnabled.Invoke();
+            
+            PowerSwitchLever.localEulerAngles = new Vector3(0, 45, 0);
         }
 
         public void AddPoints(int amount)
@@ -120,6 +123,14 @@ namespace CustomScripts
             AudioManager.Instance.PlayMusic(AudioManager.Instance.EndMusic, 0.25f, 1f);
 
             EndPanel.Instance.UpdatePanel();
+
+            if (Networking.IsHostOrSolo())
+            {
+                for (int i = ZombieManager.Instance.ExistingZombies.Count - 1; i >= 0; i--)
+                {
+                    ZombieManager.Instance.ExistingZombies[i].OnHit(9999);
+                }
+            }
         }
 
         private void OnDestroy()

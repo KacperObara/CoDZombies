@@ -127,6 +127,9 @@ namespace CustomScripts.Zombie
             if (!Networking.IsHostOrSolo())
                 return;
             
+            if (GMgr.Instance.GameEnded)
+                return;
+            
             if (Sosig == null)
                 return;
 
@@ -172,6 +175,9 @@ namespace CustomScripts.Zombie
         private void LateUpdate()
         {
             if (!Networking.IsHostOrSolo())
+                return;
+
+            if (GMgr.Instance.GameEnded)
                 return;
             
             if (Sosig == null)

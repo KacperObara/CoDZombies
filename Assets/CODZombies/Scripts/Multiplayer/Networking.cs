@@ -12,6 +12,12 @@ namespace CustomScripts.Multiplayer
 {
 	public class Networking : MonoBehaviourSingleton<Networking> 
 	{
+		public override void Awake()
+		{
+			base.Awake();
+			CustomIndex = 0;
+		}
+
 		public static bool IsHostOrSolo()
 		{
 			if (ServerRunning())
@@ -41,6 +47,54 @@ namespace CustomScripts.Multiplayer
 			if (ThreadManager.host == true)
 				return true;
 			return false;
+		}
+
+		public static int CustomIndex = 0;
+		// Stolen from Server.cs, original only supports 10 custom packet handlers
+		public static int RegisterCustomPacketType(string handlerID, int clientID = 0)
+		{
+			int index = -1;
+
+			// index = CustomIndex;
+			// CustomIndex++;
+			// return index;
+
+			if (Mod.registeredCustomPacketIDs.TryGetValue(handlerID, out index))
+			{
+				Mod.LogWarning("Client " + clientID + " requested for " + handlerID + " custom packet handler to be registered but this ID already exists.");
+			}
+			else // We don't yet have this handlerID, add it
+			{
+				index = CustomIndex;
+				CustomIndex++;
+
+				// If couldn't find one, need to add more space to handlers array
+				// if (index >= Mod.customPacketHandlers.Length)
+				// {
+				// 	//index = Mod.customPacketHandlers.Length;
+				// 	Mod.CustomPacketHandler[] temp = Mod.customPacketHandlers;
+				// 	Mod.customPacketHandlers = new Mod.CustomPacketHandler[index + 1];
+				// 	for (int i = 0; i < temp.Length; ++i)
+				// 	{
+				// 		Mod.customPacketHandlers[i] = temp[i];
+				// 	}
+				// 	for (int i = temp.Length; i < Mod.customPacketHandlers.Length; ++i) 
+				// 	{
+				// 		Mod.availableCustomPacketIndices.Add(i);
+				// 	}
+				// }
+
+				// Store for potential later use
+				Mod.registeredCustomPacketIDs.Add(handlerID, index);
+
+				// Send event so a mod can add their handler at the index
+				Mod.CustomPacketHandlerReceivedInvoke(handlerID, index);
+			}
+
+			// Send back/relay to others
+			ServerSend.RegisterCustomPacketType(handlerID, index);
+
+			return index;
 		}
 	
 		// public static int GetPlayerCount()

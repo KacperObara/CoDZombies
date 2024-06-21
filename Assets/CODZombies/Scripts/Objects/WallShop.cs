@@ -32,8 +32,18 @@ namespace CustomScripts.Objects
 
         public CustomItemSpawner WeaponSpawner;
         public CustomItemSpawner AmmoSpawner;
-        
+
+        private void OnValidate()
+        {
+            UpdateUI();
+        }
+
         private void Start()
+        {
+            UpdateUI();
+        }
+
+        private void UpdateUI()
         {
             NameText.text = Weapon.DisplayName;
             CostText.text = Cost.ToString();

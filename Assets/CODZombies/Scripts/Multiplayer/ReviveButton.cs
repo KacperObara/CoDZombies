@@ -18,7 +18,7 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 
 	private float ReviveTime
 	{
-		get { return PlayerData.Instance.QuickRevivePerkActivated ? 1.5f : 3f; }
+		get { return PlayerData.Instance.QuickRevivePerkActivated ? 2.5f : 5f; }
 	}
 	private float _timer = 0f;
 
@@ -52,10 +52,10 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 			if (_handReviving == null)
 				_handReviving = other.GetComponent<FVRViveHand>();
 
-			Debug.Log("Hand inside revive trigger");
+			//Debug.Log("Hand inside revive trigger");
 			if (_handReviving.Input.GripPressed)
 			{
-				Debug.Log("Grip pressed on revive button");
+				//Debug.Log("Grip pressed on revive button");
 				
 				ReviveIcon.color = _reviveColor;
 				_timer += Time.fixedDeltaTime;
