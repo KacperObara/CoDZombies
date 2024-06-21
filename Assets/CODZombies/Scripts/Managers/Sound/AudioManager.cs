@@ -18,9 +18,6 @@ namespace CustomScripts
         public AudioClip BuySound;
         public AudioClip DrinkSound;
 
-        public AudioClip ZombieHitSound;
-        public AudioClip ZombieDeathSound;
-
         public AudioClip HellHoundSpawnSound;
         public AudioClip HellHoundDeathSound;
 
@@ -40,14 +37,6 @@ namespace CustomScripts
 
         private Coroutine _musicRepetition;
 
-        // private void OnMusicSettingChanged()
-        // {
-        //     if (GameSettings.BackgroundMusic)
-        //         PlayMusic(Music, .08f, repeat: true);
-        //     else
-        //         MusicAudioSource.Stop();
-        // }
-
         public void Play(AudioClip audioClip, float volume = 1f, float delay = 0f)
         {
             if (delay != 0)
@@ -65,38 +54,12 @@ namespace CustomScripts
         /// <summary>
         /// Used to stop old sound when playing the new one
         /// </summary>
-        public void PlayMusic(AudioClip audioClip, float volume = 1f, float delay = 0f, bool repeat = false)
+        public void PlayMusic(AudioClip audioClip, float volume = 1f, float delay = 0f)
         {
-            if (_musicRepetition != null)
-            {
-                StopCoroutine(_musicRepetition);
-                _musicRepetition = null;
-            }
-
             MusicAudioSource.clip = audioClip;
             MusicAudioSource.volume = volume;
             MusicAudioSource.PlayDelayed(delay);
-
-            // if (repeat)
-            // {
-            //     _musicRepetition = StartCoroutine(RepeatMusic(audioClip.length, volume));
-            // }
         }
-
-        // private IEnumerator RepeatMusic(float endTimer, float volume)
-        // {
-        //     yield return new WaitForSeconds(endTimer);
-        //
-        //     if (GameSettings.BackgroundMusic)
-        //     {
-        //         PlayMusic(Music, .08f, repeat: true);
-        //     }
-        // }
-
-        // private void OnDestroy()
-        // {
-        //     GameSettings.OnMusicSettingChanged -= OnMusicSettingChanged;
-        // }
     }
 }
 #endif

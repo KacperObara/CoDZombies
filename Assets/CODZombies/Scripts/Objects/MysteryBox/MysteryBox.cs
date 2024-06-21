@@ -28,10 +28,12 @@ namespace CustomScripts
         private bool _alreadyBought;
         public bool AlreadyBought { get { return _alreadyBought; } }
 
-        [FormerlySerializedAs("LootId")] public List<WeaponData> Loot;
+        public List<WeaponData> Loot;
         public List<WeaponData> RareLoot;
         [Range(0f, 1f)]
-        public float RareChance = 0.05f;
+        public float StartRareChance = 0.01f;
+        public float ChanceIncreasePerRound = 0.003f;
+        public float MaxRareChance = 0.1f;
         
         public CustomItemSpawner WeaponSpawner;
         public CustomItemSpawner AmmoSpawner;
@@ -103,7 +105,8 @@ namespace CustomScripts
                 if (DidIRoll)
                 {
                     DidIRoll = false;
-                    bool isRare = Random.Range(0f, 1f) <= RareChance;
+                    float rareChance = Mathf.Min(StartRareChance + ChanceIncreasePerRound * RoundManager.Instance.RoundNumber, MaxRareChance);
+                    bool isRare = Random.Range(0f, 1f) <= rareChance;
 
                     WeaponData rolledWeapon = null;
                     if (isRare)
