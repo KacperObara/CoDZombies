@@ -710,7 +710,9 @@ namespace CustomScripts.Multiplayer
                     return;
                 
                 Vector3 deathPos = GameManager.players[playerID].transform.position;
-                ReviveButton.Instance.Spawn(playerID, deathPos);
+
+                PlayersMgr.SpawnReviveButton(playerID, deathPos);
+                //ReviveButton.Instance.Spawn(playerID, deathPos);
                 PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = true;
             }
             else if (customDataId == (int)CustomPlayerDataType.PLAYER_DEAD)
@@ -720,7 +722,8 @@ namespace CustomScripts.Multiplayer
                 
                 PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = false;
                 PlayersMgr.GetPlayerExcludingMe(playerID).IsDead = true;
-                ReviveButton.Instance.Despawn();
+
+                PlayersMgr.DespawnReviveButton(playerID);
             }
             else if (customDataId == (int)CustomPlayerDataType.PLAYER_REVIVED)
             {
@@ -731,7 +734,7 @@ namespace CustomScripts.Multiplayer
                 else
                 {
                     PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = false;
-                    ReviveButton.Instance.Despawn();
+                    PlayersMgr.DespawnReviveButton(playerID);
                 }
             }
         }

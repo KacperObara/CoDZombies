@@ -84,15 +84,19 @@ namespace CustomScripts.Managers
 
             while (ZombiesRemaining > ExistingZombies.Count)
             {
-                if (ExistingZombies.Count >= ZombieAtOnceLimit)
+                if (ExistingZombies.Count >= ZombieAtOnceLimit || ExistingZombies.Count >= ZombiesRemaining) // Second check is experimental fix.
                 {
-                    yield return new WaitForSeconds(5);
+                    yield return new WaitForSeconds(4);
                     continue;
                 }
 
                 SpawnZosig();
 
-                yield return new WaitForSeconds(2);
+                if (RoundManager.Instance.IsRoundSpecial)
+                    yield return new WaitForSeconds(2.6f);
+                else
+                    yield return new WaitForSeconds(1.5f);
+                    
             }
         }
 
@@ -169,6 +173,9 @@ namespace CustomScripts.Managers
             //     return;
 
             ZombiesRemaining--;
+            
+            if (GMgr.Instance.GameEnded)
+                return;
 
             if (ZombiesRemaining <= 0)
             {
@@ -210,6 +217,8 @@ namespace CustomScripts.Managers
                 d.Dam_Piercing = 0;
                 d.Dam_Stunning = 0;
             }
+
+            d.Dam_Stunning = 0;
         }
 
         [HarmonyPatch(typeof(Sosig), "ProcessDamage", new Type[] { typeof(Damage), typeof(SosigLink) })]

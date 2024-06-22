@@ -15,6 +15,9 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	public List<PlayerH3MPData> Players = new List<PlayerH3MPData>();
 	public static PlayerH3MPData Me;
 	
+	public ReviveButton ReviveButtonPrefab;
+	public List<ReviveButton> ReviveButtons = new List<ReviveButton>();
+	
 	private void Start()
 	{
 		AddMe();
@@ -89,6 +92,18 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	public static PlayerH3MPData GetPlayerExcludingMe(int playerID)
 	{
 		return Instance.Players.Find(player => !player.IsMe && player.PlayerManager.ID == playerID);
+	}
+	
+	public static void SpawnReviveButton(int playerID, Vector3 pos)
+	{
+		ReviveButton button = Instantiate(Instance.ReviveButtonPrefab, pos, Quaternion.identity);
+		button.Spawn(playerID, pos);
+	}
+	
+	public static void DespawnReviveButton(int playerID)
+	{
+		ReviveButton reviveButton = Instance.ReviveButtons.Find(button => button.AffectedPlayerID == playerID);
+		reviveButton.Despawn();
 	}
 }
 

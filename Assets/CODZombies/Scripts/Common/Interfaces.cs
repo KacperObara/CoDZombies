@@ -33,6 +33,9 @@ namespace CustomScripts
 
         public void SyncData()
         {
+            if (Networking.IsSolo())
+                return;
+            
             int powerUpID = PowerUpManager.Instance.GetIndexOf(this);
             if (Networking.IsHostOrSolo())
             {

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using CustomScripts;
+using CustomScripts.Gamemode;
 using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using CustomScripts.Powerups.Perks;
@@ -12,7 +13,7 @@ using UnityEngine.UI;
 public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 {
 	public Image ReviveIcon;
-	private int _affectedPlayerID;
+	public int AffectedPlayerID;
 	
 	private FVRViveHand _handReviving;
 
@@ -24,25 +25,23 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 
 	private Color _defaultColor = Color.yellow;
 	private Color _reviveColor = Color.white;
-
-	private void Start()
-	{
-		Despawn();
-	}
-
+	
 	public void Spawn(int playerID, Vector3 pos)
 	{
 		Debug.Log("Revive button spawned");
 		gameObject.SetActive(true);
-		_affectedPlayerID = playerID;
+		AffectedPlayerID = playerID;
 		transform.position = pos + Vector3.up;
 		_timer = 0f;
 		ReviveIcon.color = _defaultColor;
-	}
+		PlayersMgr.Instance.ReviveButtons.Add(this);
+	} 
 
 	public void Despawn()
 	{
 		gameObject.SetActive(false);
+		PlayersMgr.Instance.ReviveButtons.Remove(this);
+		Destroy(gameObject);
 	}
 	
 	private void OnTriggerStay(Collider other)
@@ -63,14 +62,14 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 				{
 					if (Networking.IsHost())
 					{
-						CodZNetworking.Instance.CustomData_PlayerID_Send(_affectedPlayerID, (int)CustomPlayerDataType.PLAYER_REVIVED);
+						CodZNetworking.Instance.CustomData_PlayerID_Send(AffectedPlayerID, (int)CustomPlayerDataType.PLAYER_REVIVED);
 					}
 					else
 					{
-						CodZNetworking.Instance.Client_CustomData_PlayerID_Send(_affectedPlayerID, (int)CustomPlayerDataType.PLAYER_REVIVED);
+						CodZNetworking.Instance.Client_CustomData_PlayerID_Send(AffectedPlayerID, (int)CustomPlayerDataType.PLAYER_REVIVED);
 					}
 
-					Despawn();
+					//Despawn();
 					//PlayerData.Instance.Revive();
 					//Destroy(gameObject);
 				}

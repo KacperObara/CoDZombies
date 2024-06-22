@@ -58,10 +58,12 @@ namespace CustomScripts
             if (!GMgr.Instance.TryRemovePoints(Cost))
                 return;
 
-            if (Networking.IsHost())
+            if (Networking.IsHostOrSolo())
             {
                 Unlock();
-                CodZNetworking.Instance.BlockadeCleared_Send(_id);
+                
+                if (Networking.IsHost())
+                    CodZNetworking.Instance.BlockadeCleared_Send(_id);
             }
             else
             {

@@ -43,6 +43,7 @@ namespace CustomScripts.Zombie
             
             Sosig = GetComponent<Sosig>();
 
+            Sosig.ShudderThreshold = 9999f;
             Sosig.CoreRB.gameObject.AddComponent<ZosigTrigger>().Initialize(this);
 
             Sosig.Speed_Run = ZombieManager.Instance.ZosigPerRoundSpeed.Evaluate(RoundManager.Instance.RoundNumber);
@@ -204,12 +205,12 @@ namespace CustomScripts.Zombie
         {
             if (PlayerData.Instance.DeadShotPerkActivated)
             {
-                Sosig.Links[0].DamMult = 1.35f;
+                Sosig.Links[0].DamMult *= 1.35f;
             }
 
             if (PlayerData.Instance.DoubleTapPerkActivated)
             {
-                Sosig.DamMult_Projectile = 1.25f;
+                Sosig.DamMult_Projectile *= 1.25f;
             }
         }
 
@@ -359,6 +360,7 @@ namespace CustomScripts.Zombie
             {
                 yield return new WaitForSeconds(5);
             }
+            
             
             Sosig.DeSpawnSosig();
         }

@@ -54,7 +54,7 @@ namespace CustomScripts
 
             try
             {
-                if (Networking.IsHost())
+                if (Networking.IsHostOrSolo())
                 {
                     SosigAPI.SpawnOptions options = new SosigAPI.SpawnOptions
                     {
@@ -74,7 +74,7 @@ namespace CustomScripts
             }
             catch (Exception e)
             {
-                ErrorShower.Instance.Show("Error, zosigs failed to spawn\nPlease send logs to Kodeman");
+                ErrorShower.Instance.Show("Error, zosigs failed to spawn");
                 Debug.LogError(e);
                 throw;
             }

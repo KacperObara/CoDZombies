@@ -39,7 +39,6 @@ namespace CustomScripts.Powerups
             if (Networking.IsHostOrSolo())
                 OnCollect();
             SyncData();
-
         }
 
         private IEnumerator DisablePowerUpDelay(float time)

@@ -99,8 +99,9 @@ namespace CustomScripts.Powerups
 
             if (Networking.IsHostOrSolo())
             {
-                CodZNetworking.Instance.PaPPurchased_Send();
                 OnBuying();
+                if (Networking.IsHost())
+                    CodZNetworking.Instance.PaPPurchased_Send();
             }
             else
             {

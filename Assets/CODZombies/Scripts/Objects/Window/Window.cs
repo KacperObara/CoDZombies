@@ -53,7 +53,9 @@ namespace CustomScripts
             {
                 int plankId = _planks.FindIndex(plank => !plank.IsBroken);
                 OnPlankTeared(plankId);
-                CodZNetworking.Instance.WindowStateChanged_Send(ID, plankId, WindowAction.Tear);
+                
+                if (Networking.IsHost())
+                    CodZNetworking.Instance.WindowStateChanged_Send(ID, plankId, WindowAction.Tear);
             }
         }
 
@@ -71,7 +73,9 @@ namespace CustomScripts
             if (Networking.IsHostOrSolo())
             {
                 OnWindowRepaired(plankId);
-                CodZNetworking.Instance.WindowStateChanged_Send(ID, plankId, WindowAction.Repair);
+                
+                if (Networking.IsHost())
+                    CodZNetworking.Instance.WindowStateChanged_Send(ID, plankId, WindowAction.Repair);
             }
             else
             {

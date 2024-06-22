@@ -47,12 +47,14 @@ namespace CustomScripts
 
         public void TeleportOnStart()
         {
-            if (Networking.IsHost() && MoveRandomlyOnStart)
+            if (Networking.IsHostOrSolo() && MoveRandomlyOnStart)
             {
                 int waypointID = GetRandomMovePoint();
                 _nextTeleportWaypoint = waypointID;
-                CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, true);
                 Teleport();
+                
+                if (Networking.IsHost())
+                    CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, true);
             }
         }
 
@@ -85,8 +87,10 @@ namespace CustomScripts
         {
             int waypointID = GetRandomMovePoint();
             SetNextWaypoint(waypointID);
-            CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, false);
             StartTeleportAnim();
+            
+            if (Networking.IsHost())
+                CodZNetworking.Instance.MysteryBoxMoved_Send(waypointID, false);
         }
 
         public void StartTeleportAnim()

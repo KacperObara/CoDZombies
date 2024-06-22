@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using CustomScripts.Multiplayer;
 using CustomScripts.Player;
@@ -21,36 +22,55 @@ namespace CustomScripts.Gamemode
         private FVRFireArm weapon;
 
         public bool PackAPunchDeactivated = false;
-        public int TimesPackAPunched = 0;
+
+        private float _despawnTimer;
+        private float _despawnTime = 60f;
 
         public bool IsWeaponMine()
         {
-            if (Networking.IsHostOrSolo())
-                return false;
-            return true;
+            if (GameManager.ID == OwnerId)
+                return true;
+
+            if (Networking.IsSolo())
+                return true;
             
-            // if (OwnerIFF == GameManager.ID)
-            //     return true;
-            // return false;
+            return false;
         }
 
         public void SetOwner(int ownerId)
         {
             OwnerId = ownerId;
-            if (GameManager.ID == OwnerId)
-            {
+            
+            if (GameManager.ID == OwnerId || Networking.IsSolo())
                 weapon.IsPickUpLocked = false;
-            }
         }
 
         public void Initialize(FVRFireArm weapon)
         {
             this.weapon = weapon;
+            if (Networking.IsHostOrSolo())
+                StartCoroutine(DespawnTimer());
         }
 
-        public void OnPackAPunched()
+        private IEnumerator DespawnTimer()
         {
-            TimesPackAPunched++;
+            while (weapon != null)
+            {
+                yield return new WaitForSeconds(1f);
+
+                if (weapon.m_hand != null || weapon.QuickbeltSlot != null)
+                {
+                    _despawnTimer = 0f;
+                    continue;
+                }
+                _despawnTimer += 5f;
+                
+                if (_despawnTimer >= _despawnTime)
+                {
+                    Destroy(gameObject);
+                    yield break;
+                }
+            }
         }
 
         // Called when the weapon is in hand
@@ -69,11 +89,6 @@ namespace CustomScripts.Gamemode
             {
                 SpeedColaActivated = true;
                 AddSpeedColaEffect();
-            }
-
-            if (PackAPunchDeactivated)
-            {
-                StartCoroutine(DelayedReActivation());
             }
         }
 
@@ -124,19 +139,6 @@ namespace CustomScripts.Gamemode
                 openBolt.HasMagReleaseButton = true;
             }
         }
-
-        // Temporary disabling upgrading to avoid weapon colliding with pack a punch again after spawning.
-        // Reactivated 2 seconds after grabbing a weapon.
-        public void BlockPackAPunchUpgrade()
-        {
-            PackAPunchDeactivated = true;
-        }
-
-        private IEnumerator DelayedReActivation()
-        {
-            yield return new WaitForSeconds(2f);
-
-            PackAPunchDeactivated = false;
-        }
+        
     }
 }

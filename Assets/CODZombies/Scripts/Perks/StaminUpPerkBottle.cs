@@ -12,7 +12,7 @@ namespace CustomScripts.Powerups.Perks
         public void ApplyModifier()
         {
             PlayerData.Instance.StaminUpPerkActivated = true;
-            GM.CurrentSceneSettings.MaxSpeedClamp = 6f;
+            GM.CurrentSceneSettings.MaxSpeedClamp = 4f;
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
             Destroy(transform.parent.gameObject);

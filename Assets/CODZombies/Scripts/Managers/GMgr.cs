@@ -45,7 +45,11 @@ namespace CustomScripts
 
         public void PowerLeverPulled()
         {
-            if (Networking.IsHost())
+            if (Networking.IsSolo())
+            {
+                TurnOnPower();
+            }
+            else if (Networking.IsHost())
             {
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.POWER_ENABLED);
             }
@@ -61,7 +65,7 @@ namespace CustomScripts
                 return;
 
             PowerEnabled = true;
-            AudioManager.Instance.Play(AudioManager.Instance.PowerOnSound, .8f);
+            AudioManager.Instance.Play(AudioManager.Instance.PowerOnSound, .4f);
             if (OnPowerEnabled != null)
                 OnPowerEnabled.Invoke();
             

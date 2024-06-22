@@ -61,7 +61,12 @@ namespace CustomScripts
                 return;
 
             DidIRoll = true;
-            if (Networking.IsHost())
+            
+            if (Networking.IsSolo())
+            {
+                OnBuying();
+            }
+            else if (Networking.IsHost())
             {
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_ROLLED);
             }
@@ -76,13 +81,20 @@ namespace CustomScripts
             InUse = true;
             WillTeleport = false;
             AudioManager.Instance.Play(RollSound, .25f);
-
-            if (Networking.IsHost())
+            
+            if (Networking.IsHostOrSolo())
             {
                 bool willTeleport = _mysteryBoxMover.CheckForTeleport();
                 if (willTeleport)
                 {
-                    CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_TELEPORT);
+                    if (Networking.IsSolo())
+                    {
+                        WillTeleport = true;
+                    }
+                    else
+                    {
+                        CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_TELEPORT);
+                    }
                 }
             }
             
@@ -95,7 +107,7 @@ namespace CustomScripts
 
             if (WillTeleport)
             {
-                if (Networking.IsHost())
+                if (Networking.IsHostOrSolo())
                 {
                     _mysteryBoxMover.StartTeleporting();
                 }
@@ -135,7 +147,7 @@ namespace CustomScripts
                 InUse = false;
             }
 
-            if (Networking.IsHost())
+            if (Networking.IsHostOrSolo())
             {
                 _mysteryBoxMover.CurrentRoll++;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using CustomScripts.Multiplayer;
 using CustomScripts.Player;
 using FistVR;
@@ -17,6 +18,11 @@ namespace CustomScripts.Gamemode
         public Transform EndGameSpawnerPos; // On game end
         public Transform RespawnPos; // On spawn on respawn next round
         public Vector3 DownedPos; // On downed
+        
+        public string StartingWeapon = "M1911";
+        public string StartingAmmo = "MagazineM1911";
+        
+       
 
         private IEnumerator Start()
         {
@@ -51,11 +57,10 @@ namespace CustomScripts.Gamemode
         private void SpawnStartingLoadout()
         {
             //Equip starting weapon
-            string weaponString = "M1911";
             FVRObject obj = null;
-            if (!IM.OD.TryGetValue(weaponString, out obj))
+            if (!IM.OD.TryGetValue(StartingWeapon, out obj))
             {
-                Debug.LogError("No object found with id: " + weaponString);
+                Debug.LogError("No object found with id: " + StartingWeapon);
             }
             var callback = obj.GetGameObject();
             FVRPhysicalObject physicalObject = Instantiate(callback, transform.position + Vector3.up, transform.rotation).GetComponent<FVRPhysicalObject>();
@@ -65,11 +70,10 @@ namespace CustomScripts.Gamemode
             physicalObject.GetComponent<WeaponWrapper>().SetOwner(GameManager.ID);
             
             //Equip starting ammo
-            string ammoString = "MagazineM1911";
             obj = null;
-            if (!IM.OD.TryGetValue(ammoString, out obj))
+            if (!IM.OD.TryGetValue(StartingAmmo, out obj))
             {
-                Debug.LogError("No object found with id: " + ammoString);
+                Debug.LogError("No object found with id: " + StartingAmmo);
             }
             callback = obj.GetGameObject();
             physicalObject = Instantiate(callback, transform.position + Vector3.up, transform.rotation).GetComponent<FVRPhysicalObject>();
@@ -88,7 +92,7 @@ namespace CustomScripts.Gamemode
         
         public void OnPlayerDowned()
         {
-            if (Networking.ServerRunning() )//&& GameManager.players.Count > 0)
+            if (Networking.ServerRunning() && PlayersMgr.Instance.Players.Count > 1)
             {
                 // Put into revive state
                 PlayersMgr.Me.IsDowned = true;
@@ -98,6 +102,7 @@ namespace CustomScripts.Gamemode
                 GM.CurrentPlayerBody.DisableHands();
                 GM.CurrentPlayerBody.DisableHitBoxes();
                 SteamVR_Fade.Start(new Color(0.5f, 0, 0, 0.2f), 0.25f);
+
 
                 if (Networking.IsHost())
                 {

@@ -24,8 +24,12 @@ namespace CustomScripts.Objects
 
             if (_isThrottled)
                 return;
-            
-            if (Networking.IsHostOrSolo())
+
+            if (Networking.IsSolo())
+            {
+                GameRefs.Radio.ToggleMusic();
+            }
+            else if (Networking.IsHost())
             {
                 //ToggleMusic();
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.RADIO_TOGGLE);

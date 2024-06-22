@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using CustomScripts;
+using CustomScripts.Player;
 using UnityEngine;
 
 public class WindowRepairTrigger : MonoBehaviour 
@@ -9,7 +10,7 @@ public class WindowRepairTrigger : MonoBehaviour
     public Window Window;
 
     private float _timer = 1.5f;
-    private float _timeToTrigger = 1.5f;
+    private float _timeToTrigger { get { return PlayerData.Instance.SpeedColaPerkActivated ? 0.75f : 1.5f; } }
     private void OnTriggerStay(Collider other)
     {
         if (Window.IsFullyRepaired())
