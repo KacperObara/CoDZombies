@@ -92,6 +92,7 @@ namespace CustomScripts.Gamemode
         
         public void OnPlayerDowned()
         {
+            PlayerData.Instance.ResetPerks();
             if (Networking.ServerRunning() && PlayersMgr.Instance.Players.Count > 1)
             {
                 // Put into revive state
@@ -142,6 +143,7 @@ namespace CustomScripts.Gamemode
             GM.CurrentPlayerBody.EnableHitBoxes();
             GM.CurrentPlayerBody.ActivatePower(PowerupType.Invincibility, PowerUpIntensity.High, PowerUpDuration.VeryShort,
                 false, false);
+
             
             SteamVR_Fade.Start(Color.clear, 0.25f);
             

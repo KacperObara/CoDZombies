@@ -63,7 +63,7 @@ namespace CustomScripts.Gamemode
                     _despawnTimer = 0f;
                     continue;
                 }
-                _despawnTimer += 5f;
+                _despawnTimer += 1f;
                 
                 if (_despawnTimer >= _despawnTime)
                 {

@@ -20,15 +20,15 @@ namespace CustomScripts.Player
         private float _downTime = 30f;
         private float _downTimer = 0f;
 
+        [HideInInspector] public List<PerkShop> UsedPerkShops;
+
         public PowerUpIndicator DoublePointsPowerUpIndicator;
         public PowerUpIndicator InstaKillPowerUpIndicator;
         public PowerUpIndicator DeathMachinePowerUpIndicator;
 
         public float DamageModifier = 1f;
         [HideInInspector] public float MoneyModifier = 1f;
-
-        //public float LargeItemSpeedMult;
-        //public float MassiveItemSpeedMult;
+        
         private float _currentSpeedMult = 1f;
 
         [HideInInspector] public bool InstaKill;
@@ -57,13 +57,35 @@ namespace CustomScripts.Player
 
             RoundManager.OnRoundChanged += OnRoundAdvance;
 
+            ResetPerks();
+            StartCoroutine(Test());
+        }
+        
+        private IEnumerator Test()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(2f);
+                Debug.Log(PlayerSpawner.Instance.transform);
+                if (GM.CurrentSceneSettings.DeathResetPoint)
+                    GM.CurrentSceneSettings.DeathResetPoint = PlayerSpawner.Instance.transform;
+            }
+            
+        }
+
+        public void ResetPerks()
+        {
             DeadShotPerkActivated = false;
             DoubleTapPerkActivated = false;
             SpeedColaPerkActivated = false;
             QuickRevivePerkActivated = false;
             StaminUpPerkActivated = false;
+            PHDFlopperPerkActivated = false;
+            ElectricCherryPerkActivated = false;
+            
+            UsedPerkShops.Clear();
         }
-        
+
         private void Update()
         {
             if (PlayersMgr.Me.IsDowned && !PlayersMgr.Me.IsDead)
@@ -86,13 +108,18 @@ namespace CustomScripts.Player
         [HarmonyPrefix]
         private static void OnBeforePlayerHit(Damage d)
         {
+            Debug.Log("Player Hit! " + d.Dam_TotalKinetic);
+            Debug.Log(GM.CurrentSceneSettings.DoesDamageGetRegistered);
+            Debug.Log(GM.CurrentSceneSettings.DeathResetPoint);
+            Debug.Log(GM.IsDead());
+            
             if (Instance.PHDFlopperPerkActivated && d.Class == Damage.DamageClass.Explosive)
             {
                 d.Dam_TotalKinetic *= .3f;
                 d.Dam_TotalEnergetic *= .3f;
             }
 
-            if (d.Source_IFF != GM.CurrentSceneSettings.DefaultPlayerIFF && GettingHitEvent != null)
+            if (d.Source_IFF != GM.CurrentPlayerBody.GetPlayerIFF() && GettingHitEvent != null)
                 GettingHitEvent.Invoke();
         }
 

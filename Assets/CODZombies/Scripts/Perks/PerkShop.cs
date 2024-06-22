@@ -1,3 +1,4 @@
+using CustomScripts.Player;
 using FistVR;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -20,19 +21,15 @@ namespace CustomScripts
         public GameObject Bottle;
         public Transform SpawnPoint;
 
-        private bool alreadyUsed = false;
-
         public void TryBuying()
         {
-            if (alreadyUsed)
+            if (PlayerData.Instance.UsedPerkShops.Contains(this))
                 return;
 
             if (IsPowered && GMgr.Instance.TryRemovePoints(Cost))
             {
-                alreadyUsed = true;
-
+                PlayerData.Instance.UsedPerkShops.Add(this);
                 Bottle.transform.position = SpawnPoint.position;
-
                 PurchaseJingle.Play();
             }
         }

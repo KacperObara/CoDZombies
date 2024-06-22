@@ -16,7 +16,7 @@ public class StartingArea : MonoBehaviour
 	public void OnGameStart()
 	{
 		StartingMusic.Stop();
-		Destroy(gameObject);
+		//Destroy(gameObject);
 	}
 
 	private void OnDestroy()
