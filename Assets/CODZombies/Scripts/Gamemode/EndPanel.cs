@@ -17,7 +17,7 @@ namespace CustomScripts
 
         public void UpdatePanel()
         {
-            TotalPointsText.text = "Total Points:\n" + GMgr.Instance.TotalPoints;
+            //TotalPointsText.text = "Total Points:\n" + GMgr.Instance.TotalPoints;
 
             KillsText.text = "Kills:\n" + GMgr.Instance.Kills;
 

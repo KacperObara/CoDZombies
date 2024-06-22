@@ -234,8 +234,8 @@ namespace CustomScripts.Zombie
                 if (Networking.IsMineIFF(killerID))
                 {
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
+                    GMgr.Instance.Kills++;
                 }
-                GMgr.Instance.Kills++;
             }
             
             ZombieManager.Instance.OnZombieDied(this);

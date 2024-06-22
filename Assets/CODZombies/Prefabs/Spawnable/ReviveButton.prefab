@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ReviveIcon: {fileID: 114566292655085028}
+  AffectedPlayerID: 0
 --- !u!135 &135631881222997602
 SphereCollider:
   m_ObjectHideFlags: 1

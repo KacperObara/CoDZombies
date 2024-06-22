@@ -337,8 +337,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1921497729907942}
-  m_LocalRotation: {x: -0, y: -0.70710576, z: -0, w: 0.7071079}
-  m_LocalPosition: {x: -0.32191086, y: -3.7258377, z: -1.5643463}
+  m_LocalRotation: {x: -0, y: 0.000000014901159, z: -0, w: 1}
+  m_LocalPosition: {x: 0.179, y: -5.627, z: -10.83}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4139648934158664}
@@ -348,7 +348,7 @@ Transform:
   - {fileID: 4394943925942214}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4173873876664560
 Transform:
   m_ObjectHideFlags: 1
@@ -1068,18 +1068,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ControlType: 0
   IsSimpleInteract: 0
-  HandlingGrabSound: 0
-  HandlingReleaseSound: 0
+  HandlingGrabSound: 1
+  HandlingReleaseSound: 1
   PoseOverride: {fileID: 0}
   QBPoseOverride: {fileID: 0}
   PoseOverride_Touch: {fileID: 0}
   UseGrabPointChild: 0
   UseGripRotInterp: 0
-  PositionInterpSpeed: 1
-  RotationInterpSpeed: 1
+  PositionInterpSpeed: 0
+  RotationInterpSpeed: 0
+  m_grabPointTransform: {fileID: 0}
+  m_pos_interp_tick: 0
+  m_rot_interp_tick: 0
   EndInteractionIfDistant: 1
-  EndInteractionDistance: 0.25
+  EndInteractionDistance: 1
   m_hasTriggeredUpSinceBegin: 0
+  triggerCooldown: 0.5
   m_hand: {fileID: 0}
   UXGeo_Hover: {fileID: 0}
   UXGeo_Held: {fileID: 0}
@@ -1087,16 +1091,21 @@ MonoBehaviour:
   UseFilteredHandPosition: 0
   UseFilteredHandRotation: 0
   UseSecondStepRotationFiltering: 0
-  MaxRot: 30
-  RefVector: {fileID: 0}
-  ValvePos: 0.5
+  SecondStepFilteredRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_isHovered: 0
+  m_isHeld: 0
+  m_colliders: []
+  MaxRot: 45
+  RefVector: {fileID: 4457971974382776}
+  ValvePos: 0
   MessageTargets: []
   AudEvent_Release:
-    Clips: []
-    VolumeRange: {x: 1, y: 1}
-    PitchRange: {x: 1, y: 1}
-    ClipLengthRange: {x: 1, y: 1}
-  Lever: {fileID: 0}
+    Clips:
+    - {fileID: 8300000, guid: 0541d22dd82914e4c8e905aa1d90896b, type: 3}
+    VolumeRange: {x: 0, y: 0}
+    PitchRange: {x: 0, y: 0}
+    ClipLengthRange: {x: 0, y: 0}
+  Lever: {fileID: 4433885392323206}
 --- !u!114 &114855943560882230
 MonoBehaviour:
   m_ObjectHideFlags: 1

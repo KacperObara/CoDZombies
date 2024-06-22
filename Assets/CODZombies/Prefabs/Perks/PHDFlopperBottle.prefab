@@ -70,7 +70,6 @@ GameObject:
   - component: {fileID: 4252358067986902}
   - component: {fileID: 65159587966483890}
   - component: {fileID: 114481988917310284}
-  - component: {fileID: 114136690029143908}
   m_Layer: 11
   m_Name: PHDFlopperBottle
   m_TagString: Untagged
@@ -110,21 +109,52 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1474573468115218
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4128789955351780}
+  - component: {fileID: 65198266146330932}
+  - component: {fileID: 114674764807854274}
+  m_Layer: 16
+  m_Name: Behavior
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4128789955351780
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1474573468115218}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4252358067986902}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4252358067986902
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1286468567501202}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -138.48792, y: -1105.6469, z: -200.00034}
-  m_LocalScale: {x: 0.69, y: 0.69, z: 0.69}
+  m_LocalRotation: {x: -0, y: 0.7071058, z: -0, w: 0.7071078}
+  m_LocalPosition: {x: -0.11000061, y: -8.629997, z: -4.47}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4612542733345716}
   - {fileID: 4434824550874344}
+  - {fileID: 4128789955351780}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &4297357078292452
 Transform:
   m_ObjectHideFlags: 1
@@ -159,7 +189,7 @@ Transform:
   m_GameObject: {fileID: 1450840168352410}
   m_LocalRotation: {x: 0, y: 0.30070576, z: 0, w: 0.953717}
   m_LocalPosition: {x: 0, y: -0.14900208, z: 0}
-  m_LocalScale: {x: 0.026333695, y: 0.026333699, z: 0.026333699}
+  m_LocalScale: {x: 0.01817026, y: 0.01817026, z: 0.01817026}
   m_Children:
   - {fileID: 4297357078292452}
   - {fileID: 4704456298623832}
@@ -322,17 +352,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.15, y: 0.4, z: 0.15}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114136690029143908
-MonoBehaviour:
+--- !u!65 &65198266146330932
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1286468567501202}
+  m_GameObject: {fileID: 1474573468115218}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac57bcba7a64f2b4ca255dc13989f3b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 2
+  m_Size: {x: 0.15, y: 0.4, z: 0.15}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114481988917310284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -355,9 +386,13 @@ MonoBehaviour:
   UseGripRotInterp: 0
   PositionInterpSpeed: 4
   RotationInterpSpeed: 4
+  m_grabPointTransform: {fileID: 0}
+  m_pos_interp_tick: 0
+  m_rot_interp_tick: 0
   EndInteractionIfDistant: 0
   EndInteractionDistance: 0
   m_hasTriggeredUpSinceBegin: 0
+  triggerCooldown: 0.5
   m_hand: {fileID: 0}
   UXGeo_Hover: {fileID: 0}
   UXGeo_Held: {fileID: 0}
@@ -365,6 +400,10 @@ MonoBehaviour:
   UseFilteredHandPosition: 0
   UseFilteredHandRotation: 0
   UseSecondStepRotationFiltering: 0
+  SecondStepFilteredRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_isHovered: 0
+  m_isHeld: 0
+  m_colliders: []
   ObjectWrapper: {fileID: 0}
   SpawnLockable: 0
   Harnessable: 0
@@ -379,6 +418,10 @@ MonoBehaviour:
   ThrowAngMultiplier: 0
   MoveIntensity: 1
   RotIntensity: 1
+  AttachedRotationMultiplier: 60
+  AttachedPositionMultiplier: 9000
+  AttachedRotationFudge: 10000
+  AttachedPositionFudge: 10000
   UsesGravity: 0
   DependantRBs: []
   DistantGrabbable: 1
@@ -387,8 +430,21 @@ MonoBehaviour:
   IsKinematicLocked: 1
   DoesQuickbeltSlotFollowHead: 0
   IsInWater: 0
+  m_timeHeld: 0
+  m_isSaveLoadable: 1
+  m_storedCOMLocal: {x: 0, y: 0, z: 0}
   AttachmentMounts: []
+  AttachmentsList: []
+  m_quickbeltSlot: {fileID: 0}
+  m_timeSinceInQuickbelt: 10
+  Slots: []
+  m_altGrip: {fileID: 0}
+  savedGrip: {fileID: 0}
   IsAltToAltTransfer: 0
+  m_bipod: {fileID: 0}
+  m_isPivotLocked: 0
+  m_pivotLockedPos: {x: 0, y: 0, z: 0}
+  m_pivotLockedRot: {x: 0, y: 0, z: 0, w: 1}
   CollisionSound:
     Clips: []
     ColSoundCooldown: 0.65
@@ -396,9 +452,14 @@ MonoBehaviour:
     m_hasCollisionSound: 0
     m_audioCollision: {fileID: 0}
     m_colSoundTick: 1
+  m_IDSpawnedFrom: {fileID: 0}
   IsPickUpLocked: 0
+  m_doesDirectParent: 1
   OverridesObjectToHand: 0
+  audioImpactController: {fileID: 0}
+  m_hasImpactController: 0
   MP:
+    m_obj: {fileID: 0}
     IsMeleeWeapon: 0
     IgnoreRBs: []
     HandPoint: {fileID: 0}
@@ -411,8 +472,11 @@ MonoBehaviour:
     HighDamageVectors: []
     DoesCyclePosePoints: 0
     PosePoints: []
+    m_poseIndex: 0
     IsThrownDisposable: 0
+    m_isCountingDownToDispose: 0
     m_isThrownAutoAim: 0
+    m_countDownToDestroy: 10
     ThrownDetectMask:
       serializedVersion: 2
       m_Bits: 0
@@ -429,6 +493,14 @@ MonoBehaviour:
     StabVelocityRequirement: 1
     CanTearOut: 0
     TearOutVelThreshold: 3
+    m_isJointedToObject: 0
+    m_stabJoint: {fileID: 0}
+    m_stabTargetRB: {fileID: 0}
+    m_initialStabPointWorld: {x: 0, y: 0, z: 0}
+    m_initialStabPointLocal: {x: 0, y: 0, z: 0}
+    m_relativeStabDir: {x: 0, y: 0, z: 0}
+    m_stabbedLink: {fileID: 0}
+    m_initialPosOfStabbedThingLocal: {x: 0, y: 0, z: 0}
     CanNewLodge: 0
     LodgeDepth: 0.04
     MassWhileLodged: 10
@@ -436,6 +508,10 @@ MonoBehaviour:
     LodgeColliders: []
     LodgeVelocityRequirement: 4
     DeLodgeVelocityRequirement: 1
+    m_isLodgedToObject: 0
+    m_lodgeJoint: {fileID: 0}
+    m_lodgeTargetRB: {fileID: 0}
+    m_initialLodgeNormal: {x: 0, y: 0, z: 0}
     UsesSweepTesting: 0
     UsesSweepDebug: 0
     TestCols: []
@@ -444,3 +520,38 @@ MonoBehaviour:
     LM_DamageTest:
       serializedVersion: 2
       m_Bits: 0
+    m_isReadyToAim: 0
+    m_lastHandPoint: {x: 0, y: 0, z: 0}
+    m_lastEndPoint: {x: 0, y: 0, z: 0}
+    handPointVelocity: {x: 0, y: 0, z: 0}
+    endPointVelocity: {x: 0, y: 0, z: 0}
+    m_pointDistance: 0
+    m_lastangFlick: 0
+    m_lastangFlickLinear: 0
+    m_SweepPointStart: {x: 0, y: 0, z: 0}
+    m_SweepPointEnd: {x: 0, y: 0, z: 0}
+    m_lastSweepPointStart: {x: 0, y: 0, z: 0}
+    m_lastSweepPointEnd: {x: 0, y: 0, z: 0}
+    m_timeSinceLastDamageDone: 0
+    timeSinceStateChange: 10
+    stabDistantPoint: {x: 1, y: 1, z: 1}
+    stabInsidePoint: {x: 1, y: 1, z: 1}
+    m_initialMass: 0
+    m_initRot: 0
+  CheckDestroyTick: 1
+  fakeHandPosWorld: {x: 0, y: 0, z: 0}
+  fakeHandVelWorld: {x: 0, y: 0, z: 0}
+  m_timeSinceFakeVelWorldTransfered: 1
+  m_isVisible: 1
+  m_containedObjects: []
+--- !u!114 &114674764807854274
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1474573468115218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac57bcba7a64f2b4ca255dc13989f3b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
