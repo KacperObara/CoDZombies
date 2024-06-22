@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 95082926042431824}
   - component: {fileID: 114083351539785378}
   - component: {fileID: 65081107035671074}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: MaxAmmoPowerUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,8 +153,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 1.5}
+  m_Center: {x: 0, y: -2.835907e-14, z: 0.25}
 --- !u!95 &95082926042431824
 Animator:
   serializedVersion: 3

@@ -115,11 +115,14 @@ namespace CustomScripts.Gamemode
             }
             else
             {
+                // Solo behavior
                 if (PlayerData.Instance.QuickRevivePerkActivated)
                 {
                     PlayerData.Instance.QuickRevivePerkActivated = false;
                     GM.CurrentMovementManager.TeleportToPoint(DownedPos, true, transform.position + transform.forward);
                     GM.CurrentPlayerBody.HealPercent(1f);
+                    GM.CurrentPlayerBody.ActivatePower(PowerupType.Invincibility, PowerUpIntensity.High, PowerUpDuration.VeryShort,
+                        false, false);
 
                     if (BeingRevivedEvent != null)
                         BeingRevivedEvent.Invoke();
@@ -131,11 +134,14 @@ namespace CustomScripts.Gamemode
             }
         }
 
+        // Multiplayer only
         public void Revive()
         {
             PlayersMgr.Me.IsDowned = false;
             GM.CurrentPlayerBody.EnableHands();
             GM.CurrentPlayerBody.EnableHitBoxes();
+            GM.CurrentPlayerBody.ActivatePower(PowerupType.Invincibility, PowerUpIntensity.High, PowerUpDuration.VeryShort,
+                false, false);
             
             SteamVR_Fade.Start(Color.clear, 0.25f);
             

@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 95549199743508132}
   - component: {fileID: 65624037115086564}
   - component: {fileID: 114667496248693360}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: DeathMachinePowerUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,8 +213,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 1.5}
+  m_Center: {x: 0, y: -2.835907e-14, z: 0.25}
 --- !u!95 &95549199743508132
 Animator:
   serializedVersion: 3
@@ -274,6 +274,7 @@ MonoBehaviour:
   Renderer: {fileID: 23974709662167792}
   MinigunSpawner: {fileID: 114108339682425664}
   MagazineSpawner: {fileID: 114289104057434802}
+  MinigunObject: {fileID: 0}
 --- !u!198 &198758096606447834
 ParticleSystem:
   m_ObjectHideFlags: 1
