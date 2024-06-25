@@ -66,7 +66,7 @@ namespace CustomScripts
             {
                 OnBuying();
             }
-            if (Networking.IsHost())
+            else if (Networking.IsHost())
             {
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.MYSTERY_BOX_ROLLED);
             }

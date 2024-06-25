@@ -24,7 +24,7 @@ namespace CustomScripts.Gamemode
 
         private void OnPointsChanged()
         {
-            PointsText.text = "Points:\n" + GMgr.Instance.Points;
+            PointsText.text = "Points: " + GMgr.Instance.Points;
         }
     }
 }

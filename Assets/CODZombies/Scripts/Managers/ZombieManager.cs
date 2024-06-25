@@ -73,7 +73,6 @@ namespace CustomScripts.Managers
         public void BeginSpawningEnemies()
         {
             ZombiesRemaining = ZombiesToSpawnThisRound;
-            Debug.Log("Begin Spawning zombies: " + ZombiesRemaining);
 
             if (RoundManager.Instance.IsRoundSpecial)
             {

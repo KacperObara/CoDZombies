@@ -5,26 +5,20 @@ using UnityEngine;
 
 namespace CustomScripts.Powerups.Perks
 {
-    public class StaminUpPerkBottle : MonoBehaviour, IModifier
+    public class StaminUpPerkBottle : PerkBottle
     {
         public static Action ConsumedEvent;
-
-        private Vector3 _originalPosition;
         
-        private void Start()
+        public override void ApplyModifier()
         {
-            _originalPosition = transform.parent.position;
-        }
-
-        public void ApplyModifier()
-        {
+            base.ApplyModifier();
             PlayerData.Instance.StaminUpPerkActivated = true;
             GM.CurrentSceneSettings.MaxSpeedClamp = 4f;
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
             
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            transform.parent.position = _originalPosition;
+            GetComponentInParent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = OriginPos;
         }
     }
 }

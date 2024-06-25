@@ -4,21 +4,15 @@ using UnityEngine;
 
 namespace CustomScripts.Powerups.Perks
 {
-    public class QuickRevivePerkBottle : MonoBehaviour, IModifier
+    public class QuickRevivePerkBottle : PerkBottle
     {
-        private Vector3 _originalPosition;
-        
-        private void Start()
+        public override void ApplyModifier()
         {
-            _originalPosition = transform.parent.position;
-        }
-        
-        public void ApplyModifier()
-        {
+            base.ApplyModifier();
             PlayerData.Instance.QuickRevivePerkActivated = true;
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            transform.parent.position = _originalPosition;
+            GetComponentInParent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = OriginPos;
         }
     }
 }

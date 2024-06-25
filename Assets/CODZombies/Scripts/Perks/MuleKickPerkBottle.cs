@@ -5,33 +5,26 @@ using UnityEngine;
 
 namespace CustomScripts.Powerups.Perks
 {
-    public class MuleKickPerkBottle : MonoBehaviour, IModifier
+    public class MuleKickPerkBottle : PerkBottle
     {
         public ObjectSpawnPoint Spawner;
         public string ObjectID;
 
         public GameObject Model;
 
-        private Vector3 _originalPosition;
-        
-        private void Start()
+        public override void ApplyModifier()
         {
-            _originalPosition = transform.parent.position;
-        }
-        
-        public void ApplyModifier()
-        {
+            base.ApplyModifier();
             Spawner.ObjectId = ObjectID;
             Spawner.Spawn();
 
-            GetComponent<FVRPhysicalObject>().IsPickUpLocked = true;
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            GetComponent<Collider>().enabled = false;
-            Model.SetActive(false);
+            //GetComponentInParent<FVRPhysicalObject>().IsPickUpLocked = true;
+            //GetComponentInParent<FVRPhysicalObject>().ForceBreakInteraction();
+            //GetComponent<Collider>().enabled = false;
+            //Model.SetActive(false);
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            transform.parent.position = _originalPosition;
+            transform.parent.position = OriginPos;
         }
     }
 }

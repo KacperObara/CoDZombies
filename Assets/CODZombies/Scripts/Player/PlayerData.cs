@@ -20,7 +20,8 @@ namespace CustomScripts.Player
         private float _downTime = 30f;
         private float _downTimer = 0f;
 
-        [HideInInspector] public List<PerkShop> UsedPerkShops;
+        [HideInInspector] public List<PerkShop> UsedPerkShops = new List<PerkShop>();
+        public List<GameObject> PlayerPerkIcons;
 
         public PowerUpIndicator DoublePointsPowerUpIndicator;
         public PowerUpIndicator InstaKillPowerUpIndicator;
@@ -76,6 +77,11 @@ namespace CustomScripts.Player
             GM.CurrentPlayerBody.ResetHealth();
             
             GM.CurrentSceneSettings.MaxSpeedClamp = 3f;
+
+            foreach (var icon in PlayerPerkIcons)
+            {
+                icon.SetActive(false);
+            }
         }
 
         private void Update()

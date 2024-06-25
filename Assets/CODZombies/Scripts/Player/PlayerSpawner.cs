@@ -144,7 +144,6 @@ namespace CustomScripts.Gamemode
             GM.CurrentPlayerBody.EnableHitBoxes();
             GM.CurrentPlayerBody.ActivatePower(PowerupType.Invincibility, PowerUpIntensity.High, PowerUpDuration.VeryShort,
                 false, false);
-
             
             SteamVR_Fade.Start(Color.clear, 0.25f);
             

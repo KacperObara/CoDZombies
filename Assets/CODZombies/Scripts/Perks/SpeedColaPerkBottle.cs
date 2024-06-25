@@ -5,17 +5,11 @@ using UnityEngine;
 
 namespace CustomScripts.Powerups.Perks
 {
-    public class SpeedColaPerkBottle : MonoBehaviour, IModifier
+    public class SpeedColaPerkBottle : PerkBottle
     {
-        private Vector3 _originalPosition;
-        
-        private void Start()
+        public override void ApplyModifier()
         {
-            _originalPosition = transform.parent.position;
-        }
-        
-        public void ApplyModifier()
-        {
+            base.ApplyModifier();
             PlayerData.Instance.SpeedColaPerkActivated = true;
 
             FVRFireArm heldWeapon = PlayerData.Instance.LeftHand.CurrentInteractable as FVRFireArm;
@@ -27,8 +21,8 @@ namespace CustomScripts.Powerups.Perks
                 heldWeapon.GetComponent<WeaponWrapper>().OnWeaponGrabbed();
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            transform.parent.position = _originalPosition;
+            GetComponentInParent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = OriginPos;
         }
     }
 }

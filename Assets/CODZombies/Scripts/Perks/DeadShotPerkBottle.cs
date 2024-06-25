@@ -1,22 +1,17 @@
 using CustomScripts.Managers;
 using CustomScripts.Player;
+using CustomScripts.Powerups.Perks;
 using CustomScripts.Zombie;
 using FistVR;
 using UnityEngine;
 
 namespace CustomScripts
 {
-    public class DeadShotPerkBottle : MonoBehaviour, IModifier
+    public class DeadShotPerkBottle : PerkBottle
     {
-        private Vector3 _originalPosition;
-        
-        private void Start()
+        public override void ApplyModifier()
         {
-            _originalPosition = transform.parent.position;
-        }
-        
-        public void ApplyModifier()
-        {
+            base.ApplyModifier();
             PlayerData.Instance.DeadShotPerkActivated = true;
 
             for (int i = 0; i < ZombieManager.Instance.ExistingZombies.Count; i++)
@@ -26,8 +21,8 @@ namespace CustomScripts
             
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
             
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            transform.parent.position = _originalPosition;
+            GetComponentInParent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = OriginPos;
         }
     }
 }

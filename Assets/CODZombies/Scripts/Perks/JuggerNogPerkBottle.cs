@@ -1,24 +1,19 @@
 using System;
+using CustomScripts.Powerups.Perks;
 using FistVR;
 using UnityEngine;
 
 namespace CustomScripts
 {
-    public class JuggerNogPerkBottle: MonoBehaviour, IModifier
+    public class JuggerNogPerkBottle: PerkBottle
     {
         public static Action ConsumedEvent;
 
         public float NewHealth = 10000;
-
-        private Vector3 _originalPosition;
         
-        private void Start()
+        public override void ApplyModifier()
         {
-            _originalPosition = transform.parent.position;
-        }
-        
-        public void ApplyModifier()
-        {
+            base.ApplyModifier();
             GM.CurrentPlayerBody.SetHealthThreshold(NewHealth);
             GM.CurrentPlayerBody.ResetHealth();
 
@@ -26,8 +21,8 @@ namespace CustomScripts
                 ConsumedEvent.Invoke();
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            transform.parent.position = _originalPosition;
+            GetComponentInParent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = OriginPos;
         }
     }
 }

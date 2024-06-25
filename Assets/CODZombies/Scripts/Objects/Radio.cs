@@ -21,15 +21,15 @@ namespace CustomScripts.Objects
         {
             if (dam.Class == FistVR.Damage.DamageClass.Explosive)
                 return;
-
+            
             if (_isThrottled)
                 return;
 
             if (Networking.IsSolo())
             {
-                GameRefs.Radio.ToggleMusic();
+                ToggleMusic();
             }
-            if (Networking.IsHost())
+            else if (Networking.IsHost())
             {
                 //ToggleMusic();
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.RADIO_TOGGLE);

@@ -129,7 +129,7 @@ namespace CustomScripts.Powerups
                         }
                         catch (Exception e)
                         {
-                            Debug.LogWarning("Raygun failed to reload it's ammo, tell Kodeman");
+                            Debug.LogWarning("Raygun failed to reload it's ammo");
                             Debug.LogError(e);
                         }
                     }

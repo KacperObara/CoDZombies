@@ -49,7 +49,7 @@ namespace CustomScripts
             {
                 TurnOnPower();
             }
-            if (Networking.IsHost())
+            else if (Networking.IsHost())
             {
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.POWER_ENABLED);
             }

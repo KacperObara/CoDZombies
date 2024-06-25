@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using CustomScripts.Gamemode;
+using CustomScripts.Managers;
 using CustomScripts.Powerups;
 using FistVR;
 using H3MP;
@@ -67,13 +68,13 @@ namespace CustomScripts.Multiplayer
             RegisterPacket("CodZ_BlockadeCleared", BlockadeCleared_Handler, BlockadeCleared_Received, ref blockadeCleared_ID);
             RegisterPacket("CodZ_Client_BlockadeCleared", Client_BlockadeCleared_Handler, Client_BlockadeCleared_Received, ref blockadeCleared_Client_ID);
 
-            //RegisterPacket("CodZ_PowerUpSpawned", PowerUpSpawned_Handler, PowerUpSpawned_Received, ref powerUpSpawned_ID);
+            RegisterPacket("CodZ_PowerUpSpawned", PowerUpSpawned_Handler, PowerUpSpawned_Received, ref powerUpSpawned_ID);
             
-            //RegisterPacket("CodZ_PowerUpCollected", PowerUpCollected_Handler, PowerUpCollected_Received, ref powerUpCollected_ID);
-            //RegisterPacket("CodZ_Client_PowerUpCollected", Client_PowerUpCollected_Handler, Client_PowerUpCollected_Received, ref powerUpCollected_Client_ID);
+            RegisterPacket("CodZ_PowerUpCollected", PowerUpCollected_Handler, PowerUpCollected_Received, ref powerUpCollected_ID);
+            RegisterPacket("CodZ_Client_PowerUpCollected", Client_PowerUpCollected_Handler, Client_PowerUpCollected_Received, ref powerUpCollected_Client_ID);
             
-            //RegisterPacket("CodZ_PaPPurchased", PaPPurchased_Handler, PaPPurchased_Received, ref papPurchased_ID);
-            //RegisterPacket("CodZ_Client_PaPPurchased", Client_PaPPurchased_Handler, Client_PaPPurchased_Received, ref papPurchased_Client_ID);
+            RegisterPacket("CodZ_PaPPurchased", PaPPurchased_Handler, PaPPurchased_Received, ref papPurchased_ID);
+            RegisterPacket("CodZ_Client_PaPPurchased", Client_PaPPurchased_Handler, Client_PaPPurchased_Received, ref papPurchased_Client_ID);
             
             RegisterPacket("CodZ_WindowStateChanged", WindowStateChanged_Handler, WindowStateChanged_Received, ref windowStateChanged_ID);
             RegisterPacket("CodZ_Client_WindowStateChanged", Client_WindowStateChanged_Handler, Client_WindowStateChanged_Received, ref windowStateChanged_Client_ID);
@@ -97,8 +98,8 @@ namespace CustomScripts.Multiplayer
                 }
                 else
                 {
-                    //packetID = Networking.RegisterCustomPacketType(packetName);
-                    packetID = Server.RegisterCustomPacketType(packetName);
+                    packetID = Networking.RegisterCustomPacketType(packetName);
+                    //packetID = Server.RegisterCustomPacketType(packetName);
                 }
                 Mod.customPacketHandlers[packetID] = hostHandler;
             }
@@ -684,6 +685,23 @@ namespace CustomScripts.Multiplayer
                     PlayersMgr.DespawnReviveButton(playerID);
                 }
             }
+            else if (customDataId == (int)CustomPlayerDataType.ZOMBIE_HIT)
+            {
+                // Hits and kills could be tracked locally, but somehow it stopped working suddenly.
+                // For client, sosig died IFF is set to host or -1 FOR SOME GODDAMN REASON
+                if (playerID == GameManager.ID)
+                { 
+                    GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
+                }
+            }
+            else if (customDataId == (int)CustomPlayerDataType.ZOMBIE_KILLED)
+            {
+                if (playerID == GameManager.ID)
+                { 
+                    GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
+                    GMgr.Instance.Kills++;
+                }
+            }
         }
     }
     
@@ -702,5 +720,7 @@ namespace CustomScripts.Multiplayer
         PLAYER_DOWNED = 0,
         PLAYER_DEAD = 1,
         PLAYER_REVIVED = 2,
+        ZOMBIE_HIT = 3,
+        ZOMBIE_KILLED = 4,
     }
 }

@@ -228,20 +228,21 @@ namespace CustomScripts.Zombie
                 Destroy(explosionPS.gameObject, 4f);
             }
             
-            if (awardPoints)
-            {
-                int killerID = Sosig.GetDiedFromIFF();
-                Debug.Log("Zosig died from: " + killerID + " Is mine?: " + Networking.IsMineIFF(killerID) + " My IFF: " + GM.CurrentPlayerBody.GetPlayerIFF());
-                if (Networking.IsMineIFF(killerID))
-                {
-                    GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
-                    GMgr.Instance.Kills++;
-                }
-            }
+            // if (awardPoints)
+            // {
+            //     int killerID = Sosig.GetDiedFromIFF();
+            //     Debug.Log("Zosig died from: " + killerID + " Is mine?: " + Networking.IsMineIFF(killerID) + " My IFF: " + GM.CurrentPlayerBody.GetPlayerIFF());
+            //     if (Networking.IsMineIFF(killerID))
+            //     {
+            //         GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
+            //         GMgr.Instance.Kills++;
+            //     }
+            // }
+            CodZNetworking.Instance.CustomData_PlayerID_Send(Sosig.GetDiedFromIFF(), (int)CustomPlayerDataType.ZOMBIE_KILLED);
             
             ZombieManager.Instance.OnZombieDied(this);
             
-            Debug.Log("After Zombie Killed, existing zombies: " + ZombieManager.Instance.ExistingZombies.Count + " Zombies remaining: " + ZombieManager.Instance.ZombiesRemaining);
+            //Debug.Log("After Zombie Killed, existing zombies: " + ZombieManager.Instance.ExistingZombies.Count + " Zombies remaining: " + ZombieManager.Instance.ZombiesRemaining);
 
             StartCoroutine(DelayedDespawn());
         }
@@ -256,13 +257,14 @@ namespace CustomScripts.Zombie
                 Sosig.KillSosig();
             }
 
-            if (_hitsGivingMoney <= 0)
-                return;
-
-            _hitsGivingMoney--;
-
-            if (Networking.IsMineIFF(damage.Source_IFF))
-                GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
+            CodZNetworking.Instance.CustomData_PlayerID_Send(damage.Source_IFF, (int)CustomPlayerDataType.ZOMBIE_HIT);
+            // if (_hitsGivingMoney <= 0)
+            //     return;
+            //
+            // _hitsGivingMoney--;
+            //
+            // if (Networking.IsMineIFF(damage.Source_IFF))
+            //     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
         }
 
         public override void OnHit(float damage, bool headHit)

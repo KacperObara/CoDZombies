@@ -1,25 +1,20 @@
 using CustomScripts.Gamemode;
 using CustomScripts.Managers;
 using CustomScripts.Player;
+using CustomScripts.Powerups.Perks;
 using CustomScripts.Zombie;
 using FistVR;
 using UnityEngine;
 
 namespace CustomScripts
 {
-    public class DoubleTapPerkBottle : MonoBehaviour, IModifier
+    public class DoubleTapPerkBottle : PerkBottle
     {
         public float DamageMultiplier = 1.5f;
-
-        private Vector3 _originalPosition;
         
-        private void Start()
+        public override void ApplyModifier()
         {
-            _originalPosition = transform.parent.position;
-        }
-        
-        public void ApplyModifier()
-        {
+            base.ApplyModifier();
             PlayerData.Instance.DoubleTapPerkActivated = true;
             
             for (int i = 0; i < ZombieManager.Instance.ExistingZombies.Count; i++)
@@ -38,8 +33,8 @@ namespace CustomScripts
 
             PlayerData.Instance.DamageModifier *= DamageMultiplier;
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
-            transform.parent.position = _originalPosition;
+            GetComponentInParent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = OriginPos;
         }
     }
 }
