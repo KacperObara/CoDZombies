@@ -29,7 +29,7 @@ namespace CustomScripts.Objects
             {
                 GameRefs.Radio.ToggleMusic();
             }
-            else if (Networking.IsHost())
+            if (Networking.IsHost())
             {
                 //ToggleMusic();
                 CodZNetworking.Instance.CustomData_Send((int)CustomDataType.RADIO_TOGGLE);
@@ -44,7 +44,6 @@ namespace CustomScripts.Objects
         {
             if (_isPlaying)
             {
-                Debug.Log("Stopping music");
                 _isPlaying = false;
 
                 AudioManager.Instance.MusicAudioSource.Stop();
@@ -54,7 +53,6 @@ namespace CustomScripts.Objects
             }
             else
             {
-                Debug.Log("Starting music");
                 _isPlaying = true;
 
                 var musicLength = Song.length;

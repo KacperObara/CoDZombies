@@ -10,6 +10,8 @@ using UnityEngine;
 
 namespace CustomScripts.Multiplayer
 {
+    // Welcome traveller, You are here to learn about the networking system in CODZombies.
+    // I'm sorry but I have no idea what I'm doing, and why this works.
     public class CodZNetworking : MonoBehaviourSingleton<CodZNetworking> 
     {
         //Packet IDs
@@ -51,13 +53,9 @@ namespace CustomScripts.Multiplayer
             if (Networking.ServerRunning())
             {
                 SetupPacketTypes();
+                
+                // Different IFF for every player to track kills and award points
                 GM.CurrentPlayerBody.SetPlayerIFF(GameManager.ID + 5);
-            }
-
-            // log all packet IDs
-            foreach (var packet in Mod.registeredCustomPacketIDs)
-            {
-                Debug.Log("Packet ID: " + packet.Key + " = " + packet.Value);
             }
         }
 
@@ -69,13 +67,13 @@ namespace CustomScripts.Multiplayer
             RegisterPacket("CodZ_BlockadeCleared", BlockadeCleared_Handler, BlockadeCleared_Received, ref blockadeCleared_ID);
             RegisterPacket("CodZ_Client_BlockadeCleared", Client_BlockadeCleared_Handler, Client_BlockadeCleared_Received, ref blockadeCleared_Client_ID);
 
-            RegisterPacket("CodZ_PowerUpSpawned", PowerUpSpawned_Handler, PowerUpSpawned_Received, ref powerUpSpawned_ID);
+            //RegisterPacket("CodZ_PowerUpSpawned", PowerUpSpawned_Handler, PowerUpSpawned_Received, ref powerUpSpawned_ID);
             
-            RegisterPacket("CodZ_PowerUpCollected", PowerUpCollected_Handler, PowerUpCollected_Received, ref powerUpCollected_ID);
-            RegisterPacket("CodZ_Client_PowerUpCollected", Client_PowerUpCollected_Handler, Client_PowerUpCollected_Received, ref powerUpCollected_Client_ID);
+            //RegisterPacket("CodZ_PowerUpCollected", PowerUpCollected_Handler, PowerUpCollected_Received, ref powerUpCollected_ID);
+            //RegisterPacket("CodZ_Client_PowerUpCollected", Client_PowerUpCollected_Handler, Client_PowerUpCollected_Received, ref powerUpCollected_Client_ID);
             
-            RegisterPacket("CodZ_PaPPurchased", PaPPurchased_Handler, PaPPurchased_Received, ref papPurchased_ID);
-            RegisterPacket("CodZ_Client_PaPPurchased", Client_PaPPurchased_Handler, Client_PaPPurchased_Received, ref papPurchased_Client_ID);
+            //RegisterPacket("CodZ_PaPPurchased", PaPPurchased_Handler, PaPPurchased_Received, ref papPurchased_ID);
+            //RegisterPacket("CodZ_Client_PaPPurchased", Client_PaPPurchased_Handler, Client_PaPPurchased_Received, ref papPurchased_Client_ID);
             
             RegisterPacket("CodZ_WindowStateChanged", WindowStateChanged_Handler, WindowStateChanged_Received, ref windowStateChanged_ID);
             RegisterPacket("CodZ_Client_WindowStateChanged", Client_WindowStateChanged_Handler, Client_WindowStateChanged_Received, ref windowStateChanged_Client_ID);
@@ -99,7 +97,8 @@ namespace CustomScripts.Multiplayer
                 }
                 else
                 {
-                    packetID = Networking.RegisterCustomPacketType(packetName);
+                    //packetID = Networking.RegisterCustomPacketType(packetName);
+                    packetID = Server.RegisterCustomPacketType(packetName);
                 }
                 Mod.customPacketHandlers[packetID] = hostHandler;
             }
@@ -131,14 +130,12 @@ namespace CustomScripts.Multiplayer
             packet.Write(GameSettings.WeakerEnemiesEnabled);
             packet.Write(GameSettings.SpecialRoundDisabled);
             packet.Write(GameSettings.ItemSpawnerEnabled);
-            
-            Debug.Log("host Sending StartGame packet with ID: " + gameStarted_ID);
+
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
         private void StartGame_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received StartGame packet from host: " + clientID);
             GameSettings.HardMode = packet.ReadBool();
             GameSettings.WeakerEnemiesEnabled = packet.ReadBool();
             GameSettings.SpecialRoundDisabled = packet.ReadBool();
@@ -151,7 +148,6 @@ namespace CustomScripts.Multiplayer
         
         private void StartGame_Received(string handlerID, int index)
         {
-            Debug.Log("Registered StartGame packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_GameStarted")
             {
                 gameStarted_ID = index;
@@ -173,13 +169,11 @@ namespace CustomScripts.Multiplayer
             packet.Write(newWayPointID);
             packet.Write(immediate);
             
-            Debug.Log("host Sending MysteryBoxMoved packet with ID: " + mysteryBoxMoved_ID);
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
         private void MysteryBoxMoved_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received MysteryBoxMoved packet from host: " + clientID);
             int newWaypointID = packet.ReadInt();
             bool immediate = packet.ReadBool();
             
@@ -193,7 +187,6 @@ namespace CustomScripts.Multiplayer
         
         private void MysteryBoxMoved_Received(string handlerID, int index)
         {
-            Debug.Log("Registered MysteryBoxMoved packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_MysteryBoxMoved")
             {
                 mysteryBoxMoved_ID = index;
@@ -215,20 +208,17 @@ namespace CustomScripts.Multiplayer
             Packet packet = new Packet(blockadeCleared_ID);
             packet.Write(blockadeId);
             
-            Debug.Log("host Sending BlockadeCleared packet with ID: " + blockadeCleared_ID);
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
         void BlockadeCleared_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received BlockadeCleared packet from host: " + clientID);
             int blockadeId = packet.ReadInt();
             GMgr.Instance.Blockades[blockadeId].Unlock();
         }
 
         void BlockadeCleared_Received(string handlerID, int index)
         {
-            Debug.Log("Registered BlockadeCleared packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_BlockadeCleared")
             {
                 blockadeCleared_ID = index;
@@ -246,13 +236,11 @@ namespace CustomScripts.Multiplayer
             Packet packet = new Packet(blockadeCleared_Client_ID);
             packet.Write(blockadeId);
             
-            Debug.Log("Client sending BlockadeCleared packet with ID: " + blockadeCleared_Client_ID);
             ClientSend.SendTCPData(packet, true);
         }
         
         void Client_BlockadeCleared_Handler(int clientID, Packet packet)
         {
-            Debug.Log("host received BlockadeCleared packet from client: " + clientID);
             int blockadeId = packet.ReadInt();
             GMgr.Instance.Blockades[blockadeId].Unlock();
             
@@ -261,7 +249,6 @@ namespace CustomScripts.Multiplayer
 
         void Client_BlockadeCleared_Received(string handlerID, int index)
         {
-            Debug.Log("Registered Client_BlockadeCleared packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_Client_BlockadeCleared")
             {
                 blockadeCleared_Client_ID = index;
@@ -283,14 +270,12 @@ namespace CustomScripts.Multiplayer
             Packet packet = new Packet(powerUpSpawned_ID);
             packet.Write(powerUpId);
             packet.Write(pos);
-    
-            Debug.Log("host Sending PowerUpSpawned packet with ID: " + powerUpSpawned_ID);
+            
             ServerSend.SendTCPDataToAll(packet, true);
         }
 
         void PowerUpSpawned_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received PowerUpSpawned packet from host: " + clientID);
             int powerUpId = packet.ReadInt();
             Vector3 pos = packet.ReadVector3();
             PowerUpManager.Instance.SpawnPowerUp(PowerUpManager.Instance.PowerUps[powerUpId], pos);
@@ -298,7 +283,6 @@ namespace CustomScripts.Multiplayer
 
         void PowerUpSpawned_Received(string handlerID, int index)
         {
-            Debug.Log("Registered PowerUpSpawned packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_PowerUpSpawned")
             {
                 powerUpSpawned_ID = index;
@@ -320,14 +304,12 @@ namespace CustomScripts.Multiplayer
     
             Packet packet = new Packet(powerUpCollected_ID);
             packet.Write(powerUpId);
-    
-            Debug.Log("host Sending PowerUpCollected packet with ID: " + powerUpCollected_ID);
+            
             ServerSend.SendTCPDataToAll(packet, true);
         }
 
         void PowerUpCollected_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received PowerUpCollected packet from host: " + clientID);
             int powerUpId = packet.ReadInt();
             PowerUp powerUp = PowerUpManager.Instance.PowerUps[powerUpId];
             powerUp.OnCollect();
@@ -335,7 +317,6 @@ namespace CustomScripts.Multiplayer
 
         void PowerUpCollected_Received(string handlerID, int index)
         {
-            Debug.Log("Registered PowerUpCollected packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_PowerUpCollected")
             {
                 powerUpCollected_ID = index;
@@ -352,14 +333,12 @@ namespace CustomScripts.Multiplayer
 
             Packet packet = new Packet(powerUpCollected_Client_ID);
             packet.Write(powerUpId);
-    
-            Debug.Log("Client sending PowerUpCollected packet with ID: " + powerUpCollected_Client_ID);
+            
             ClientSend.SendTCPData(packet, true);
         }
 
         void Client_PowerUpCollected_Handler(int clientID, Packet packet)
         {
-            Debug.Log("host received PowerUpCollected packet from client: " + clientID);
             int powerUpId = packet.ReadInt();
             PowerUp powerUp = PowerUpManager.Instance.PowerUps[powerUpId];
             powerUp.OnCollect();
@@ -369,7 +348,6 @@ namespace CustomScripts.Multiplayer
 
         void Client_PowerUpCollected_Received(string handlerID, int index)
         {
-            Debug.Log("Registered Client_PowerUpCollected packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_Client_PowerUpCollected")
             {
                 powerUpCollected_Client_ID = index;
@@ -389,19 +367,16 @@ namespace CustomScripts.Multiplayer
                 return;
 
             Packet packet = new Packet(papPurchased_ID);
-            Debug.Log("host Sending PaPPurchased packet with ID: " + papPurchased_ID);
             ServerSend.SendTCPDataToAll(packet, true);
         }
 
         void PaPPurchased_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received PaPPurchased packet from host: " + clientID);
             GameRefs.PackAPunch.OnBuying();
         }
 
         void PaPPurchased_Received(string handlerID, int index)
         {
-            Debug.Log("Registered PaPPurchased packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_PaPPurchased")
             {
                 papPurchased_ID = index;
@@ -417,20 +392,17 @@ namespace CustomScripts.Multiplayer
                 return;
 
             Packet packet = new Packet(papPurchased_Client_ID);
-            Debug.Log("Client sending PaPPurchased packet with ID: " + papPurchased_Client_ID);
             ClientSend.SendTCPData(packet, true);
         }
 
         void Client_PaPPurchased_Handler(int clientID, Packet packet)
         {
-            Debug.Log("host received PaPPurchased packet from client: " + clientID);
             GameRefs.PackAPunch.OnBuying();
             PaPPurchased_Send();
         }
 
         void Client_PaPPurchased_Received(string handlerID, int index)
         {
-            Debug.Log("Registered Client_PaPPurchased packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_Client_PaPPurchased")
             {
                 papPurchased_Client_ID = index;
@@ -448,22 +420,17 @@ namespace CustomScripts.Multiplayer
         {
             if (!Networking.ServerRunning() || Networking.IsClient())
                 return;
-
-            Debug.Log("Window state changed: Sending ID: " + windowStateChanged_ID);
-    
+            
             Packet packet = new Packet(windowStateChanged_ID);
             packet.Write(windowId);
             packet.Write(plankId);
             packet.Write((int)windowAction);
-    
-            Debug.Log("host Sending WindowStateChanged packet with ID: " + windowStateChanged_ID);
+
             ServerSend.SendTCPDataToAll(packet, true);
         }
 
         void WindowStateChanged_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received WindowStateChanged packet from host: " + clientID);
-            
             int windowId = packet.ReadInt();
             int plankId = packet.ReadInt();
             WindowAction windowAction = (WindowAction)packet.ReadInt();
@@ -480,7 +447,6 @@ namespace CustomScripts.Multiplayer
 
         void WindowStateChanged_Received(string handlerID, int index)
         {
-            Debug.Log("Registered WindowStateChanged packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_WindowStateChanged")
             {
                 windowStateChanged_ID = index;
@@ -498,14 +464,12 @@ namespace CustomScripts.Multiplayer
             Packet packet = new Packet(windowStateChanged_Client_ID);
             packet.Write(windowId);
             packet.Write(plankId);
-    
-            Debug.Log("Client sending WindowStateChanged packet with ID: " + windowStateChanged_Client_ID);
+            
             ClientSend.SendTCPData(packet, true);
         }
 
         void Client_WindowStateChanged_Handler(int clientID, Packet packet)
         {
-            Debug.Log("host received WindowStateChanged packet from client: " + clientID);
             int windowId = packet.ReadInt();
             int plankId = packet.ReadInt();
 
@@ -515,7 +479,6 @@ namespace CustomScripts.Multiplayer
 
         void Client_WindowStateChanged_Received(string handlerID, int index)
         {
-            Debug.Log("Registered Client_WindowStateChanged packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_Client_WindowStateChanged")
             {
                 windowStateChanged_Client_ID = index;
@@ -538,22 +501,18 @@ namespace CustomScripts.Multiplayer
             
             Packet packet = new Packet(customData_ID);
             packet.Write(customDataID);
-            
-            Debug.Log("Host sending custom data: " + (CustomDataType)customDataID);
-            
+
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
         void CustomData_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received CustomData packet from host: " + clientID);
             int customDataId = packet.ReadInt();
             HandleCustomData(customDataId);
         }
 
         void CustomData_Received(string handlerID, int index)
         {
-            Debug.Log("Registered CustomData packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_CustomData")
             {
                 customData_ID = index;
@@ -570,23 +529,20 @@ namespace CustomScripts.Multiplayer
             
             Packet packet = new Packet(customData_Client_ID);
             packet.Write(customDataId);
-
-            Debug.Log("Client sending custom data: " + (CustomDataType)customDataId);
             
             ClientSend.SendTCPData(packet, true);
         }
         
         void Client_CustomData_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Host received CustomData packet from client: " + clientID);
             int customDataId = packet.ReadInt();
+            
             HandleCustomData(customDataId);
             CustomData_Send(customDataId);
         }
 
         void Client_CustomData_Received(string handlerID, int index)
         {
-            Debug.Log("Registered Client_CustomData packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_Client_CustomData")
             {
                 customData_Client_ID = index;
@@ -610,14 +566,11 @@ namespace CustomScripts.Multiplayer
             packet.Write(playerID);
             packet.Write(customDataID);
             
-            Debug.Log("Host sending custom data with player ID: " + playerID + " " + (CustomPlayerDataType)customData_ID);
-            
             ServerSend.SendTCPDataToAll(packet, true);
         }
         
         void CustomData_PlayerID_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Received CustomData_PlayerID packet from host: " + clientID);
             int playerID = packet.ReadInt();
             int customDataId = packet.ReadInt();
             HandlePlayerCustomData(playerID, customDataId);
@@ -625,7 +578,6 @@ namespace CustomScripts.Multiplayer
 
         void CustomData_PlayerID_Received(string handlerID, int index)
         {
-            Debug.Log("Registered CustomData_PlayerID packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_CustomData_PlayerID")
             {
                 customData_playerID_ID = index;
@@ -644,13 +596,11 @@ namespace CustomScripts.Multiplayer
             packet.Write(playerID);
             packet.Write(customDataID);
             
-            Debug.Log("Client sending custom data with player ID: " + playerID + " " + (CustomPlayerDataType)customData_ID);
             ClientSend.SendTCPData(packet, true);
         }
         
         void Client_CustomData_PlayerID_Handler(int clientID, Packet packet)
         {
-            Debug.Log("Host received CustomData_PlayerID packet from client: " + clientID);
             int playerID = packet.ReadInt();
             int customDataId = packet.ReadInt();
             HandlePlayerCustomData(playerID, customDataId);
@@ -659,7 +609,6 @@ namespace CustomScripts.Multiplayer
 
         void Client_CustomData_PlayerID_Received(string handlerID, int index)
         {
-            Debug.Log("Registered Client_CustomData_PlayerID packet with handler ID: " + handlerID + " and index: " + index);
             if (handlerID == "CodZ_Client_CustomData_PlayerID")
             {
                 customData_playerID_Client_ID = index;
@@ -673,7 +622,6 @@ namespace CustomScripts.Multiplayer
         
         private void HandleCustomData(int customDataId)
         {
-            Debug.Log("Handling custom data: " + (CustomDataType)customDataId+ " with int=" + customDataId);
             if (customDataId == (int)CustomDataType.MYSTERY_BOX_ROLLED)
             {
                 GameRefs.MysteryBox.OnBuying();
@@ -698,7 +646,6 @@ namespace CustomScripts.Multiplayer
         
         private void HandlePlayerCustomData(int playerID, int customDataId)
         {
-            Debug.Log("Handling player custom data: " + (CustomPlayerDataType)customDataId + " with int=" + customDataId + " for player: " + playerID);
             if (customDataId == (int)CustomPlayerDataType.PLAYER_DOWNED)
             {
                 if (Networking.IsHost() && PlayersMgr.Instance.AllPlayersDowned())

@@ -29,7 +29,7 @@ namespace CustomScripts.Gamemode
             // Wait one frame so that everything is all setup
             yield return null;
             GM.CurrentSceneSettings.DeathResetPoint = transform;
-            GM.CurrentMovementManager.TeleportToPoint(transform.position, true, transform.position + transform.forward);
+            GM.CurrentMovementManager.TeleportToPoint(transform.position, true, transform.position - transform.forward);
         }
         
         [HarmonyPatch(typeof(GM), "BringBackPlayer")]
@@ -92,7 +92,6 @@ namespace CustomScripts.Gamemode
         
         public void OnPlayerDowned()
         {
-            PlayerData.Instance.ResetPerks();
             if (Networking.ServerRunning() && PlayersMgr.Instance.Players.Count > 1)
             {
                 // Put into revive state
@@ -133,6 +132,8 @@ namespace CustomScripts.Gamemode
                     MoveToEndGameArea();
                 }
             }
+            
+            PlayerData.Instance.ResetPerks();
         }
 
         // Multiplayer only

@@ -62,7 +62,6 @@ namespace CustomScripts
         // Data receiver
         public void OnPlankTeared(int plankId)
         {
-            Debug.Log("Plank Tearing: " + plankId + " " + _planks.Count + " " + _audioSource);
             _planks[plankId].Tear();
             _audioSource.PlayOneShot(TearingPlankSounds[UnityEngine.Random.Range(0, TearingPlankSounds.Count)]);
         }

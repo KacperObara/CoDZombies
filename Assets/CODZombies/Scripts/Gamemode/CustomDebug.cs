@@ -103,7 +103,7 @@ namespace CustomScripts.Gamemode.GMDebug
                 SpawnTestObject();
             }
 
-            //IFFText.text = "IFF: " + GM.CurrentPlayerBody.GetPlayerIFF();
+            IFFText.text = "IFF: " + GM.CurrentPlayerBody.GetPlayerIFF();
             //LayerText.text = LayerMask.LayerToName(GM.CurrentMovementManager.Hands[0].gameObject.layer);
             
         }

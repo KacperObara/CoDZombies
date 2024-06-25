@@ -11,6 +11,13 @@ namespace CustomScripts
     {
         public float DamageMultiplier = 1.5f;
 
+        private Vector3 _originalPosition;
+        
+        private void Start()
+        {
+            _originalPosition = transform.parent.position;
+        }
+        
         public void ApplyModifier()
         {
             PlayerData.Instance.DoubleTapPerkActivated = true;
@@ -31,7 +38,8 @@ namespace CustomScripts
 
             PlayerData.Instance.DamageModifier *= DamageMultiplier;
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(transform.parent.gameObject);
+            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = _originalPosition;
         }
     }
 }

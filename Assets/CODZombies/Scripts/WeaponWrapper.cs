@@ -63,6 +63,15 @@ namespace CustomScripts.Gamemode
                     _despawnTimer = 0f;
                     continue;
                 }
+
+                // Don't despawn if a player is close to the weapon. I can't manually check if the weapon is in a client hand or quickbelt
+                Vector3 closestPlayerPos = PlayersMgr.Instance.GetClosestPlayer(transform.position).GetHead().transform.position;
+                if (Vector3.Distance(closestPlayerPos, transform.position) < 2f)
+                {
+                    _despawnTimer = 0f;
+                    continue;
+                }
+                
                 _despawnTimer += 1f;
                 
                 if (_despawnTimer >= _despawnTime)

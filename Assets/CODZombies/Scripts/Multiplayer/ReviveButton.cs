@@ -25,22 +25,25 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 
 	private Color _defaultColor = Color.yellow;
 	private Color _reviveColor = Color.white;
+
+	private bool _available = false;
 	
 	public void Spawn(int playerID, Vector3 pos)
 	{
-		Debug.Log("Revive button spawned");
 		gameObject.SetActive(true);
 		AffectedPlayerID = playerID;
 		transform.position = pos + Vector3.up;
 		_timer = 0f;
 		ReviveIcon.color = _defaultColor;
 		PlayersMgr.Instance.ReviveButtons.Add(this);
+		_available = true;
 	} 
 
 	public void Despawn()
 	{
 		gameObject.SetActive(false);
 		PlayersMgr.Instance.ReviveButtons.Remove(this);
+		_available = false;
 		Destroy(gameObject);
 	}
 	
@@ -69,6 +72,8 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 						CodZNetworking.Instance.Client_CustomData_PlayerID_Send(AffectedPlayerID, (int)CustomPlayerDataType.PLAYER_REVIVED);
 					}
 
+					_timer = 0f;
+					_available = false;
 					//Despawn();
 					//PlayerData.Instance.Revive();
 					//Destroy(gameObject);

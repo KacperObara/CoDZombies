@@ -231,6 +231,7 @@ namespace CustomScripts.Zombie
             if (awardPoints)
             {
                 int killerID = Sosig.GetDiedFromIFF();
+                Debug.Log("Zosig died from: " + killerID + " Is mine?: " + Networking.IsMineIFF(killerID) + " My IFF: " + GM.CurrentPlayerBody.GetPlayerIFF());
                 if (Networking.IsMineIFF(killerID))
                 {
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
@@ -269,7 +270,6 @@ namespace CustomScripts.Zombie
             //nuke
             Sosig.Links[0].LinkExplodes(Damage.DamageClass.Projectile);
             Sosig.KillSosig();
-            Debug.Log("Sosig was nuked");
         }
         
         public void OnTriggerEntered(Collider other)
@@ -281,72 +281,11 @@ namespace CustomScripts.Zombie
             {
                 other.GetComponent<ITrap>().OnEnemyEntered(this);
             }
-
-            // if (_isAttackingWindow)
-            //     return;
-            //
-            // if (CanInteractWithWindows && other.GetComponent<WindowTrigger>())
-            // {
-            //     Window window = other.GetComponent<WindowTrigger>().Window;
-            //     if (window.IsOpen)
-            //     {
-            //         ChangeTarget(GameRefs.Instance.Player);
-            //         return;
-            //     }
-            //
-            //     _isAttackingWindow = true;
-            //
-            //     _cachedSpeed = _sosig.Speed_Run;
-            //     _sosig.Speed_Run = 0;
-            //     _sosig.Speed_Walk = 0;
-            //     _sosig.Speed_Turning = 0;
-            //     _sosig.Speed_Crawl = 0;
-            //     _sosig.Speed_Sneak = 0;
-            //
-            //     LastInteractedWindow = window;
-            //     OnTouchingWindow();
-            // }
         }
         
         public void OnTriggerExited(Collider other)
         {
         }
-
-        // public void OnTouchingWindow()
-        // {
-        //     if (_tearingPlanksCoroutine == null)
-        //         _tearingPlanksCoroutine = StartCoroutine(TearPlankDelayed());
-        // }
-
-        // public void OnHitWindow()
-        // {
-        //     LastInteractedWindow.OnPlankRipped();
-        //
-        //     if (LastInteractedWindow.IsOpen)
-        //     {
-        //         ChangeTarget(GameRefs.Instance.Player);
-        //     }
-        // }
-        //
-        // private IEnumerator TearPlankDelayed()
-        // {
-        //     while (!LastInteractedWindow.IsOpen && !_isDead)
-        //     {
-        //         yield return new WaitForSeconds(2.5f);
-        //
-        //         if (!_isDead && _sosig.BodyState == Sosig.SosigBodyState.InControl)
-        //             OnHitWindow();
-        //     }
-        //
-        //     _isAttackingWindow = false;
-        //     _sosig.Speed_Run = _cachedSpeed;
-        //     _sosig.Speed_Walk = _cachedSpeed;
-        //     _sosig.Speed_Turning = _cachedSpeed;
-        //     _sosig.Speed_Crawl = _cachedSpeed;
-        //     _sosig.Speed_Sneak = _cachedSpeed;
-        //
-        //     _tearingPlanksCoroutine = null;
-        // }
 
         private IEnumerator DelayedDespawn()
         {

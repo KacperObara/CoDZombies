@@ -58,19 +58,6 @@ namespace CustomScripts.Player
             RoundManager.OnRoundChanged += OnRoundAdvance;
 
             ResetPerks();
-            StartCoroutine(Test());
-        }
-        
-        private IEnumerator Test()
-        {
-            while (true)
-            {
-                yield return new WaitForSeconds(2f);
-                Debug.Log(PlayerSpawner.Instance.transform);
-                if (GM.CurrentSceneSettings.DeathResetPoint)
-                    GM.CurrentSceneSettings.DeathResetPoint = PlayerSpawner.Instance.transform;
-            }
-            
         }
 
         public void ResetPerks()
@@ -84,6 +71,11 @@ namespace CustomScripts.Player
             ElectricCherryPerkActivated = false;
             
             UsedPerkShops.Clear();
+            
+            GM.CurrentPlayerBody.SetHealthThreshold(5000);
+            GM.CurrentPlayerBody.ResetHealth();
+            
+            GM.CurrentSceneSettings.MaxSpeedClamp = 3f;
         }
 
         private void Update()
@@ -108,11 +100,6 @@ namespace CustomScripts.Player
         [HarmonyPrefix]
         private static void OnBeforePlayerHit(Damage d)
         {
-            Debug.Log("Player Hit! " + d.Dam_TotalKinetic);
-            Debug.Log(GM.CurrentSceneSettings.DoesDamageGetRegistered);
-            Debug.Log(GM.CurrentSceneSettings.DeathResetPoint);
-            Debug.Log(GM.IsDead());
-            
             if (Instance.PHDFlopperPerkActivated && d.Class == Damage.DamageClass.Explosive)
             {
                 d.Dam_TotalKinetic *= .3f;

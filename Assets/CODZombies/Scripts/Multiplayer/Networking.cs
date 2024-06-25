@@ -51,14 +51,14 @@ namespace CustomScripts.Multiplayer
 
 		public static bool IsSolo()
 		{
-			if (ServerRunning() && IsHost())
+			if (ServerRunning())
 			{
-				if (GameManager.players.Count == 0)
+				if (IsHost() && PlayersMgr.Instance.Players.Count == 1)
 					return true;
-				
+
 				return false;
 			}
-			
+
 			return true;
 		}
 

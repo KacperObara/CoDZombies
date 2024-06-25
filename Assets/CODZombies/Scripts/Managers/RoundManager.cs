@@ -54,10 +54,10 @@ namespace CustomScripts
             RoundNumber = 0;
 
             
-            AdvanceRound();
-
             if (OnGameStarted != null)
                 OnGameStarted.Invoke();
+            
+            AdvanceRound();
         }
 
         public void AdvanceRound()

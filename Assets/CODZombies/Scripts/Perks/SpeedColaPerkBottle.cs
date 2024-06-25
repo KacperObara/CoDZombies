@@ -7,6 +7,13 @@ namespace CustomScripts.Powerups.Perks
 {
     public class SpeedColaPerkBottle : MonoBehaviour, IModifier
     {
+        private Vector3 _originalPosition;
+        
+        private void Start()
+        {
+            _originalPosition = transform.parent.position;
+        }
+        
         public void ApplyModifier()
         {
             PlayerData.Instance.SpeedColaPerkActivated = true;
@@ -20,7 +27,8 @@ namespace CustomScripts.Powerups.Perks
                 heldWeapon.GetComponent<WeaponWrapper>().OnWeaponGrabbed();
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(transform.parent.gameObject);
+            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = _originalPosition;
         }
     }
 }

@@ -12,6 +12,13 @@ namespace CustomScripts.Powerups.Perks
 
         public GameObject Model;
 
+        private Vector3 _originalPosition;
+        
+        private void Start()
+        {
+            _originalPosition = transform.parent.position;
+        }
+        
         public void ApplyModifier()
         {
             Spawner.ObjectId = ObjectID;
@@ -23,7 +30,8 @@ namespace CustomScripts.Powerups.Perks
             Model.SetActive(false);
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(transform.parent.gameObject, 1f);
+            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = _originalPosition;
         }
     }
 }

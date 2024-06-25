@@ -9,13 +9,22 @@ namespace CustomScripts.Powerups.Perks
     {
         public static Action ConsumedEvent;
 
+        private Vector3 _originalPosition;
+        
+        private void Start()
+        {
+            _originalPosition = transform.parent.position;
+        }
+
         public void ApplyModifier()
         {
             PlayerData.Instance.StaminUpPerkActivated = true;
             GM.CurrentSceneSettings.MaxSpeedClamp = 4f;
 
             AudioManager.Instance.Play(AudioManager.Instance.DrinkSound);
-            Destroy(transform.parent.gameObject);
+            
+            GetComponent<FVRPhysicalObject>().ForceBreakInteraction();
+            transform.parent.position = _originalPosition;
         }
     }
 }

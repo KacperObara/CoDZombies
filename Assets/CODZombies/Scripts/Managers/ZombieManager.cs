@@ -7,6 +7,8 @@ using CustomScripts.Gamemode.GMDebug;
 using CustomScripts.Multiplayer;
 using CustomScripts.Zombie;
 using FistVR;
+using H3MP;
+using H3MP.Scripts;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -25,6 +27,8 @@ namespace CustomScripts.Managers
         public AnimationCurve ZosigHPCurve;
         public AnimationCurve ZosigLinkIntegrityCurve;
         public AnimationCurve ZosigPerRoundSpeed;
+
+        
         
         public int PointsOnHit = 10;
         public int PointsOnKill = 100;
@@ -33,17 +37,31 @@ namespace CustomScripts.Managers
 
         public ParticleSystem HellhoundExplosionPS;
 
-        public int ZombieAtOnceLimit = 20;
+        public int ExistingZombieLimit
+        {
+            get
+            {
+                if (Networking.IsSolo())
+                    return BaseZombieLimit;
+                return BaseZombieLimit + (ExtraZombiesPerPlayer * (PlayersMgr.Instance.Players.Count - 1));
+            }
+        }
+        
+        public int ExtraZombiesPerPlayer = 3;
+        public int BaseZombieLimit = 20;
+        
         [HideInInspector] public int ZombiesRemaining;
 
         private int ZombiesToSpawnThisRound
         {
             get
             {
+                int extraZombies = Networking.IsSolo() ? 0 : ExtraZombiesPerPlayer * (PlayersMgr.Instance.Players.Count - 1);
+                
                 if (GameSettings.HardMode)
-                    return Mathf.CeilToInt(ZombieCountCurve.Evaluate(RoundManager.Instance.RoundNumber) + 1);
+                    return Mathf.CeilToInt(ZombieCountCurve.Evaluate(RoundManager.Instance.RoundNumber) + 1 + extraZombies);
                 else
-                    return Mathf.CeilToInt(ZombieCountCurve.Evaluate(RoundManager.Instance.RoundNumber));
+                    return Mathf.CeilToInt(ZombieCountCurve.Evaluate(RoundManager.Instance.RoundNumber) + extraZombies);
             }
         }
 
@@ -55,17 +73,16 @@ namespace CustomScripts.Managers
         public void BeginSpawningEnemies()
         {
             ZombiesRemaining = ZombiesToSpawnThisRound;
+            Debug.Log("Begin Spawning zombies: " + ZombiesRemaining);
 
             if (RoundManager.Instance.IsRoundSpecial)
             {
                 StartSpawningZombies(6f);
-
                 AudioManager.Instance.Play(AudioManager.Instance.HellHoundRoundStartSound, 0.35f, 0f);
             }
             else
             {
                 StartSpawningZombies(2f);
-
                 AudioManager.Instance.Play(AudioManager.Instance.RoundStartSound, 0.2f, 1f);
             }
 
@@ -84,7 +101,7 @@ namespace CustomScripts.Managers
 
             while (ZombiesRemaining > ExistingZombies.Count)
             {
-                if (ExistingZombies.Count >= ZombieAtOnceLimit || ExistingZombies.Count >= ZombiesRemaining) // Second check is experimental fix.
+                if (ExistingZombies.Count >= ExistingZombieLimit || ExistingZombies.Count >= ZombiesRemaining) // Second check is experimental fix.
                 {
                     yield return new WaitForSeconds(4);
                     continue;
@@ -92,10 +109,10 @@ namespace CustomScripts.Managers
 
                 SpawnZosig();
 
-                if (RoundManager.Instance.IsRoundSpecial)
-                    yield return new WaitForSeconds(2.6f);
+                if (!GameSettings.HardMode || RoundManager.Instance.IsRoundSpecial)
+                    yield return new WaitForSeconds(3f);
                 else
-                    yield return new WaitForSeconds(1.5f);
+                    yield return new WaitForSeconds(2f);
                     
             }
         }
@@ -136,8 +153,6 @@ namespace CustomScripts.Managers
             {
                 controller.InitializeSpecialType();
             }
-
-            Debug.Log("After Zombie spawned, existing zombies: " + ExistingZombies.Count + " Zombies remaining: " + ZombiesRemaining);
         }
 
         #endregion
@@ -171,6 +186,8 @@ namespace CustomScripts.Managers
 
             // if (!awardKill)
             //     return;
+
+            Debug.Log("Zombie died, zombies remaining: " + ZombiesRemaining + " Existing zombies: " + ExistingZombies.Count);
 
             ZombiesRemaining--;
             
