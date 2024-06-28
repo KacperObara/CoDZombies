@@ -122,6 +122,7 @@ namespace CustomScripts.Powerups
             
             AudioManager.Instance.Play(AudioManager.Instance.BuySound, .5f);
             AudioManager.Instance.Play(UpgradeSound, .3f);
+            StartCoroutine(DelayedAllowUse());
         }
         
         public void SpawnWeapon(string weaponId, int ownerId)
@@ -146,6 +147,13 @@ namespace CustomScripts.Powerups
                 weaponWrapper.SetOwner(ownerId);
             }
 
+            InUse = false;
+        }
+        
+        // TODO Quick test fix
+        private IEnumerator DelayedAllowUse()
+        { 
+            yield return new WaitForSeconds(5f);
             InUse = false;
         }
     }

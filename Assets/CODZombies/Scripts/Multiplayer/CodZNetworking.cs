@@ -538,7 +538,7 @@ namespace CustomScripts.Multiplayer
         {
             int customDataId = packet.ReadInt();
             
-            HandleCustomData(customDataId);
+            //HandleCustomData(customDataId);
             CustomData_Send(customDataId);
         }
 
@@ -604,7 +604,7 @@ namespace CustomScripts.Multiplayer
         {
             int playerID = packet.ReadInt();
             int customDataId = packet.ReadInt();
-            HandlePlayerCustomData(playerID, customDataId);
+            //HandlePlayerCustomData(playerID, customDataId);
             CustomData_PlayerID_Send(playerID, customDataId);
         }
 
@@ -689,15 +689,15 @@ namespace CustomScripts.Multiplayer
             {
                 // Hits and kills could be tracked locally, but somehow it stopped working suddenly.
                 // For client, sosig died IFF is set to host or -1 FOR SOME GODDAMN REASON
-                if (playerID == GameManager.ID)
+                if (playerID == GM.CurrentPlayerBody.GetPlayerIFF())
                 { 
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
                 }
             }
             else if (customDataId == (int)CustomPlayerDataType.ZOMBIE_KILLED)
             {
-                if (playerID == GameManager.ID)
-                { 
+                if (playerID == GM.CurrentPlayerBody.GetPlayerIFF())
+                {
                     GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
                     GMgr.Instance.Kills++;
                 }

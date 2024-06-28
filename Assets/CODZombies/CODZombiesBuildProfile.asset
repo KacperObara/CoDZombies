@@ -19,11 +19,10 @@ MonoBehaviour:
   WebsiteURL: 
   Description: Custom game mode based on Call of Duty Zombies
   AdditionalDependencies:
-  - devyndamonster-MagazinePatcher-0.1.9
+  - VIP-H3MP-1.9.15
   - Nuigo_Ftrmarket-CDZ_Raygun_Mk1-1.2.3
   - Nuigo_Ftrmarket-CDZ_Raygun_Mk2-1.0.2
   - Nuigo_Ftrmarket-CDZ_Thundergun-1.0.1
-  - VIP-H3MP-1.9.15
   StripNamespaces: 1
   AdditionalNamespaces:
   - CustomScripts

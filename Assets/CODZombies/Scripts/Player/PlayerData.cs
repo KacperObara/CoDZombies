@@ -16,9 +16,6 @@ namespace CustomScripts.Player
     public class PlayerData : MonoBehaviourSingleton<PlayerData>
     {
         public static Action GettingHitEvent;
-            
-        private float _downTime = 30f;
-        private float _downTimer = 0f;
 
         [HideInInspector] public List<PerkShop> UsedPerkShops = new List<PerkShop>();
         public List<GameObject> PlayerPerkIcons;
@@ -84,19 +81,6 @@ namespace CustomScripts.Player
             }
         }
 
-        private void Update()
-        {
-            if (PlayersMgr.Me.IsDowned && !PlayersMgr.Me.IsDead)
-            {
-                _downTimer += Time.deltaTime;
-                if (_downTimer >= _downTime)
-                {
-                    _downTimer = 0f;
-                    PlayerSpawner.Instance.DieFully();
-                }
-            }
-        }
-
         private void OnRoundAdvance()
         {
             GM.CurrentPlayerBody.HealPercent(1f);
@@ -106,6 +90,26 @@ namespace CustomScripts.Player
         [HarmonyPrefix]
         private static void OnBeforePlayerHit(Damage d)
         {
+            // Disable FriendyFire
+            foreach (var player in PlayersMgr.Instance.Players)
+            {
+                //TODO don't hardcode number 5 when assigning IFFs
+                if (!player.IsMe && player.PlayerManager.ID + 5 == d.Source_IFF)
+                {
+                    d.Dam_Blunt = 0;
+                    d.Dam_Piercing = 0;
+                    d.Dam_Cutting = 0;
+                    d.Dam_TotalKinetic = 0;
+                    d.Dam_Thermal = 0;
+                    d.Dam_Chilling = 0;
+                    d.Dam_EMP = 0;
+                    d.Dam_TotalEnergetic = 0;
+                    d.Dam_Stunning = 0;
+                    d.Dam_Blinding = 0;
+                    d.damageSize = 0;
+                }
+            }
+            
             if (Instance.PHDFlopperPerkActivated && d.Class == Damage.DamageClass.Explosive)
             {
                 d.Dam_TotalKinetic *= .3f;

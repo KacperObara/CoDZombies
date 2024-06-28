@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
 using UnityEngine.UI;
 
 namespace CustomScripts.Gamemode.GMDebug
@@ -10,7 +10,7 @@ namespace CustomScripts.Gamemode.GMDebug
         public void Show(string message)
         {
             ErrorText.text = message;
-            ErrorText.gameObject.SetActive(true);
+            ErrorText.gameObject.SetActive(true); 
         }
     }
 }

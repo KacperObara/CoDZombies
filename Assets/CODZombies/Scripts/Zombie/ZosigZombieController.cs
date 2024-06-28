@@ -238,11 +238,18 @@ namespace CustomScripts.Zombie
             //         GMgr.Instance.Kills++;
             //     }
             // }
-            CodZNetworking.Instance.CustomData_PlayerID_Send(Sosig.GetDiedFromIFF(), (int)CustomPlayerDataType.ZOMBIE_KILLED);
+            
+            if (Networking.IsSolo())
+            {
+                GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnKill);
+                GMgr.Instance.Kills++;
+            }
+            else if (Networking.IsHost())
+            {
+                CodZNetworking.Instance.CustomData_PlayerID_Send(Sosig.GetDiedFromIFF(), (int)CustomPlayerDataType.ZOMBIE_KILLED);
+            }
             
             ZombieManager.Instance.OnZombieDied(this);
-            
-            //Debug.Log("After Zombie Killed, existing zombies: " + ZombieManager.Instance.ExistingZombies.Count + " Zombies remaining: " + ZombieManager.Instance.ZombiesRemaining);
 
             StartCoroutine(DelayedDespawn());
         }
@@ -256,8 +263,16 @@ namespace CustomScripts.Zombie
             {
                 Sosig.KillSosig();
             }
-
-            CodZNetworking.Instance.CustomData_PlayerID_Send(damage.Source_IFF, (int)CustomPlayerDataType.ZOMBIE_HIT);
+            
+            if (Networking.IsSolo())
+            {
+                GMgr.Instance.AddPoints(ZombieManager.Instance.PointsOnHit);
+            }
+            else if (Networking.IsHost())
+            {
+                CodZNetworking.Instance.CustomData_PlayerID_Send(damage.Source_IFF, (int)CustomPlayerDataType.ZOMBIE_HIT);
+            }
+            
             // if (_hitsGivingMoney <= 0)
             //     return;
             //

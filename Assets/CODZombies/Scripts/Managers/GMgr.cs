@@ -61,6 +61,7 @@ namespace CustomScripts
         
         public void TurnOnPower()
         {
+            Debug.Log("Turning on power");
             if (PowerEnabled)
                 return;
 

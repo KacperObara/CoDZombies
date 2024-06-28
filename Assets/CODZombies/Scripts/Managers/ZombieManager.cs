@@ -84,8 +84,6 @@ namespace CustomScripts.Managers
                 StartSpawningZombies(2f);
                 AudioManager.Instance.Play(AudioManager.Instance.RoundStartSound, 0.2f, 1f);
             }
-
-
         }
 
         public void StartSpawningZombies(float initialDelay)

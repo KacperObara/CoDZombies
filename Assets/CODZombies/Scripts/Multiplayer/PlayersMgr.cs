@@ -73,8 +73,6 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 		}
 
 		return closestPlayer;
-		// List<PlayerH3MPData> alivePlayers = Players.FindAll(player => player.IsAlive);
-		// return alivePlayers.OrderBy(player => Vector3.Distance(player.GetHead().position, origin)).First();
 	}
 	
 	public PlayerH3MPData GetClosestPlayer(Vector3 origin)
@@ -93,8 +91,6 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 		}
 
 		return closestPlayer;
-		// List<PlayerH3MPData> alivePlayers = Players.FindAll(player => player.IsAlive);
-		// return alivePlayers.OrderBy(player => Vector3.Distance(player.GetHead().position, origin)).First();
 	}
 	
 	public bool AllPlayersDowned()
@@ -135,27 +131,21 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	{
 		ReviveButton button = Instantiate(Instance.ReviveButtonPrefab, pos, Quaternion.identity);
 		button.Spawn(playerID, pos);
-
-		Debug.Log("Buttons after adding");
-		foreach (var buttont in PlayersMgr.Instance.ReviveButtons)
-		{
-			Debug.Log(buttont.AffectedPlayerID);
-		}
 	}
 	
 	public static void DespawnReviveButton(int playerID)
 	{
 		ReviveButton reviveButton = Instance.ReviveButtons.Find(button => button.AffectedPlayerID == playerID);
-		
-		Debug.Log("Buttons before removing");
-		foreach (var buttont in PlayersMgr.Instance.ReviveButtons)
-		{
-			Debug.Log(buttont.AffectedPlayerID);
-		}
-
-		Debug.Log("Does despawn exist: " + reviveButton + "  for id " + playerID);
-		
 		reviveButton.Despawn();
+	}
+
+	public void SetAllToAlive()
+	{
+		foreach (var player in Players)
+		{
+			player.IsDowned = false;
+			player.IsDead = false;
+		}
 	}
 }
 

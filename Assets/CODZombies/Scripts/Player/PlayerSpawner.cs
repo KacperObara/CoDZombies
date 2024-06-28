@@ -22,7 +22,8 @@ namespace CustomScripts.Gamemode
         public string StartingWeapon = "M1911";
         public string StartingAmmo = "MagazineM1911";
         
-       
+        private float _downTime = 30f;
+        private float _downTimer = 0f;
 
         private IEnumerator Start()
         {
@@ -30,6 +31,19 @@ namespace CustomScripts.Gamemode
             yield return null;
             GM.CurrentSceneSettings.DeathResetPoint = transform;
             GM.CurrentMovementManager.TeleportToPoint(transform.position, true, transform.position - transform.forward);
+        }
+        
+        private void Update()
+        {
+            if (PlayersMgr.Me.IsDowned && !PlayersMgr.Me.IsDead)
+            {
+                _downTimer += Time.deltaTime;
+                if (_downTimer >= _downTime)
+                {
+                    _downTimer = 0f;
+                    DieFully();
+                }
+            }
         }
         
         [HarmonyPatch(typeof(GM), "BringBackPlayer")]
@@ -50,7 +64,7 @@ namespace CustomScripts.Gamemode
             GM.CurrentMovementManager.TeleportToPoint(RespawnPos.position, true);
             SteamVR_Fade.Start(Color.clear, 0.0f); 
             SpawnStartingLoadout();
-
+            
             RoundManager.OnRoundChanged -= SpawnPlayer;
         }
         
@@ -94,6 +108,7 @@ namespace CustomScripts.Gamemode
         {
             if (Networking.ServerRunning() && PlayersMgr.Instance.Players.Count > 1)
             {
+                _downTimer = 0f;
                 // Put into revive state
                 PlayersMgr.Me.IsDowned = true;
                 GM.CurrentMovementManager.TeleportToPoint(DownedPos, true, transform.position + transform.forward);
