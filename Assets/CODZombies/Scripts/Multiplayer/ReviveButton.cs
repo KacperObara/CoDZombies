@@ -53,12 +53,9 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 		{
 			if (_handReviving == null)
 				_handReviving = other.GetComponent<FVRViveHand>();
-
-			//Debug.Log("Hand inside revive trigger");
+			
 			if (_handReviving.Input.GripPressed)
 			{
-				//Debug.Log("Grip pressed on revive button");
-				
 				ReviveIcon.color = _reviveColor;
 				_timer += Time.fixedDeltaTime;
 				if (_timer >= ReviveTime)
@@ -74,9 +71,6 @@ public class ReviveButton : MonoBehaviourSingleton<ReviveButton>
 
 					_timer = 0f;
 					_available = false;
-					//Despawn();
-					//PlayerData.Instance.Revive();
-					//Destroy(gameObject);
 				}
 			}
 			else

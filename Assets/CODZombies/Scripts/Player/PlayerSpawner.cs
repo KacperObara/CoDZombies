@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using CustomScripts.Multiplayer;
 using CustomScripts.Player;
+using CustomScripts.Powerups.Perks;
 using FistVR;
 using H3MP;
 using HarmonyLib;
@@ -58,7 +59,7 @@ namespace CustomScripts.Gamemode
             GM.CurrentPlayerBody.HealPercent(1f);
             GM.CurrentPlayerBody.EnableHands();
             GM.CurrentPlayerBody.EnableHitBoxes();
-            GM.CurrentPlayerBody.WipeQuickbeltContents();
+            WipeEquipment();
             PlayersMgr.Me.IsDead = false;
             PlayersMgr.Me.IsDowned = false;
             GM.CurrentMovementManager.TeleportToPoint(RespawnPos.position, true);
@@ -170,7 +171,8 @@ namespace CustomScripts.Gamemode
         {
             PlayersMgr.Me.IsDead = true;
             PlayersMgr.Me.IsDowned = false;
-            GM.CurrentPlayerBody.WipeQuickbeltContents();
+            WipeEquipment();
+            
             SteamVR_Fade.Start(new Color(0, 0, 0, 0.2f), 0.25f);
             RoundManager.OnRoundChanged += SpawnPlayer;
             
@@ -181,6 +183,27 @@ namespace CustomScripts.Gamemode
             else
             {
                 CodZNetworking.Instance.Client_CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_DEAD);
+            }
+        }
+
+        public void WipeEquipment()
+        {
+            GM.CurrentPlayerBody.WipeQuickbeltContents();
+            
+            // Destroy hand items unless it's perk bottle
+            if (GM.CurrentMovementManager.Hands[0].CurrentInteractable != null)
+            {
+                FVRInteractiveObject obj = GM.CurrentMovementManager.Hands[0].CurrentInteractable;
+                obj.ForceBreakInteraction();
+                if (!obj.GetComponentInChildren<PerkBottle>())
+                    Destroy(obj.gameObject);
+            }
+            if (GM.CurrentMovementManager.Hands[1].CurrentInteractable != null)
+            {
+                FVRInteractiveObject obj = GM.CurrentMovementManager.Hands[1].CurrentInteractable;
+                obj.ForceBreakInteraction();
+                if (!obj.GetComponentInChildren<PerkBottle>())
+                    Destroy(obj.gameObject);
             }
         }
         

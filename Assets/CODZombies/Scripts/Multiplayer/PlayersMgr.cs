@@ -22,6 +22,7 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	{
 		AddMe();
 		RoundManager.OnGameStarted += AddClients;
+		RoundManager.RoundStarted += SetAllToAlive;
 	}
 
 	private void AddClients()
@@ -38,6 +39,12 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 				Debug.Log("Me " + GameManager.ID);
 			else
 				Debug.Log(player.PlayerManager.username + " " + player.PlayerManager.ID);
+		}
+
+		foreach (var player in Players)
+		{
+			if (!player.IsMe)
+				Debug.Log("IFF: " + (player.PlayerManager.ID + 5));
 		}
 	}
 
@@ -120,6 +127,7 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	private void OnDestroy()
 	{
 		RoundManager.OnGameStarted -= AddClients;
+		RoundManager.RoundStarted -= SetAllToAlive;
 	}
 
 	public static PlayerH3MPData GetPlayerExcludingMe(int playerID)
@@ -131,10 +139,12 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	{
 		ReviveButton button = Instantiate(Instance.ReviveButtonPrefab, pos, Quaternion.identity);
 		button.Spawn(playerID, pos);
+		Debug.Log("Revive button spawned: " + playerID);
 	}
 	
 	public static void DespawnReviveButton(int playerID)
 	{
+		Debug.Log("Revive button despawned " + playerID);
 		ReviveButton reviveButton = Instance.ReviveButtons.Find(button => button.AffectedPlayerID == playerID);
 		reviveButton.Despawn();
 	}

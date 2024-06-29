@@ -180,12 +180,7 @@ namespace CustomScripts.Managers
         public void OnZombieDied(ZombieController controller)
         {
             ExistingZombies.Remove(controller);
-
-            // if (!awardKill)
-            //     return;
-
-            Debug.Log("Zombie died, zombies remaining: " + ZombiesRemaining + " Existing zombies: " + ExistingZombies.Count);
-
+            
             ZombiesRemaining--;
             
             if (GMgr.Instance.GameEnded)

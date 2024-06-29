@@ -90,32 +90,55 @@ namespace CustomScripts.Player
         [HarmonyPrefix]
         private static void OnBeforePlayerHit(Damage d)
         {
+            Debug.Log("I'm hit!: " + d.Source_IFF + "  " + d.Class);
             // Disable FriendyFire
-            foreach (var player in PlayersMgr.Instance.Players)
+            // foreach (var player in PlayersMgr.Instance.Players)
+            // {
+            //     //TODO don't hardcode number 5 when assigning IFFs
+            //     if (!player.IsMe && player.PlayerManager.ID + 5 == d.Source_IFF)
+            //     {
+            //         d.Dam_Blunt = 0;
+            //         d.Dam_Piercing = 0;
+            //         d.Dam_Cutting = 0;
+            //         d.Dam_TotalKinetic = 0;
+            //         d.Dam_Thermal = 0;
+            //         d.Dam_Chilling = 0;
+            //         d.Dam_EMP = 0;
+            //         d.Dam_TotalEnergetic = 0;
+            //         d.Dam_Stunning = 0;
+            //         d.Dam_Blinding = 0;
+            //         d.damageSize = 0;
+            //     }
+            // }
+            // if (d.Source_IFF != 1)
+            // {
+            //     d.Dam_Blunt = 0;
+            //     d.Dam_Piercing = 0;
+            //     d.Dam_Cutting = 0;
+            //     d.Dam_TotalKinetic = 0;
+            //     d.Dam_Thermal = 0;
+            //     d.Dam_Chilling = 0;
+            //     d.Dam_EMP = 0;
+            //     d.Dam_TotalEnergetic = 0;
+            //     d.Dam_Stunning = 0;
+            //     d.Dam_Blinding = 0;
+            //     d.damageSize = 0;
+            // }
+            
+            if (d.Class == Damage.DamageClass.Explosive)
             {
-                //TODO don't hardcode number 5 when assigning IFFs
-                if (!player.IsMe && player.PlayerManager.ID + 5 == d.Source_IFF)
+                if (Instance.PHDFlopperPerkActivated)
                 {
-                    d.Dam_Blunt = 0;
-                    d.Dam_Piercing = 0;
-                    d.Dam_Cutting = 0;
-                    d.Dam_TotalKinetic = 0;
-                    d.Dam_Thermal = 0;
-                    d.Dam_Chilling = 0;
-                    d.Dam_EMP = 0;
-                    d.Dam_TotalEnergetic = 0;
-                    d.Dam_Stunning = 0;
-                    d.Dam_Blinding = 0;
-                    d.damageSize = 0;
+                    d.Dam_TotalKinetic *= .05f; //.3f
+                    d.Dam_TotalEnergetic *= .05f; //.3f
+                }
+                else
+                {
+                    d.Dam_TotalKinetic *= .5f; //.3f
+                    d.Dam_TotalEnergetic *= .5f; //.3f
                 }
             }
             
-            if (Instance.PHDFlopperPerkActivated && d.Class == Damage.DamageClass.Explosive)
-            {
-                d.Dam_TotalKinetic *= .3f;
-                d.Dam_TotalEnergetic *= .3f;
-            }
-
             if (d.Source_IFF != GM.CurrentPlayerBody.GetPlayerIFF() && GettingHitEvent != null)
                 GettingHitEvent.Invoke();
         }
