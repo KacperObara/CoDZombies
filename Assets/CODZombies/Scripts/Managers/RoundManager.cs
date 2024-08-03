@@ -52,7 +52,6 @@ namespace CustomScripts
             GMgr.Instance.GameStarted = true;
 
             RoundNumber = 0;
-
             
             if (OnGameStarted != null)
                 OnGameStarted.Invoke();

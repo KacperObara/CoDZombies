@@ -62,9 +62,19 @@ namespace CustomScripts.Gamemode
             WipeEquipment();
             PlayersMgr.Me.IsDead = false;
             PlayersMgr.Me.IsDowned = false;
+            
             GM.CurrentMovementManager.TeleportToPoint(RespawnPos.position, true);
             SteamVR_Fade.Start(Color.clear, 0.0f); 
             SpawnStartingLoadout();
+            
+            // if (Networking.IsHost())
+            // {
+            //     CodZNetworking.Instance.CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_SPAWNED);
+            // }
+            // else
+            // {
+            //     CodZNetworking.Instance.Client_CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_SPAWNED);
+            // }
             
             RoundManager.OnRoundChanged -= SpawnPlayer;
         }
@@ -184,6 +194,8 @@ namespace CustomScripts.Gamemode
             {
                 CodZNetworking.Instance.Client_CustomData_PlayerID_Send(GameManager.ID, (int)CustomPlayerDataType.PLAYER_DEAD);
             }
+            
+            
         }
 
         public void WipeEquipment()
@@ -209,6 +221,7 @@ namespace CustomScripts.Gamemode
         
         public void MoveToEndGameArea()
         {
+            Debug.Log("Teleporting to end Game");
             GM.CurrentMovementManager.TeleportToPoint(EndGameSpawnerPos.position, true, transform.position + transform.forward);
             GM.CurrentPlayerBody.EnableHands();
             GM.CurrentPlayerBody.EnableHitBoxes();

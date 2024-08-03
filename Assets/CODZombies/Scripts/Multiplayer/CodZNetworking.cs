@@ -131,6 +131,7 @@ namespace CustomScripts.Multiplayer
             packet.Write(GameSettings.WeakerEnemiesEnabled);
             packet.Write(GameSettings.SpecialRoundDisabled);
             packet.Write(GameSettings.ItemSpawnerEnabled);
+            packet.Write(GameSettings.WonderWeaponEnabled);
 
             ServerSend.SendTCPDataToAll(packet, true);
         }
@@ -141,6 +142,7 @@ namespace CustomScripts.Multiplayer
             GameSettings.WeakerEnemiesEnabled = packet.ReadBool();
             GameSettings.SpecialRoundDisabled = packet.ReadBool();
             GameSettings.ItemSpawnerEnabled = packet.ReadBool();
+            GameSettings.WonderWeaponEnabled = packet.ReadBool();
             
             GameSettings.OnSettingsChanged.Invoke();
             
@@ -668,6 +670,11 @@ namespace CustomScripts.Multiplayer
                 if (playerID == GameManager.ID)
                     return;
                 
+                if (Networking.IsHost() && PlayersMgr.Instance.AllPlayersDowned())
+                {
+                    CustomData_Send((int)CustomDataType.EVERY_PLAYER_DEAD);
+                }
+                
                 PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = false;
                 PlayersMgr.GetPlayerExcludingMe(playerID).IsDead = true;
 
@@ -702,6 +709,14 @@ namespace CustomScripts.Multiplayer
                     GMgr.Instance.Kills++;
                 }
             }
+            else if (customDataId == (int)CustomPlayerDataType.PLAYER_SPAWNED)
+            {
+                if (playerID == GameManager.ID)
+                    return;
+                
+                PlayersMgr.GetPlayerExcludingMe(playerID).IsDowned = false;
+                PlayersMgr.GetPlayerExcludingMe(playerID).IsDead = false;
+            }
         }
     }
     
@@ -722,5 +737,6 @@ namespace CustomScripts.Multiplayer
         PLAYER_REVIVED = 2,
         ZOMBIE_HIT = 3,
         ZOMBIE_KILLED = 4,
+        PLAYER_SPAWNED = 5,
     }
 }

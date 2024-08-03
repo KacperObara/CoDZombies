@@ -17,6 +17,7 @@ namespace CustomScripts
         public static bool SpecialRoundDisabled;
         public static bool ItemSpawnerEnabled;
         public static bool WeakerEnemiesEnabled;
+        public static bool WonderWeaponEnabled;
 
         public Text OptionDescriptionText;
 
@@ -44,6 +45,7 @@ namespace CustomScripts
             ItemSpawnerEnabled = false;
             SpecialRoundDisabled = false;
             WeakerEnemiesEnabled = false;
+            WonderWeaponEnabled = false;
 
             OptionDescriptionText.text = "Default settings restored.";
             if (OnSettingsChanged != null)
@@ -120,6 +122,24 @@ namespace CustomScripts
                 OnSettingsChanged.Invoke();
 
             OptionDescriptionText.text = "Enemies have normal HP";
+        }
+        
+        public void EnableWonderWeaponsClicked()
+        {
+            WonderWeaponEnabled = true;
+            if (OnSettingsChanged != null)
+                OnSettingsChanged.Invoke();
+
+            OptionDescriptionText.text = "Wonder weapons might spawn in MysteryBox. If playing Multiplayer, check first in other scenes if modded weapons work correctly for both players.";
+        }
+
+        public void DisableWonderWeaponsClicked()
+        {
+            WonderWeaponEnabled = false;
+            if (OnSettingsChanged != null)
+                OnSettingsChanged.Invoke();
+
+            OptionDescriptionText.text = "Wonder weapons will not spawn in MysteryBox";
         }
 
         public void ToggleBackgroundMusic()

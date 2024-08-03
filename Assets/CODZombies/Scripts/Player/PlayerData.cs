@@ -90,7 +90,7 @@ namespace CustomScripts.Player
         [HarmonyPrefix]
         private static void OnBeforePlayerHit(Damage d)
         {
-            Debug.Log("I'm hit!: " + d.Source_IFF + "  " + d.Class);
+            //Debug.Log("I'm hit!: " + d.Source_IFF + "  " + d.Class);
             // Disable FriendyFire
             // foreach (var player in PlayersMgr.Instance.Players)
             // {

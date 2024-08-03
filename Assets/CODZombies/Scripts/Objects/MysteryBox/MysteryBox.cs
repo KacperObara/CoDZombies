@@ -120,6 +120,9 @@ namespace CustomScripts
                     float rareChance = Mathf.Min(StartRareChance + ChanceIncreasePerRound * RoundManager.Instance.RoundNumber, MaxRareChance);
                     bool isRare = Random.Range(0f, 1f) <= rareChance;
 
+                    if (!GameSettings.WonderWeaponEnabled)
+                        isRare = false;
+
                     WeaponData rolledWeapon = null;
                     if (isRare)
                     {

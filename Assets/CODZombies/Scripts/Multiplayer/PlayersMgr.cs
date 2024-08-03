@@ -139,12 +139,12 @@ public class PlayersMgr : MonoBehaviourSingleton<PlayersMgr>
 	{
 		ReviveButton button = Instantiate(Instance.ReviveButtonPrefab, pos, Quaternion.identity);
 		button.Spawn(playerID, pos);
-		Debug.Log("Revive button spawned: " + playerID);
+		//Debug.Log("Revive button spawned: " + playerID);
 	}
 	
 	public static void DespawnReviveButton(int playerID)
 	{
-		Debug.Log("Revive button despawned " + playerID);
+		//Debug.Log("Revive button despawned " + playerID);
 		ReviveButton reviveButton = Instance.ReviveButtons.Find(button => button.AffectedPlayerID == playerID);
 		reviveButton.Despawn();
 	}

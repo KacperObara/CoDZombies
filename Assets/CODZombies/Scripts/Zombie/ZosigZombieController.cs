@@ -64,7 +64,7 @@ namespace CustomScripts.Zombie
                 Sosig.Mustard *= .6f;
                 foreach (SosigLink link in Sosig.Links)
                 {
-                    link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .6f);
+                    link.SetIntegrity(ZombieManager.Instance.ZosigLinkIntegrityCurve.Evaluate(RoundManager.Instance.RoundNumber) * .75f);
                 }
             }
 
