@@ -1,8 +1,33 @@
-# MeatKit
-MeatKit is a Unity Editor modding toolkit for developing and packaging custom maps, guns, and mods for Hot Dogs, Horseshoes & Handgrenades. Using MeatKit creating and exporting mods is easier than ever.
+# CoD Zombies Multiplayer Prototype Scene
 
-## Setup
-Checkout the wiki for setup and getting started guides: https://h3vr-modding.github.io/wiki/creating/meatkit/intro.html
+## Tutorial
 
-## Contributing
-If you'd like to help develop MeatKit give me a shout on Discord `@nrgill28#9007`. I'd appreciate having a chance to talk about any changes you plan on making before you make a PR.
+  **Multiplayer:**  
+    - When all players are present in the scene, the host can start the game.  
+    - You cannot join an existing game.
+
+  **Solo Play:**  
+    - Enter the scene normally or by creating a server first.  
+    - If you are not hosting the server, you might encounter some H3MP errors. They can be ignored.
+
+**Reviving Players:**  
+Hold the grip button on the revive icon.
+
+**Known Issues:**  
+Friendly fire is enabled. Do NOT change IFF  
+Custom guns don't work for me when playing with others, so I made Wonder weapons optional
+   
+   
+   
+[![Support on Ko-fi](https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0)](https://ko-fi.com/kodeman)  
+   
+   
+   
+**Wouldn't happen without:**  
+VIP  
+Sora101Ven  
+Arpy  
+Frityet  
+nrgill28  
+devyndamonster  
+

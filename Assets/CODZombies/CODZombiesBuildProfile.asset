@@ -16,7 +16,7 @@ MonoBehaviour:
   Version: 0.8.0
   Icon: {fileID: 2800000, guid: 0148ce2cb3a59434fb095ed1aa374ee0, type: 3}
   ReadMe: {fileID: 102900000, guid: 57936d06bd74e084aa085fbccaa6ac7d, type: 3}
-  WebsiteURL: 
+  WebsiteURL: https://github.com/KacperObara/CoDZombies
   Description: Multiplayer compatible Call Of Duty Zombie GameMode
   AdditionalDependencies:
   - VIP-H3MP-1.9.15
