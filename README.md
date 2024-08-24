@@ -16,9 +16,10 @@ Hold the grip button on the revive icon.
 **Known Issues:**  
 Friendly fire is enabled. Do NOT change IFF  
 Custom guns don't work for me when playing with others, so I made Wonder weapons optional
-   
-   
-   
+
+[Creating maps tutorial](https://docs.google.com/document/d/1rJI8_7GcbBk43JC2FUqAYcvUkna3AhPa2h8D9vF-klI/edit?usp=sharing)  
+
+  
 [![Support on Ko-fi](https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0)](https://ko-fi.com/kodeman)  
    
    
