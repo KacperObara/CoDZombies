@@ -63,7 +63,7 @@ namespace CustomScripts
         public void OnPlankTeared(int plankId)
         {
             _planks[plankId].Tear();
-            _audioSource.PlayOneShot(TearingPlankSounds[UnityEngine.Random.Range(0, TearingPlankSounds.Count)]);
+            _audioSource.PlayOneShot(TearingPlankSounds[UnityEngine.Random.Range(0, TearingPlankSounds.Count)], 0.75f);
         }
 
         public void RepairWindow()
@@ -86,8 +86,8 @@ namespace CustomScripts
         {
             _planks[plankId].Repair(false);
             
-            _audioSource.PlayOneShot(PlankFloatSound);
-            _audioSource.PlayOneShot(WindowRepairSound);
+            _audioSource.PlayOneShot(PlankFloatSound, 0.5f);
+            _audioSource.PlayOneShot(WindowRepairSound, 0.5f);
             
             if (BarricadedEvent != null)
                 BarricadedEvent.Invoke();
@@ -95,7 +95,7 @@ namespace CustomScripts
 
         public void OnPlankInPlace()
         {
-            _audioSource.PlayOneShot(RepairingPlankSounds[UnityEngine.Random.Range(0, RepairingPlankSounds.Count)]);
+            _audioSource.PlayOneShot(RepairingPlankSounds[UnityEngine.Random.Range(0, RepairingPlankSounds.Count)], 0.5f);
         }
 
         public void RepairAll()

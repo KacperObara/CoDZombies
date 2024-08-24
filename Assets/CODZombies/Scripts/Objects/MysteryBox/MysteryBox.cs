@@ -44,8 +44,8 @@ namespace CustomScripts
 
         private MysteryBoxMover _mysteryBoxMover;
 
-        public bool WillTeleport;
-        public bool DidIRoll;
+        [HideInInspector] public bool WillTeleport;
+        [HideInInspector] public bool DidIRoll;
         
         private void Awake()
         {

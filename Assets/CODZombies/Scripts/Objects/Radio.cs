@@ -58,7 +58,7 @@ namespace CustomScripts.Objects
                 var musicLength = Song.length;
                 _musicEndCoroutine = StartCoroutine(OnMusicEnd(musicLength));
 
-                AudioManager.Instance.PlayMusic(Song, 0.095f);
+                AudioManager.Instance.PlayMusic(Song, 0.133f);
             }
 
             StartCoroutine(Throttle());

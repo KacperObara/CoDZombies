@@ -17,10 +17,9 @@ Hold the grip button on the revive icon.
 Friendly fire is enabled. Do NOT change IFF  
 Custom guns don't work for me when playing with others, so I made Wonder weapons optional
    
-   
+[![](https://markdown-videos-api.jorgenkh.no/youtube/HSCB_92v260)](https://youtu.be/HSCB_92v260)
    
 [![Support on Ko-fi](https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0)](https://ko-fi.com/kodeman)  
-   
    
    
 **Wouldn't happen without:**  

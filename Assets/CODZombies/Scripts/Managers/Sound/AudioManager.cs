@@ -7,10 +7,6 @@ namespace CustomScripts
 {
     public class AudioManager : MonoBehaviourSingleton<AudioManager>
     {
-        public List<AudioClip> FarZombieSounds;
-        public List<AudioClip> CloseZombieSounds;
-        public List<AudioClip> HellHoundsSounds;
-
         public AudioSource MainAudioSource;
         public AudioSource MusicAudioSource;
 
