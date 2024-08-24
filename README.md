@@ -19,6 +19,7 @@ Custom guns don't work for me when playing with others, so I made Wonder weapons
 
 [Creating maps tutorial](https://docs.google.com/document/d/1rJI8_7GcbBk43JC2FUqAYcvUkna3AhPa2h8D9vF-klI/edit?usp=sharing)  
 
+[![](https://markdown-videos-api.jorgenkh.no/youtube/HSCB_92v260)](https://youtu.be/HSCB_92v260)
   
 [![Support on Ko-fi](https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0)](https://ko-fi.com/kodeman)  
    
